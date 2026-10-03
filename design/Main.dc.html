@@ -1,0 +1,1957 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Seamlessly Does It — pattern maker</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+  <helmet>
+    <style>
+    </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Fraunces:opsz,wght@9..144,500&amp;family=Instrument+Serif&amp;family=Inter:wght@400;500;600&amp;family=Caveat:wght@600&amp;display=swap">
+<style>
+body{margin:0;background:#FBFAF9}
+a{color:#0086FC}a:hover{color:#005FB3}
+.sdi-shell{display:grid;grid-template-columns:minmax(0,330px) minmax(0,270px) minmax(0,1fr);gap:24px;align-items:start}
+.sdi-work{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}
+.sdi-panel{position:sticky;top:20px}
+.sdi-hero{display:grid;grid-template-columns:minmax(0,1fr) 510px;gap:32px;align-items:center}
+@media (max-width:1300px){.sdi-work{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:1100px){.sdi-shell{grid-template-columns:minmax(0,330px) minmax(0,1fr)}.sdi-factory{grid-column:1;position:static}.sdi-shell>main{grid-column:2;grid-row:1 / span 2}}
+@media (max-width:960px){.sdi-shell{grid-template-columns:minmax(0,1fr)}.sdi-shell>main{grid-column:auto;grid-row:auto}.sdi-panel{position:static}.sdi-hero{grid-template-columns:minmax(0,1fr)}.sdi-art{display:none}}
+.sdi-btn{transition:background-color .15s ease,opacity .15s ease,transform .1s ease;cursor:pointer}
+.sdi-btn:hover{opacity:.86}
+.sdi-btn:active{transform:translateY(1px)}
+.sdi-btn:focus-visible,.sdi-file:focus-within,.sdi-swatch:focus-visible{outline:3px solid #0086FC;outline-offset:3px}
+.sdi-file{cursor:pointer}
+.sdi-cswatch{-webkit-appearance:none;appearance:none;overflow:hidden}
+.sdi-cswatch::-webkit-color-swatch-wrapper{padding:0}
+.sdi-cswatch::-webkit-color-swatch{border:none;border-radius:9999px}
+.sdi-cswatch::-moz-color-swatch{border:none;border-radius:9999px}
+.sdi-mocks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media (max-width:900px){.sdi-mocks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.sdi-mocks{grid-template-columns:minmax(0,1fr)}}
+.sdi-tip{position:relative}
+.sdi-hue,.sdi-alpha{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:9999px;margin:0;outline:none;cursor:pointer}
+.sdi-hue{background:linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%)}
+.sdi-hue::-webkit-slider-thumb,.sdi-alpha::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:9999px;background:#FFFFFF;border:2.5px solid #3B82F6;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
+.sdi-hue::-moz-range-thumb,.sdi-alpha::-moz-range-thumb{width:16px;height:16px;border-radius:9999px;background:#FFFFFF;border:2.5px solid #3B82F6}
+.sdi-hue:focus-visible,.sdi-alpha:focus-visible{outline:3px solid #0086FC;outline-offset:2px}
+.sdi-herobtn:focus-visible{outline:3px solid #0086FC;outline-offset:2px}
+.sdi-herobtn:hover{background:rgba(255,255,255,0.12)}
+.sdi-tipbox{position:absolute;top:calc(100% + 8px);right:0;width:280px;background:#121212;color:#FFFFFF;font-size:13px;font-weight:400;line-height:1.45;text-align:left;padding:12px 14px;border-radius:10px;opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity .12s ease,transform .12s ease;z-index:10;white-space:normal}
+.sdi-tip:hover .sdi-tipbox,.sdi-tip:focus-visible .sdi-tipbox{opacity:1;transform:translateY(0)}
+.sdi-tiptext{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:#121212;color:#FFFFFF;font-size:12px;font-weight:500;line-height:1;padding:7px 10px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s ease,transform .12s ease;z-index:5}
+.sdi-tip:hover .sdi-tiptext,.sdi-tip:focus-visible .sdi-tiptext{opacity:1;transform:translateX(-50%) translateY(0)}
+.sdi-btn:disabled{opacity:.35;cursor:not-allowed}
+.sdi-btn:disabled:hover{opacity:.35}
+.sdi-range:disabled{opacity:.4}
+.sdi-range{width:100%;accent-color:#121212;height:28px;margin:0}
+.sdi-swatch{cursor:pointer;transition:transform .12s ease}
+.sdi-swatch:hover{transform:scale(1.08)}
+@media (prefers-reduced-motion:reduce){.sdi-btn,.sdi-swatch{transition:none}.sdi-swatch:hover{transform:none}}
+</style>
+  </helmet>
+<div style="min-height: 100vh; background: {{t.page}}; color: {{t.ink2}}; font-family: {{t.bodyFont}}; font-size: 16px">
+
+<sc-if value="{{lbOpen}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-modal="true" aria-label="{{lbTitle}}" onClick="{{lbClose}}" onKeyDown="{{lbKey}}" style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; background: rgba(15,16,21,0.72)">
+<div onClick="{{lbStop}}" style="display: flex; flex-direction: column; gap: 14px; width: min(92vw, 1000px); max-height: 94vh; background: {{t.card}}; border-radius: 14px; padding: 18px; box-sizing: border-box">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<h2 style="margin: 0; font-family: {{t.headFont}}; font-weight: {{t.headWeight}}; font-size: 26px; letter-spacing: -0.02em; color: {{t.ink1}}">{{lbTitle}}</h2>
+<div style="display: flex; gap: 8px">
+<button type="button" class="sdi-btn" onClick="{{lbSave}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 32px; border: 0; background: {{t.sand}}; color: {{t.ink1}}; font: inherit; font-size: 14px; font-weight: 500"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12"></path><path d="M7 11l5 5 5-5"></path><path d="M4 20h16"></path></svg>Download</button>
+<button type="button" class="sdi-btn" onClick="{{lbClose}}" aria-label="Close" autofocus="{{ true }}" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border-radius: 9999px; border: 0; background: {{t.ink1}}; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+</div>
+<canvas ref="{{lbRef}}" width="1440" height="1200" aria-label="{{lbTitle}}" style="display: block; width: 100%; max-height: calc(94vh - 110px); aspect-ratio: 6 / 5; object-fit: contain; border-radius: 10px"></canvas>
+</div>
+</div>
+</sc-if>
+<div style="max-width: 1800px; margin: 0 auto; padding: 32px 40px 96px; box-sizing: border-box">
+
+<header class="sdi-hero" style="padding: {{t.heroPad}}; margin-bottom: {{t.heroGap}}; background: {{t.heroBg}}; border-radius: {{t.heroRadius}}px">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<h1 style="margin: 0; font-family: {{t.headFont}}; font-weight: {{t.headWeight}}; font-size: clamp(36px, 4.8vw, 64px); line-height: 1.04; letter-spacing: -0.031em; white-space: nowrap; color: {{t.heroInk}}">Seamlessly <span style="color: {{t.heroAccent}}">Does It</span></h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.5; font-weight: 400; color: {{t.heroSub}}; max-width: 520px">Design your pattern. We handle the seamless repeat.</p>
+</div>
+
+<sc-if value="{{showArt}}" hint-placeholder-val="{{ true }}">
+<div class="sdi-art" style="position: relative; width: 510px; height: 219px">
+<svg aria-hidden="true" style="position: absolute; left: 30px; top: 20px" width="480" height="188" viewBox="0 0 640 250" fill="none" stroke="{{t.ink2}}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+<defs>
+<g id="sdi-s"><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(0.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(45.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(90.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(135.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(180.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(225.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(270.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(315.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><circle cx="0" cy="0" r="5.2" fill="#FFCD6C" stroke-width="1.2"></circle></g>
+<g id="sdi-h"><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(22.5)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(67.5)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(112.5)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(157.5)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(202.5)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(247.5)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(292.5)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-9.00" rx="4.6" ry="9" transform="rotate(337.5)" fill="#FFFFFF" stroke-width="1.2"></ellipse><circle cx="0" cy="0" r="5.2" fill="#FFCD6C" stroke-width="1.2"></circle></g>
+<g id="sdi-c"><ellipse cx="0" cy="-4.80" rx="2.8" ry="5.2" transform="rotate(0.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-4.80" rx="2.8" ry="5.2" transform="rotate(45.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-4.80" rx="2.8" ry="5.2" transform="rotate(90.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-4.80" rx="2.8" ry="5.2" transform="rotate(135.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-4.80" rx="2.8" ry="5.2" transform="rotate(180.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-4.80" rx="2.8" ry="5.2" transform="rotate(225.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-4.80" rx="2.8" ry="5.2" transform="rotate(270.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><ellipse cx="0" cy="-4.80" rx="2.8" ry="5.2" transform="rotate(315.0)" fill="#FFFFFF" stroke-width="1.2"></ellipse><circle cx="0" cy="0" r="3.2" fill="#FFCD6C" stroke-width="1.2"></circle></g>
+<g id="sdi-dots"><circle cx="48" cy="48" r="2.2" fill="#FFFFFF" stroke="none"></circle><circle cx="50" cy="9" r="1.8" fill="#FFFFFF" stroke="none"></circle><circle cx="8" cy="50" r="1.8" fill="#FFFFFF" stroke="none"></circle><circle cx="88" cy="46" r="2" fill="#FFFFFF" stroke="none"></circle><circle cx="46" cy="88" r="2" fill="#FFFFFF" stroke="none"></circle><circle cx="38" cy="60" r="1.5" fill="#FFFFFF" stroke="none"></circle><circle cx="60" cy="36" r="1.5" fill="#FFFFFF" stroke="none"></circle><circle cx="90" cy="8" r="1.6" fill="#FFFFFF" stroke="none"></circle><circle cx="8" cy="90" r="1.6" fill="#FFFFFF" stroke="none"></circle></g>
+<g id="sdi-t"><use href="#sdi-dots"></use><use href="#sdi-s" x="24" y="24"></use><use href="#sdi-h" x="72" y="72"></use><use href="#sdi-c" x="72" y="22"></use><use href="#sdi-c" x="24" y="74"></use></g>
+<clipPath id="sdi-lo"><path d="M0 0 L0 96 L96 96 Z"></path></clipPath><clipPath id="sdi-up"><path d="M0 0 L96 0 L96 96 Z"></path></clipPath>
+<g id="sdi-k"><g clip-path="url(#sdi-lo)"><use href="#sdi-t"></use></g><g clip-path="url(#sdi-up)"><g transform="matrix(0,1,1,0,0,0)"><use href="#sdi-t"></use></g></g></g>
+<pattern id="sdi-pat-grid" width="96" height="96" patternUnits="userSpaceOnUse"><rect width="96" height="96" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use></pattern>
+<pattern id="sdi-pat-halfdrop" width="192" height="96" patternUnits="userSpaceOnUse"><rect width="192" height="96" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use><use href="#sdi-t" x="96" y="-48"></use><use href="#sdi-t" x="96" y="48"></use></pattern>
+<pattern id="sdi-pat-brick" width="96" height="192" patternUnits="userSpaceOnUse"><rect width="96" height="192" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use><use href="#sdi-t" x="-48" y="96"></use><use href="#sdi-t" x="48" y="96"></use></pattern>
+<pattern id="sdi-pat-mirror" width="192" height="96" patternUnits="userSpaceOnUse"><rect width="192" height="96" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use><use href="#sdi-t" transform="translate(192,0) scale(-1,1)"></use></pattern>
+<pattern id="sdi-pat-squaremirror" width="192" height="192" patternUnits="userSpaceOnUse"><rect width="192" height="192" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use><use href="#sdi-t" transform="translate(192,0) scale(-1,1)"></use><use href="#sdi-t" transform="translate(0,192) scale(1,-1)"></use><use href="#sdi-t" transform="translate(192,192) scale(-1,-1)"></use></pattern>
+<pattern id="sdi-pat-halfturn" width="192" height="192" patternUnits="userSpaceOnUse"><rect width="192" height="192" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use><use href="#sdi-t" transform="matrix(-1 0 0 -1 192 96)"></use><use href="#sdi-t" transform="matrix(-1 0 0 -1 96 192)"></use><use href="#sdi-t" transform="matrix(1 0 0 1 96 96)"></use></pattern>
+<pattern id="sdi-pat-footsteps" width="96" height="192" patternUnits="userSpaceOnUse"><rect width="96" height="192" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use><use href="#sdi-t" transform="matrix(1 0 0 -1 48 192)"></use><use href="#sdi-t" transform="matrix(1 0 0 -1 -48 192)"></use></pattern>
+<pattern id="sdi-pat-pinwheel" width="192" height="192" patternUnits="userSpaceOnUse"><rect width="192" height="192" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use><use href="#sdi-t" transform="matrix(0 1 -1 0 192 0)"></use><use href="#sdi-t" transform="matrix(-1 0 0 -1 192 192)"></use><use href="#sdi-t" transform="matrix(0 -1 1 0 0 192)"></use></pattern>
+<pattern id="sdi-pat-offsetmirror" width="192" height="192" patternUnits="userSpaceOnUse"><rect width="192" height="192" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-t"></use><use href="#sdi-t" transform="matrix(-1 0 0 1 192 0)"></use><use href="#sdi-t" transform="matrix(1 0 0 1 96 96)"></use><use href="#sdi-t" transform="matrix(-1 0 0 1 288 96)"></use><use href="#sdi-t" transform="matrix(-1 0 0 1 96 96)"></use></pattern>
+<clipPath id="sdi-wedge"><path d="M-0.5 -0.5 L49 -0.5 L49 28.71 Z"></path></clipPath>
+<pattern id="sdi-pat-honeycomb" width="96" height="166" patternUnits="userSpaceOnUse"><rect width="96" height="166" fill="{{t.c3}}" stroke="none"></rect><g transform="translate(0,0) rotate(0)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(0) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(60)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(60) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(120)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(120) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(180)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(180) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(240)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(240) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(300)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,0) rotate(300) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(0)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(0) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(60)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(60) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(120)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(120) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(180)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(180) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(240)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(240) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(300)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,0) rotate(300) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(0)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(0) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(60)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(60) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(120)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(120) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(180)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(180) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(240)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(240) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(300)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(0,166) rotate(300) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(0)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(0) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(60)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(60) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(120)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(120) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(180)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(180) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(240)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(240) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(300)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(96,166) rotate(300) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(0)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(0) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(60)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(60) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(120)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(120) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(180)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(180) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(240)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(240) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(300)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g><g transform="translate(48,83) rotate(300) rotate(60) scale(1,-1)"><g clip-path="url(#sdi-wedge)"><use href="#sdi-t" transform="translate(-48,-48)"></use></g></g></pattern>
+<pattern id="sdi-pat-tossed" width="192" height="192" patternUnits="userSpaceOnUse"><rect width="192" height="192" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-dots" transform="translate(4,6)"></use><use href="#sdi-dots" transform="translate(100,96) rotate(15 48 48)"></use><use href="#sdi-s" transform="translate(40,38) rotate(-20)"></use><use href="#sdi-h" transform="translate(120,30) rotate(25)"></use><use href="#sdi-c" transform="translate(168,62) rotate(0)"></use><use href="#sdi-s" transform="translate(150,128) rotate(40)"></use><use href="#sdi-h" transform="translate(40,118) rotate(-30)"></use><use href="#sdi-c" transform="translate(96,86) rotate(0)"></use><use href="#sdi-c" transform="translate(30,170) rotate(0)"></use><use href="#sdi-s" transform="translate(100,166) rotate(10)"></use><use href="#sdi-h" transform="translate(168,172) rotate(-15)"></use></pattern>
+<pattern id="sdi-pat-kaleido" width="192" height="192" patternUnits="userSpaceOnUse"><rect width="192" height="192" fill="{{t.c3}}" stroke="none"></rect><use href="#sdi-k"></use><use href="#sdi-k" transform="translate(192,0) scale(-1,1)"></use><use href="#sdi-k" transform="translate(0,192) scale(1,-1)"></use><use href="#sdi-k" transform="translate(192,192) scale(-1,-1)"></use></pattern>
+
+</defs>
+<g transform="rotate(2 390 128)">
+<rect x="160" y="14" width="466" height="222" rx="10" fill="{{heroFill}}"></rect>
+</g>
+<g transform="rotate(-6 80 168)">
+<rect x="14" y="104" width="128" height="128" rx="10" fill="#FFFFFF"></rect>
+<rect x="24" y="114" width="108" height="108" rx="3" fill="{{t.c3}}" stroke-dasharray="5 4"></rect>
+<g transform="translate(24,114) scale(1.125)"><use href="#sdi-dots"></use><use href="#sdi-s" x="24" y="24"></use><use href="#sdi-h" x="72" y="72"></use><use href="#sdi-c" x="72" y="22"></use><use href="#sdi-c" x="24" y="74"></use></g>
+<rect x="44" y="72" width="68" height="30" rx="15" fill="{{t.ink1}}" stroke="none"></rect>
+<text x="78" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="500" fill="#FFFFFF" stroke="none">Tile</text>
+</g>
+</svg>
+<span style="position: absolute; right: 20px; bottom: 18px; transform: rotate(2deg); padding: 6px 14px; border-radius: 9999px; background: #FFFFFF; box-shadow: 0 0 0 1.5px {{t.ink2}}; font-size: 13px; font-weight: 500; color: {{t.ink2}}; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600">{{heroLabel}}</span>
+<button type="button" class="sdi-herobtn" onClick="{{onHeroNext}}" aria-label="{{heroNextLabel}}" style="position: absolute; left: 36px; top: 72px; width: 104px; height: 126px; padding: 0; border: 0; border-radius: 14px; background: transparent; cursor: pointer"></button>
+<svg aria-hidden="true" style="position: absolute; left: 73px; top: 176px; pointer-events: none; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2))" width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="{{t.ink1}}" stroke-width="0.9" stroke-linejoin="round" stroke-linecap="round"><path d="M8 2a2 2 0 0 1 2 2V9.5a2 2 0 0 1 4 0v1a2 2 0 0 1 4 0v.5a2 2 0 0 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-6-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L6 14.2V4a2 2 0 0 1 2-2z" fill="#FFFFFF"></path><path d="M10 9.5V12.5M14 10.5V13M18 11V13.5"></path></svg>
+</div>
+</sc-if>
+</header>
+
+<section aria-label="Layout" style="display: flex; flex-direction: column; gap: 14px; background: {{t.card}}; border-radius: {{t.radius}}px; padding: 22px 28px; margin-bottom: 24px; box-shadow: {{t.shadow}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 600; color: {{t.ink1}}">Layout</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; flex: 1 1 600px">
+<sc-for list="{{layouts}}" as="l" hint-placeholder-count="7">
+<button type="button" class="sdi-btn" aria-pressed="{{l.pressed}}" onClick="{{l.pick}}" style="display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 22px 0 16px; border-radius: {{t.chip}}; border: 0; background: {{l.bg}}; color: {{l.fg}}; font: inherit; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em">
+<span style="width: 14px; height: 14px; border-radius: 9999px; background: {{l.dot}}; box-shadow: 0 0 0 1.5px {{l.ring}}"></span>
+<span>{{l.label}}</span>
+</button>
+</sc-for>
+</div>
+<p style="margin: 0; flex-basis: 100%; font-size: 14px; line-height: 1.5; color: {{t.muted}}">{{layoutHint}}</p>
+</div>
+</section>
+
+<div class="sdi-shell">
+
+<aside class="sdi-panel" style="display: flex; flex-direction: column; gap: 16px">
+
+
+
+<section style="display: flex; flex-direction: column; gap: 14px; background: {{t.card}}; border-radius: {{t.radius}}px; padding: 28px; box-shadow: {{t.shadow}}">
+<div style="display: flex; flex-direction: column; gap: 8px; background: #121212; border-radius: 10px; padding: 20px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<h3 style="margin: 0; font-family: {{t.headFont}}; font-size: 23px; font-weight: 500; letter-spacing: -0.02em; color: #FFFFFF">Add Image</h3>
+<button type="button" class="sdi-btn sdi-tip" aria-label="Tip: SVGs can be recolored. Select an SVG motif on the tile to change its colors." style="display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px 0 9px; border-radius: 9999px; border: 0; background: #FFFFFF; color: {{t.ink2}}; font: inherit; font-size: 13px; font-weight: 600; cursor: help">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"></path><path d="M10 21h4"></path><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"></path></svg>
+<span>Tip</span>
+<span class="sdi-tipbox" aria-hidden="true">SVGs can be recolored. Select an SVG motif on the tile to change its colors.</span>
+</button>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #D9D7D3">SVG, PNG, JPG or WebP, up to 8 MB.</p>
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 6px">
+<label class="sdi-file sdi-btn" style="position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 32px; background: #00C978; color: #121212; font-size: 15px; font-weight: 500">
+<input type="file" accept="image/svg+xml,image/png,image/jpeg,image/webp" onChange="{{onFile}}" style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M4 20h16"></path></svg>
+<span>Choose file</span>
+</label>
+<span style="font-size: 14px; color: #FFFFFF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px">{{fileLabel}}</span>
+</div>
+<sc-if value="{{error}}" hint-placeholder-val="{{ false }}">
+<p role="alert" style="margin: 0; font-size: 14px; font-weight: 500; color: #FF9A9A">{{error}}</p>
+</sc-if>
+</div>
+<div style="height: 1px; background: {{t.stone}}; margin: 4px 0"></div>
+<h2 style="margin: 0; font-size: 15px; font-weight: 600; color: {{t.ink1}}">Background Color</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+<sc-for list="{{swatches}}" as="s" hint-placeholder-count="8">
+<button type="button" class="sdi-swatch" aria-label="{{s.name}}" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}" style="width: 38px; height: 38px; border-radius: 9999px; border: 0; background: {{s.css}}; box-shadow: {{s.ring}}; padding: 0"></button>
+</sc-for>
+<button type="button" class="sdi-btn" onClick="{{onBgCustom}}" aria-expanded="{{bgPickExpanded}}" aria-label="Custom background color" style="display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 500; color: {{t.ink2}}; cursor: pointer">
+<span style="display: block; width: 38px; height: 38px; box-sizing: border-box; border: 1px solid {{t.line}}; border-radius: 10px; background: {{bgCss}}"></span>
+<span>Custom</span>
+</button>
+</div>
+<sc-if value="{{bgPickOpen}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Background color picker" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border-radius: 12px; padding: 16px; box-shadow: rgba(0,0,0,0.08) 0px 4px 16px 0px">
+<div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8E8EC; padding-bottom: 8px">
+<span style="font-size: 16px; font-weight: 700; color: {{t.ink1}}; padding-bottom: 6px; margin-bottom: -9px; border-bottom: 2px solid {{t.ink1}}">Color</span>
+<button type="button" class="sdi-btn" onClick="{{pkClose}}" aria-label="Close color picker" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: {{t.muted}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div role="group" aria-label="Picker style" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #F1F1F4; border-radius: 10px">
+<sc-for list="{{pkModes}}" as="pm" hint-placeholder-count="2">
+<button type="button" class="sdi-btn" aria-pressed="{{pm.pressed}}" onClick="{{pm.pick}}" style="min-height: 36px; border: 0; border-radius: 8px; background: {{pm.bg}}; box-shadow: {{pm.shadow}}; color: {{pm.fg}}; font: inherit; font-size: 14px; font-weight: {{pm.weight}}">{{pm.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{pkViewSolid}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div role="group" aria-label="Ready-made colors" style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px">
+<sc-for list="{{pkGrid}}" as="gc" hint-placeholder-count="60">
+<button type="button" class="sdi-swatch" aria-label="{{gc.hex}}" aria-pressed="{{gc.pressed}}" onClick="{{gc.pick}}" style="aspect-ratio: 1 / 1; width: 100%; min-width: 0; padding: 0; border: 0; border-radius: 4px; background: {{gc.hex}}; box-shadow: {{gc.ring}}"></button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<button type="button" class="sdi-btn sdi-tip" onClick="{{onEyedrop}}" aria-label="Pick a color from the screen" disabled="{{noEyedrop}}" style="display: flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 8px; background: #F1F1F4; color: {{t.ink2}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 2.5a2.1 2.1 0 0 1 3 3l-2.2 2.2-3-3z"></path><path d="M13.5 6.5l4 4"></path><path d="M15.5 8.5L6 18l-1.5 1.5 0.5-2"></path></svg><span class="sdi-tiptext" aria-hidden="true">Eyedropper</span></button>
+<button type="button" class="sdi-btn sdi-tip" onClick="{{onPkNone}}" aria-label="No color (see-through)" style="flex: 0 0 auto; display: flex; width: 36px; height: 36px; padding: 5px; box-sizing: border-box; border: 0; border-radius: 8px; background: #F1F1F4"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="#FFFFFF" stroke="rgba(0,0,0,0.2)"></circle><path d="M7 19L19 7" stroke="#E5484D" stroke-width="2" stroke-linecap="round"></path></svg><span class="sdi-tiptext" aria-hidden="true">No color</span></button>
+<input class="sdi-alpha" type="range" min="0" max="100" step="1" value="{{pkAlpha}}" onChange="{{onPkAlpha}}" aria-label="Opacity" style="background: {{pkAlphaBg}}">
+</div>
+</div>
+</sc-if>
+<sc-if value="{{pkViewRadial}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 14px">
+<canvas ref="{{wheel2Ref}}" width="360" height="360" aria-label="Color wheel. Click or drag to choose a color." onPointerDown="{{onWhDown}}" onPointerMove="{{onWhMove}}" onPointerUp="{{onWhUp}}" onPointerCancel="{{onWhUp}}" style="display: block; width: min(100%, 240px); aspect-ratio: 1 / 1; border-radius: 9999px; cursor: crosshair; touch-action: none"></canvas>
+<div style="display: flex; flex-direction: column; gap: 12px; width: 100%">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 0 0 74px; font-size: 13px; font-weight: 500; color: {{t.ink2}}">Brightness</span>
+<input class="sdi-alpha" type="range" min="0" max="100" step="1" value="{{pkBright}}" onChange="{{onPkBright}}" aria-label="Brightness" style="background: {{pkBrightBg}}">
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 0 0 74px; font-size: 13px; font-weight: 500; color: {{t.ink2}}">Opacity</span>
+<input class="sdi-alpha" type="range" min="0" max="100" step="1" value="{{pkAlpha}}" onChange="{{onPkAlpha}}" aria-label="Opacity" style="background: {{pkAlphaBg}}">
+</div>
+</div>
+</div>
+</sc-if>
+<div style="display: grid; grid-template-columns: auto minmax(0, 1fr) 78px; gap: 8px">
+<select value="{{pkFmt}}" onChange="{{onPkFmt}}" aria-label="Color format" style="height: 42px; padding: 0 8px; border-radius: 8px; border: 1px solid #DCDCE2; background: #FFFFFF; color: {{t.ink1}}; font: inherit; font-size: 14px; font-weight: 500">
+<option value="hex">HEX</option>
+<option value="rgb">RGB</option>
+</select>
+<input type="text" spellcheck="false" autocomplete="off" value="{{pkText}}" onChange="{{onPkText}}" onBlur="{{onPkTextBlur}}" aria-label="Color value" style="height: 42px; min-width: 0; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid #DCDCE2; background: #FFFFFF; color: {{t.ink1}}; font: inherit; font-size: 14px; font-variant-numeric: tabular-nums">
+<label style="display: flex; align-items: center; height: 42px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #DCDCE2; background: #FFFFFF; font-size: 14px; color: {{t.ink1}}">
+<input type="text" inputmode="numeric" value="{{pkAlphaText}}" onChange="{{onPkAlphaText}}" aria-label="Opacity percent" style="width: 100%; min-width: 0; border: 0; outline: none; padding: 0; background: transparent; font: inherit; text-align: right">
+<span style="margin-left: 4px">%</span>
+</label>
+</div>
+</div>
+</sc-if>
+
+
+</section>
+
+
+<section style="position: relative; overflow: hidden; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; background: {{t.exportBg}}; color: #FFFFFF; border-radius: {{t.radius}}px; padding: 28px">
+<svg aria-hidden="true" style="position: absolute; right: 24px; top: 14px" width="120" height="40" viewBox="0 0 120 40" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round">
+<g transform="translate(0,4) scale(0.32)"><path d="M50 4 L61 37 L96 38 L68 59 L78 94 L50 73 L22 94 L32 59 L4 38 L39 37 Z" fill="{{t.c1}}"></path></g>
+<circle cx="60" cy="20" r="8" fill="{{t.c2}}"></circle>
+<path transform="translate(90,8)" d="M10 18 C-3 9 0 0 6 0 C9 0 10 2 10 3 C10 2 11 0 14 0 C20 0 23 9 10 18 Z" fill="{{t.c3}}"></path>
+</svg>
+<div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; max-width: 460px">
+<h2 style="margin: 0; font-family: {{t.headFont}}; font-weight: {{t.headWeight}}; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em">Export</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: {{t.onDark}}">The repeat tile is the file to upload for fabric, wallpaper or wrapping paper — it lines up perfectly on every side.</p>
+</div>
+<div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 14px; align-items: flex-start">
+<div role="group" aria-label="Tile size" style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap">
+<span style="font-size: 14px; font-weight: 500; color: {{t.onDark}}; margin-right: 6px">Tile size</span>
+<sc-for list="{{sizes}}" as="z" hint-placeholder-count="3">
+<button type="button" class="sdi-btn" aria-pressed="{{z.pressed}}" onClick="{{z.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 9999px; border: 0; background: {{z.bg}}; color: {{z.fg}}; font: inherit; font-size: 14px; font-weight: 500">{{z.label}}</button>
+</sc-for>
+</div>
+<div role="group" aria-label="File type" style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap">
+<span style="font-size: 14px; font-weight: 500; color: {{t.onDark}}; margin-right: 6px">File type</span>
+<sc-for list="{{formats}}" as="fm" hint-placeholder-count="2">
+<button type="button" class="sdi-btn" aria-pressed="{{fm.pressed}}" onClick="{{fm.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 9999px; border: 0; background: {{fm.bg}}; color: {{fm.fg}}; font: inherit; font-size: 14px; font-weight: 500">{{fm.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{svgNote}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; max-width: 380px; font-size: 13px; line-height: 1.45; color: {{t.onDark}}">{{svgNote}}</p>
+</sc-if>
+<div style="display: flex; gap: 10px; flex-wrap: wrap">
+<button type="button" class="sdi-btn" onClick="{{onExportTile}}" style="min-height: 48px; padding: 0 22px; border-radius: 32px; border: 0; background: #FFFFFF; color: {{t.ink1}}; font: inherit; font-size: 15px; font-weight: 600">{{tileBtnLabel}}</button>
+</div>
+<sc-if value="{{status}}" hint-placeholder-val="{{ false }}">
+<p role="status" style="margin: 0; font-size: 14px; font-weight: 500; color: {{t.c1}}">{{status}}</p>
+</sc-if>
+</div>
+</section>
+
+</aside>
+
+<aside class="sdi-panel sdi-factory" style="display: flex; flex-direction: column; gap: 16px">
+<section aria-label="Shape Factory" style="display: flex; flex-direction: column; gap: 14px; background: {{t.card}}; border-radius: {{t.radius}}px; padding: 24px; box-shadow: {{t.shadow}}">
+<h2 style="margin: 0; font-family: {{t.headFont}}; font-weight: {{t.headWeight}}; font-size: 32px; line-height: 1.1; letter-spacing: -0.02em; color: {{t.ink1}}">Shape Factory</h2>
+<div style="min-height: 140px; border-radius: 10px; background: {{t.stone}}"></div>
+</section>
+<section aria-label="Motif Library" style="display: flex; flex-direction: column; gap: 12px; background: {{t.card}}; border-radius: {{t.radius}}px; padding: 24px; box-shadow: {{t.shadow}}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap">
+<h3 style="margin: 0; font-family: {{t.headFont}}; font-size: 23px; font-weight: 500; letter-spacing: -0.02em; color: {{t.ink1}}">Motif Library</h3>
+
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{motifs}}" as="mo" hint-placeholder-count="3">
+<button type="button" class="sdi-btn" onClick="{{mo.pick}}" aria-label="Add {{mo.label}} to the tile" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px 0 14px; border-radius: {{t.chip}}; border: 0; background: #FFFFFF; color: {{t.ink1}}; font: inherit; font-size: 15px; font-weight: 500"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span>{{mo.label}}</span></button>
+</sc-for>
+</div>
+</section>
+</aside>
+
+<main style="display: flex; flex-direction: column; gap: 24px; min-width: 0">
+<div class="sdi-work">
+
+<section style="display: flex; flex-direction: column; gap: 16px; min-width: 0; background: {{t.card}}; border-radius: {{t.radius}}px; padding: 28px; box-shadow: {{t.shadow}}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+<h2 style="margin: 0; font-family: {{t.headFont}}; font-weight: {{t.headWeight}}; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em; color: {{t.ink1}}">Tile</h2>
+<button type="button" class="sdi-btn sdi-tip" aria-label="Tip: {{tileNote}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px 0 10px; border-radius: 9999px; border: 0; background: {{t.stone}}; color: {{t.ink2}}; font: inherit; font-size: 13px; font-weight: 600; cursor: help">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"></path><path d="M10 21h4"></path><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"></path></svg>
+<span>Tip</span>
+<span class="sdi-tipbox" aria-hidden="true">{{tileNote}}</span>
+</button>
+</div>
+<canvas ref="{{tileRef}}" width="720" height="720" aria-label="Tile. Click a motif to select it, drag to move it." onPointerDown="{{onDown}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="display: block; width: 100%; aspect-ratio: 1 / 1; border-radius: 10px; cursor: grab; touch-action: none; background: #FFFFFF; box-shadow: rgba(0,0,0,0.06) 0px 0px 0px 1px"></canvas>
+<div role="toolbar" aria-label="Tile tools" style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" aria-label="Undo" onClick="{{onUndo}}" disabled="{{noUndo}}" class="sdi-btn sdi-tip" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border-radius: 10px; border: 1.5px solid {{t.ink2}}; font: inherit; font-size: 14px; font-weight: 600; background: #FFFFFF; color: {{t.ink1}}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"></path><path d="M4 9h10a6 6 0 0 1 0 12h-3"></path></svg><span class="sdi-tiptext" aria-hidden="true">Undo</span></button>
+<button type="button" aria-label="Redo" onClick="{{onRedo}}" disabled="{{noRedo}}" class="sdi-btn sdi-tip" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border-radius: 10px; border: 1.5px solid {{t.ink2}}; font: inherit; font-size: 14px; font-weight: 600; background: #FFFFFF; color: {{t.ink1}}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14l5-5-5-5"></path><path d="M20 9H10a6 6 0 0 0 0 12h3"></path></svg><span class="sdi-tiptext" aria-hidden="true">Redo</span></button>
+<button type="button" aria-label="Duplicate" onClick="{{onDuplicate}}" disabled="{{noSel}}" class="sdi-btn sdi-tip" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border-radius: 10px; border: 1.5px solid {{t.ink2}}; font: inherit; font-size: 14px; font-weight: 600; background: #FFFFFF; color: {{t.ink1}}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"></rect><path d="M16 4H5a1 1 0 0 0-1 1v11"></path><path d="M14.5 11.5v6M11.5 14.5h6"></path></svg><span class="sdi-tiptext" aria-hidden="true">Duplicate</span></button>
+<button type="button" aria-label="Delete" onClick="{{onDelete}}" disabled="{{noSel}}" class="sdi-btn sdi-tip" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border-radius: 10px; border: 1.5px solid {{t.ink2}}; font: inherit; font-size: 14px; font-weight: 600; background: #FFFFFF; color: {{t.ink1}}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M10 11v6M14 11v6"></path><path d="M6 7l1 13h10l1-13"></path><path d="M9 7V4h6v3"></path></svg><span class="sdi-tiptext" aria-hidden="true">Delete</span></button>
+<button type="button" aria-label="Flip" onClick="{{onFlip}}" disabled="{{noSel}}" class="sdi-btn sdi-tip" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border-radius: 10px; border: 1.5px solid {{t.ink2}}; font: inherit; font-size: 14px; font-weight: 600; background: #FFFFFF; color: {{t.ink1}}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5v19" stroke-width="1.6" stroke-dasharray="1.6 2.4"></path><path d="M9 5L2.5 18.5H9z" fill="currentColor" stroke-width="1.8"></path><path d="M15 5l6.5 13.5H15z" stroke-width="1.8"></path></svg><span class="sdi-tiptext" aria-hidden="true">Flip</span></button>
+<button type="button" aria-label="Ruler" onClick="{{onRuler}}" aria-pressed="{{rulerPressed}}" class="sdi-btn sdi-tip" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border-radius: 10px; border: 1.5px solid {{t.ink2}}; font: inherit; font-size: 14px; font-weight: 600; background: {{rulerBg}}; color: {{rulerFg}}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="8" width="20" height="8" rx="1.5"></rect><path d="M6 8v3M10 8v4M14 8v3M18 8v4"></path></svg><span class="sdi-tiptext" aria-hidden="true">Ruler</span></button>
+<button type="button" aria-label="Clear All" onClick="{{onClear}}" disabled="{{noItems}}" class="sdi-btn sdi-tip" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border-radius: 10px; border: 1.5px solid {{t.ink2}}; font: inherit; font-size: 14px; font-weight: 600; background: #FFFFFF; color: {{t.ink1}}"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg><span class="sdi-tiptext" aria-hidden="true">Clear All</span></button>
+</div>
+<sc-if value="{{isVector}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px; background: {{t.stone}}; border-radius: 10px; padding: 18px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+<h3 style="margin: 0; font-size: 15px; font-weight: 600; color: {{t.ink1}}">Recolor</h3>
+<button type="button" class="sdi-btn" onClick="{{onResetColors}}" style="min-height: 36px; padding: 0 14px; border-radius: 32px; border: 0; background: #FFFFFF; color: {{t.ink1}}; font: inherit; font-size: 13px; font-weight: 500">Original colors</button>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: {{t.muted}}">Click a color to change it. It changes everywhere that color appears in this motif.</p>
+<div role="group" aria-label="Colors in this motif" style="display: flex; flex-wrap: wrap; gap: 12px">
+<sc-for list="{{svgColors}}" as="c" hint-placeholder-count="4">
+<button type="button" class="sdi-btn" aria-label="{{c.label}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0; border: 0; background: transparent; font: inherit; cursor: pointer">
+<span style="display: block; width: 44px; height: 44px; border-radius: 9999px; background: {{c.css}}; box-shadow: {{c.ring}}"></span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{colorOpen}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Color picker" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border-radius: 12px; padding: 16px; box-shadow: rgba(0,0,0,0.08) 0px 4px 16px 0px">
+<div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8E8EC; padding-bottom: 8px">
+<span style="font-size: 16px; font-weight: 700; color: {{t.ink1}}; padding-bottom: 6px; margin-bottom: -9px; border-bottom: 2px solid {{t.ink1}}">Color</span>
+<button type="button" class="sdi-btn" onClick="{{pkClose}}" aria-label="Close color picker" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: {{t.muted}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div role="group" aria-label="Picker style" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #F1F1F4; border-radius: 10px">
+<sc-for list="{{pkModes}}" as="pm" hint-placeholder-count="2">
+<button type="button" class="sdi-btn" aria-pressed="{{pm.pressed}}" onClick="{{pm.pick}}" style="min-height: 36px; border: 0; border-radius: 8px; background: {{pm.bg}}; box-shadow: {{pm.shadow}}; color: {{pm.fg}}; font: inherit; font-size: 14px; font-weight: {{pm.weight}}">{{pm.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{pkViewSolid}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div role="group" aria-label="Ready-made colors" style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px">
+<sc-for list="{{pkGrid}}" as="gc" hint-placeholder-count="60">
+<button type="button" class="sdi-swatch" aria-label="{{gc.hex}}" aria-pressed="{{gc.pressed}}" onClick="{{gc.pick}}" style="aspect-ratio: 1 / 1; width: 100%; min-width: 0; padding: 0; border: 0; border-radius: 4px; background: {{gc.hex}}; box-shadow: {{gc.ring}}"></button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<button type="button" class="sdi-btn sdi-tip" onClick="{{onEyedrop}}" aria-label="Pick a color from the screen" disabled="{{noEyedrop}}" style="display: flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 8px; background: #F1F1F4; color: {{t.ink2}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 2.5a2.1 2.1 0 0 1 3 3l-2.2 2.2-3-3z"></path><path d="M13.5 6.5l4 4"></path><path d="M15.5 8.5L6 18l-1.5 1.5 0.5-2"></path></svg><span class="sdi-tiptext" aria-hidden="true">Eyedropper</span></button>
+<button type="button" class="sdi-btn sdi-tip" onClick="{{onPkNone}}" aria-label="No color (see-through)" style="flex: 0 0 auto; display: flex; width: 36px; height: 36px; padding: 5px; box-sizing: border-box; border: 0; border-radius: 8px; background: #F1F1F4"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="#FFFFFF" stroke="rgba(0,0,0,0.2)"></circle><path d="M7 19L19 7" stroke="#E5484D" stroke-width="2" stroke-linecap="round"></path></svg><span class="sdi-tiptext" aria-hidden="true">No color</span></button>
+<input class="sdi-alpha" type="range" min="0" max="100" step="1" value="{{pkAlpha}}" onChange="{{onPkAlpha}}" aria-label="Opacity" style="background: {{pkAlphaBg}}">
+</div>
+</div>
+</sc-if>
+<sc-if value="{{pkViewRadial}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 14px">
+<canvas ref="{{wheel2Ref}}" width="360" height="360" aria-label="Color wheel. Click or drag to choose a color." onPointerDown="{{onWhDown}}" onPointerMove="{{onWhMove}}" onPointerUp="{{onWhUp}}" onPointerCancel="{{onWhUp}}" style="display: block; width: min(100%, 240px); aspect-ratio: 1 / 1; border-radius: 9999px; cursor: crosshair; touch-action: none"></canvas>
+<div style="display: flex; flex-direction: column; gap: 12px; width: 100%">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 0 0 74px; font-size: 13px; font-weight: 500; color: {{t.ink2}}">Brightness</span>
+<input class="sdi-alpha" type="range" min="0" max="100" step="1" value="{{pkBright}}" onChange="{{onPkBright}}" aria-label="Brightness" style="background: {{pkBrightBg}}">
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 0 0 74px; font-size: 13px; font-weight: 500; color: {{t.ink2}}">Opacity</span>
+<input class="sdi-alpha" type="range" min="0" max="100" step="1" value="{{pkAlpha}}" onChange="{{onPkAlpha}}" aria-label="Opacity" style="background: {{pkAlphaBg}}">
+</div>
+</div>
+</div>
+</sc-if>
+<div style="display: grid; grid-template-columns: auto minmax(0, 1fr) 78px; gap: 8px">
+<select value="{{pkFmt}}" onChange="{{onPkFmt}}" aria-label="Color format" style="height: 42px; padding: 0 8px; border-radius: 8px; border: 1px solid #DCDCE2; background: #FFFFFF; color: {{t.ink1}}; font: inherit; font-size: 14px; font-weight: 500">
+<option value="hex">HEX</option>
+<option value="rgb">RGB</option>
+</select>
+<input type="text" spellcheck="false" autocomplete="off" value="{{pkText}}" onChange="{{onPkText}}" onBlur="{{onPkTextBlur}}" aria-label="Color value" style="height: 42px; min-width: 0; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid #DCDCE2; background: #FFFFFF; color: {{t.ink1}}; font: inherit; font-size: 14px; font-variant-numeric: tabular-nums">
+<label style="display: flex; align-items: center; height: 42px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #DCDCE2; background: #FFFFFF; font-size: 14px; color: {{t.ink1}}">
+<input type="text" inputmode="numeric" value="{{pkAlphaText}}" onChange="{{onPkAlphaText}}" aria-label="Opacity percent" style="width: 100%; min-width: 0; border: 0; outline: none; padding: 0; background: transparent; font: inherit; text-align: right">
+<span style="margin-left: 4px">%</span>
+</label>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 24px; min-width: 0">
+<section style="display: flex; flex-direction: column; gap: 16px; min-width: 0; background: {{t.card}}; border-radius: {{t.radius}}px; padding: 28px; box-shadow: {{t.shadow}}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+<h2 style="margin: 0; font-family: {{t.headFont}}; font-weight: {{t.headWeight}}; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em; color: {{t.ink1}}">Live Repeat</h2>
+<button type="button" class="sdi-btn sdi-tip" aria-label="Tip: Drag to move around. Scroll to zoom in and out. Double-click to reset." style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px 0 10px; border-radius: 9999px; border: 0; background: {{t.stone}}; color: {{t.ink2}}; font: inherit; font-size: 13px; font-weight: 600; cursor: help">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"></path><path d="M10 21h4"></path><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"></path></svg>
+<span>Tip</span>
+<span class="sdi-tipbox" aria-hidden="true">Drag to move around. Scroll to zoom in and out. Double-click to reset the view.</span>
+</button>
+</div>
+<canvas ref="{{previewRef}}" width="1200" height="1200" aria-label="Live preview of the repeating pattern. Drag to move around, scroll to zoom." onPointerDown="{{onPrevDown}}" onPointerMove="{{onPrevMove}}" onPointerUp="{{onPrevUp}}" onPointerCancel="{{onPrevUp}}" onDoubleClick="{{onPrevReset}}" style="display: block; width: 100%; aspect-ratio: 1 / 1; border-radius: 10px; background: #FFFFFF; box-shadow: rgba(0,0,0,0.06) 0px 0px 0px 1px; cursor: grab; touch-action: none"></canvas>
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap">
+<span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 6px; background: {{t.stone}}; font-size: 13px; font-weight: 500; color: {{t.ink2}}"><span style="width: 8px; height: 8px; border-radius: 9999px; background: {{layoutDot}}"></span>{{layoutName}}</span>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 16px; background: {{t.card}}; border-radius: {{t.radius}}px; padding: 28px; box-shadow: {{t.shadow}}">
+<h2 style="margin: 0; font-size: 15px; font-weight: 600; color: {{t.ink1}}">Adjust</h2>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; font-size: 15px"><label for="sdi-zoom" style="font-weight: 500; color: {{t.ink2}}">Repeat scale</label><span style="color: {{t.muted}}">{{zoomLabel}}</span></div>
+<input id="sdi-zoom" class="sdi-range" type="range" min="60" max="480" step="1" value="{{zoom}}" onChange="{{onZoom}}">
+</div>
+<sc-if value="{{isTossed}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; font-size: 15px"><label for="sdi-count" style="font-weight: 500; color: {{t.ink2}}">Motifs per repeat</label><span style="color: {{t.muted}}">{{tossCount}}</span></div>
+<input id="sdi-count" class="sdi-range" type="range" min="2" max="14" step="1" value="{{tossCount}}" onChange="{{onCount}}">
+</div>
+</sc-if>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button type="button" class="sdi-btn" onClick="{{onCenter}}" disabled="{{noSel}}" style="min-height: 44px; padding: 0 18px; border-radius: 32px; border: 0; background: {{t.sand}}; color: {{t.ink1}}; font: inherit; font-size: 14px; font-weight: 500">Center selected</button>
+<sc-if value="{{isTossed}}" hint-placeholder-val="{{ false }}">
+<button type="button" class="sdi-btn" onClick="{{onShuffle}}" style="min-height: 44px; padding: 0 18px; border-radius: 32px; border: 0; background: {{ink}}; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 500">Shuffle</button>
+</sc-if>
+<button type="button" class="sdi-btn" onClick="{{onReset}}" style="min-height: 44px; padding: 0 18px; border-radius: 32px; border: 0; background: transparent; color: {{t.muted}}; font: inherit; font-size: 14px; font-weight: 500; text-decoration: underline">Reset</button>
+</div>
+</section>
+</div>
+
+</div>
+
+
+<section aria-label="Mock Ups" style="display: flex; flex-direction: column; gap: 18px; background: {{t.card}}; border-radius: {{t.radius}}px; padding: 28px; box-shadow: {{t.shadow}}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+<h2 style="margin: 0; font-family: {{t.headFont}}; font-weight: {{t.headWeight}}; font-size: 44px; line-height: 1.09; letter-spacing: -0.02em; color: {{t.ink1}}">Mock Ups</h2>
+<span style="padding: 5px 9px; border-radius: 6px; background: {{t.stone}}; font-size: 13px; font-weight: 500; color: {{t.ink2}}">Updates as you design</span>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: {{t.muted}}">See your pattern on products. Download any mock-up to share in your shop or on social media.</p>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 28px">
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 240px; max-width: 360px">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><label for="sdi-mscale" style="font-weight: 500; color: {{t.ink2}}">Pattern size on products</label><span style="color: {{t.muted}}">{{mockScaleLabel}}</span></div>
+<input id="sdi-mscale" class="sdi-range" type="range" min="40" max="320" step="1" value="{{mockScale}}" onChange="{{onMockScale}}">
+</div>
+<div role="group" aria-label="Backdrop" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap">
+<span style="font-size: 14px; font-weight: 500; color: {{t.ink2}}; margin-right: 4px">Backdrop</span>
+<sc-for list="{{backdrops}}" as="bd" hint-placeholder-count="3">
+<button type="button" class="sdi-btn" aria-pressed="{{bd.pressed}}" onClick="{{bd.pick}}" style="min-height: 40px; padding: 0 14px; border-radius: 9999px; border: 0; background: {{bd.bg}}; color: {{bd.fg}}; font: inherit; font-size: 14px; font-weight: 500">{{bd.label}}</button>
+</sc-for>
+</div>
+</div>
+<div class="sdi-mocks">
+<sc-for list="{{mockups}}" as="mk" hint-placeholder-count="6">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px">
+<div style="position: relative">
+<canvas ref="{{mk.ref}}" width="720" height="600" aria-label="{{mk.alt}}" style="display: block; width: 100%; aspect-ratio: 6 / 5; border-radius: 10px; background: {{t.stone}}"></canvas>
+<button type="button" class="sdi-btn" onClick="{{mk.zoom}}" aria-label="See a larger {{mk.label}} mock-up" style="position: absolute; top: 10px; right: 10px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border-radius: 9999px; border: 0; background: rgba(255,255,255,0.92); color: {{t.ink1}}; box-shadow: rgba(0,0,0,0.12) 0px 1px 4px 0px; cursor: zoom-in">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path><path d="M11 8.5v5M8.5 11h5"></path></svg>
+</button>
+</div>
+<figcaption style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="font-size: 15px; font-weight: 600; color: {{t.ink1}}">{{mk.label}}</span>
+<button type="button" class="sdi-btn" onClick="{{mk.save}}" aria-label="Download {{mk.label}} mock-up" style="display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 32px; border: 0; background: {{t.sand}}; color: {{t.ink1}}; font: inherit; font-size: 13px; font-weight: 500"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12"></path><path d="M7 11l5 5 5-5"></path><path d="M4 20h16"></path></svg>Download</button>
+</figcaption>
+</figure>
+</sc-for>
+</div>
+</section>
+</main>
+</div>
+</div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FF58AE&quot;,&quot;options&quot;:[&quot;#FF58AE&quot;,&quot;#FF3E00&quot;,&quot;#9F4FFF&quot;,&quot;#0086FC&quot;],&quot;section&quot;:&quot;Colors&quot;},&quot;ink&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#121212&quot;,&quot;options&quot;:[&quot;#121212&quot;,&quot;#1E2A5A&quot;,&quot;#3B2A4F&quot;,&quot;#24443A&quot;],&quot;section&quot;:&quot;Colors&quot;},&quot;pageBg&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FBFAF9&quot;,&quot;options&quot;:[&quot;#FBFAF9&quot;,&quot;#FFFFFF&quot;,&quot;#F2F0ED&quot;,&quot;#FFF6EC&quot;],&quot;section&quot;:&quot;Colors&quot;},&quot;headingFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Bricolage Grotesque&quot;,&quot;options&quot;:[&quot;Bricolage Grotesque&quot;,&quot;Fraunces&quot;,&quot;Instrument Serif&quot;],&quot;section&quot;:&quot;Type&quot;},&quot;cornerRadius&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:10,&quot;min&quot;:0,&quot;max&quot;:24,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;section&quot;:&quot;Shape&quot;},&quot;showHeaderArt&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;section&quot;:&quot;Layout&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this._nextId = 2;
+    this._history = [];
+    this._uploads = {};
+    this._svgSrc = {};
+    this._rasterSrc = {};
+    this._svgColors = {};
+    this._svgDefault = {};
+    this._recolored = {};
+    this._upN = 0;
+    this.state = this.defaults();
+    this._tile = null;
+    this._preview = null;
+    this._motifCache = {};
+    this._tileRef = (el) => { this._tile = el; if (el) this.draw(); };
+    this._pan = { x: 0, y: 0 };
+    this._wheelFn = (e) => this.previewWheel(e);
+    this._previewRef = (el) => {
+      if (this._preview && this._preview !== el) this._preview.removeEventListener('wheel', this._wheelFn);
+      this._preview = el;
+      if (el) { el.addEventListener('wheel', this._wheelFn, { passive: false }); this.draw(); }
+    };
+    this._wheelRef = (el) => { this._wheel = el; if (el) this.drawWheel(); };
+    this._svRef = (el) => { this._sv = el; if (el) this.drawSV(); };
+    this._wh2Ref = (el) => { this._wh2 = el; if (el) this.drawWheel2(); };
+    this._gid = 0;
+    this._mockEls = {};
+    this._lbRef = (el) => { this._lb = el; if (el) this.drawLightbox(); };
+    this._mockRefs = {};
+    ['cushion', 'mug', 'tote', 'notebook', 'tshirt', 'fabric'].forEach(k => {
+      this._mockRefs[k] = (el) => { this._mockEls[k] = el; if (el) this.queueMockups(); };
+    });
+  }
+
+  defaults() {
+    this._nextId = 2;
+    return {
+      layout: 'grid', fileName: '',
+      items: [{ id: 1, motif: 'daisy', x: 0.5, y: 0.5, scale: 55, rot: 0, flip: false }],
+      sel: 1, ruler: false, recolorKey: null, hexDraft: null, heroLayout: 'grid', colorOpenFor: null, mockScale: 120, backdrop: 'smart', lightbox: null, exportFormat: 'png',
+      bg: '#64C6FF', zoom: 200, tossCount: 6, seed: 7, exportSize: 1500,
+      error: '', status: ''
+    };
+  }
+
+  componentDidMount() { this.draw(); }
+  componentDidUpdate() { this.draw(); this.drawSV(); this.drawWheel2(); }
+
+  // ---------- starter motifs ----------
+  starterColors(key) {
+    return ({
+      daisy: ['#ffffff', '#ffcd6c', '#ff3e00', '#343433'],
+      sprig: ['#00ca48', '#00c978', '#ff58ae', '#343433'],
+      lemon: ['#ffcd6c', '#00c978', '#343433']
+    })[key] || [];
+  }
+
+  makeMotif(key, map) {
+    map = map || {};
+    let x0 = null;
+    const col = (h) => this.canvasPaint(map[h] || h, x0);
+    const ck = key + '|' + Object.keys(map).sort().map(k => k + '>' + JSON.stringify(map[k])).join(',');
+    if (this._motifCache[ck]) return this._motifCache[ck];
+    const c = document.createElement('canvas');
+    c.width = 600; c.height = 600;
+    const x = c.getContext('2d');
+    x0 = x;
+    const INK = col('#343433');
+    x.lineCap = 'round'; x.lineJoin = 'round';
+    if (key === 'sprig') {
+      x.strokeStyle = INK; x.lineWidth = 10;
+      x.beginPath(); x.moveTo(300, 560); x.bezierCurveTo(250, 420, 360, 260, 300, 70); x.stroke();
+      const leaves = [[285, 470, -0.9], [322, 400, 0.8], [292, 320, -0.8], [330, 240, 0.7], [300, 165, -0.6]];
+      leaves.forEach((l, i) => {
+        x.save(); x.translate(l[0], l[1]); x.rotate(l[2]);
+        x.fillStyle = i % 2 ? col('#00c978') : col('#00ca48'); x.strokeStyle = INK; x.lineWidth = 5;
+        x.beginPath(); x.ellipse(l[2] < 0 ? -62 : 62, 0, 70, 26, 0, 0, Math.PI * 2); x.fill(); x.stroke();
+        x.restore();
+      });
+      [[300, 62, 30], [262, 92, 22], [340, 96, 24], [306, 112, 18]].forEach(b => {
+        x.fillStyle = col('#ff58ae'); x.strokeStyle = INK; x.lineWidth = 5;
+        x.beginPath(); x.arc(b[0], b[1], b[2], 0, Math.PI * 2); x.fill(); x.stroke();
+      });
+    } else if (key === 'daisy') {
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        x.save(); x.translate(300 + Math.cos(a) * 150, 300 + Math.sin(a) * 150); x.rotate(a);
+        x.fillStyle = col('#ffffff'); x.strokeStyle = INK; x.lineWidth = 6;
+        x.beginPath(); x.ellipse(0, 0, 105, 40, 0, 0, Math.PI * 2); x.fill(); x.stroke();
+        x.restore();
+      }
+      x.fillStyle = col('#ffcd6c'); x.strokeStyle = INK; x.lineWidth = 6;
+      x.beginPath(); x.arc(300, 300, 80, 0, Math.PI * 2); x.fill(); x.stroke();
+      x.fillStyle = col('#ff3e00');
+      for (let i = 0; i < 18; i++) {
+        const a = i * 2.4, r = 10 + i * 3;
+        x.beginPath(); x.arc(300 + Math.cos(a) * r, 300 + Math.sin(a) * r, 5, 0, Math.PI * 2); x.fill();
+      }
+    } else {
+      x.save(); x.translate(300, 340); x.rotate(-0.35);
+      x.fillStyle = col('#ffcd6c'); x.strokeStyle = INK; x.lineWidth = 7;
+      x.beginPath(); x.ellipse(0, 0, 200, 140, 0, 0, Math.PI * 2); x.fill(); x.stroke();
+      x.beginPath(); x.ellipse(-205, 0, 22, 18, 0, 0, Math.PI * 2); x.fill(); x.stroke();
+      x.beginPath(); x.ellipse(205, 0, 22, 18, 0, 0, Math.PI * 2); x.fill(); x.stroke();
+      x.strokeStyle = 'rgba(255,255,255,0.75)'; x.lineWidth = 14;
+      x.beginPath(); x.arc(-20, -10, 100, Math.PI * 1.1, Math.PI * 1.45); x.stroke();
+      x.restore();
+      x.save(); x.translate(250, 160); x.rotate(-0.9);
+      x.fillStyle = col('#00c978'); x.strokeStyle = INK; x.lineWidth = 6;
+      x.beginPath(); x.ellipse(0, -70, 42, 92, 0, 0, Math.PI * 2); x.fill(); x.stroke();
+      x.beginPath(); x.moveTo(0, 18); x.lineTo(0, -150); x.stroke();
+      x.restore();
+    }
+    this._motifCache[ck] = c;
+    return c;
+  }
+
+  motifFor(key) {
+    if (key && key.indexOf('up') === 0 && this._uploads[key]) return this._uploads[key];
+    return this.makeMotif(key && key.indexOf('up') === 0 ? 'daisy' : key);
+  }
+
+  // the image to draw for one item: a recolored copy when it is a vector with color changes
+  motifImg(it) {
+    if (!(it.motif && it.motif.indexOf('up') === 0)) return this.makeMotif(it.motif, it.colors);
+    const base = this.motifFor(it.motif);
+    const src = this._svgSrc[it.motif];
+    const map = it.colors || {};
+    const changed = Object.keys(map).filter(k => map[k] && map[k] !== k);
+    if (!src || !changed.length) return base;
+    const ck = it.motif + '|' + changed.sort().map(k => k + '>' + JSON.stringify(map[k])).join(',');
+    const hit = this._recolored[ck];
+    if (hit && hit.ready) { this._lastGood = this._lastGood || {}; this._lastGood[it.id] = hit.img; return hit.img; }
+    if (!hit) {
+      const img = new Image();
+      const entry = { img, ready: false };
+      this._recolored[ck] = entry;
+      img.onload = () => { entry.ready = true; this.forceUpdate(); };
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(this.recolor(src, map, it.motif));
+    }
+    return (this._lastGood && this._lastGood[it.id]) || base;
+  }
+
+  normColor(v) {
+    if (!this._nctx) this._nctx = this.canvas(1, 1).getContext('2d');
+    const c = this._nctx;
+    v = String(v).trim();
+    if (!v || /^(url|none|transparent|currentcolor|inherit|initial)/i.test(v)) return null;
+    c.fillStyle = '#010203'; c.fillStyle = v;
+    const out = c.fillStyle;
+    if (out === '#010203' && v.toLowerCase() !== '#010203') return null;
+    return /^#[0-9a-f]{6}$/i.test(out) ? out.toLowerCase() : null;
+  }
+
+  colorRe() { return /(^|[\s;{"'])(stop-color|flood-color|fill|stroke)(\s*=\s*["']|\s*:\s*)([^"';>}]+)/gi; }
+
+  extractColors(src) {
+    const found = [];
+    src.replace(this.colorRe(), (all, pre, prop, sep, val) => {
+      const n = this.normColor(val);
+      if (n && found.indexOf(n) < 0 && found.length < 12) found.push(n);
+      return all;
+    });
+    return found;
+  }
+
+  recolor(src, map, key) {
+    const defs = [];
+    let out = src.replace(this.colorRe(), (all, pre, prop, sep, val) => {
+      const n = this.normColor(val);
+      return n && map[n] ? pre + prop + sep + this.svgPaint(map[n], defs) : all;
+    });
+    if (this._svgDefault[key] && map['#000000']) out = out.replace(/<svg\b/i, '<svg fill="' + this.svgPaint(map['#000000'], defs) + '"');
+    if (defs.length) out = out.replace(/(<svg\b[^>]*>)/i, '$1<defs>' + defs.join('') + '</defs>');
+    return out;
+  }
+
+  // ---------- paints: plain colors, see-through and gradients ----------
+  paintCss(v) {
+    if (!v) return '#000000';
+    if (typeof v === 'object') {
+      const a = this.paintCss(v.stops[0]), b = this.paintCss(v.stops[1]);
+      return v.type === 'radial' ? 'radial-gradient(circle, ' + a + ', ' + b + ')' : 'linear-gradient(' + (v.angle || 0) + 'deg, ' + a + ', ' + b + ')';
+    }
+    if (v === 'none') return 'repeating-conic-gradient(#DDDDDD 0% 25%, #FFFFFF 0% 50%) 50% / 10px 10px';
+    return v;
+  }
+
+  canvasPaint(v, x) {
+    if (v && typeof v === 'object') {
+      if (!x) return this.canvasPaint(v.stops[0]);
+      let g;
+      if (v.type === 'radial') g = x.createRadialGradient(300, 300, 0, 300, 300, 300);
+      else {
+        const t = (v.angle || 0) * Math.PI / 180, dx = Math.sin(t) * 300, dy = -Math.cos(t) * 300;
+        g = x.createLinearGradient(300 - dx, 300 - dy, 300 + dx, 300 + dy);
+      }
+      g.addColorStop(0, this.canvasPaint(v.stops[0])); g.addColorStop(1, this.canvasPaint(v.stops[1]));
+      return g;
+    }
+    return v === 'none' ? 'rgba(0,0,0,0)' : v;
+  }
+
+  svgPaint(v, defs) {
+    if (v && typeof v === 'object') {
+      const id = 'sdig' + (++this._gid);
+      const stop = (o, c) => c === 'none' ? '<stop offset="' + o + '" stop-color="#000000" stop-opacity="0"/>' : '<stop offset="' + o + '" stop-color="' + c + '"/>';
+      const st = stop(0, v.stops[0]) + stop(1, v.stops[1]);
+      if (v.type === 'radial') defs.push('<radialGradient id="' + id + '" cx="0.5" cy="0.5" r="0.5">' + st + '</radialGradient>');
+      else {
+        const t = (v.angle || 0) * Math.PI / 180, sx = Math.sin(t) / 2, sy = -Math.cos(t) / 2;
+        defs.push('<linearGradient id="' + id + '" x1="' + (0.5 - sx).toFixed(3) + '" y1="' + (0.5 - sy).toFixed(3) + '" x2="' + (0.5 + sx).toFixed(3) + '" y2="' + (0.5 + sy).toFixed(3) + '">' + st + '</linearGradient>');
+      }
+      return 'url(#' + id + ')';
+    }
+    return v || '#000000';
+  }
+
+  parseColor(str) {
+    if (!str || typeof str !== 'string') return null;
+    str = str.trim();
+    if (str === 'none') return { r: 0, g: 0, b: 0, a: 0 };
+    let m = /^#?([0-9a-f]{6})$/i.exec(str);
+    if (m) { const n = parseInt(m[1], 16); return { r: n >> 16 & 255, g: n >> 8 & 255, b: n & 255, a: 1 }; }
+    m = /^#?([0-9a-f]{3})$/i.exec(str);
+    if (m) return this.parseColor('#' + m[1].split('').map(c => c + c).join(''));
+    m = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:[\s,\/]+([\d.]+%?))?\s*\)$/i.exec(str);
+    if (m) {
+      const a = m[4] === undefined ? 1 : (m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4]));
+      return { r: Math.min(255, Math.round(+m[1])), g: Math.min(255, Math.round(+m[2])), b: Math.min(255, Math.round(+m[3])), a: Math.max(0, Math.min(1, a)) };
+    }
+    return null;
+  }
+
+  rgbToHsv(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+    let h = 0;
+    if (d) h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return [((h * 60) + 360) % 360, mx ? d / mx : 0, mx];
+  }
+
+  hsvToRgb(h, s, v) {
+    const f = (n) => { const k = (n + h / 60) % 6; return Math.round((v - v * s * Math.max(0, Math.min(k, 4 - k, 1))) * 255); };
+    return [f(5), f(3), f(1)];
+  }
+
+  colorString(r, g, b, a) {
+    if (a >= 0.995) return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + (Math.round(a * 100) / 100) + ')';
+  }
+
+  // the color the picker is editing: a plain color, or one end of a gradient
+  pkTarget() {
+    if (this.state.bgPick) {
+      const str = this.state.bg === 'transparent' ? 'none' : this.state.bg;
+      return { bg: true, v: str, grad: false, stop: 0, str, key: 'bg' };
+    }
+    const act = this.activeColor();
+    if (!act) return null;
+    const v = (act.it.colors && act.it.colors[act.orig]) || act.orig;
+    const grad = !!v && typeof v === 'object';
+    const stop = grad ? (this.state.pkStop || 0) : 0;
+    const str = grad ? v.stops[stop] : v;
+    return { act, v, grad, stop, str, key: act.it.id + '|' + act.orig + '|' + stop };
+  }
+
+  pkHsva() {
+    const t = this.pkTarget();
+    if (!t) return null;
+    if (this._pk && this._pk.key === t.key && this._pk.str === t.str) return this._pk;
+    const c = this.parseColor(t.str) || { r: 0, g: 0, b: 0, a: 1 };
+    const hsv = this.rgbToHsv(c.r, c.g, c.b);
+    const keepHue = this._pk && this._pk.key === t.key ? this._pk.h : hsv[0];
+    this._pk = { key: t.key, str: t.str, h: (hsv[1] === 0 || hsv[2] === 0) ? keepHue : hsv[0], s: hsv[1], v: hsv[2], a: t.str === 'none' ? 0 : c.a };
+    return this._pk;
+  }
+
+  setPkString(str, tag) {
+    const t = this.pkTarget();
+    if (!t) return;
+    if (t.bg) { this.setState({ bg: str === 'none' ? 'transparent' : str }); return; }
+    let nv = str;
+    if (t.grad) { const stops = t.v.stops.slice(); stops[t.stop] = str; nv = Object.assign({}, t.v, { stops }); }
+    this.updateSel({ colors: Object.assign({}, t.act.it.colors || {}, { [t.act.orig]: nv }) }, tag === undefined ? 'color' + t.act.orig : tag);
+  }
+
+  applyHsva(h, s, v, a, tag) {
+    const t = this.pkTarget();
+    if (!t) return;
+    const rgb = this.hsvToRgb(h, s, v);
+    const str = this.colorString(rgb[0], rgb[1], rgb[2], a);
+    this._pk = { key: t.key, str, h, s, v, a };
+    this.setPkString(str, tag);
+  }
+
+  setPkMode(mode) {
+    const t = this.pkTarget();
+    if (!t) return;
+    const first = t.grad ? t.v.stops[0] : t.v;
+    let nv;
+    if (mode === 'solid') nv = first;
+    else if (t.grad) nv = Object.assign({}, t.v, { type: mode });
+    else nv = { type: mode, stops: [first, '#ffffff'], angle: 90 };
+    this.setState({ pkStop: 0, pkDraft: null });
+    this.updateSel({ colors: Object.assign({}, t.act.it.colors || {}, { [t.act.orig]: nv }) });
+  }
+
+  drawSV() {
+    const c = this._sv;
+    const p = c ? this.pkHsva() : null;
+    if (!c || !p) return;
+    const x = c.getContext('2d'), W = c.width, H = c.height;
+    const rgb = this.hsvToRgb(p.h, 1, 1);
+    x.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')'; x.fillRect(0, 0, W, H);
+    let gr = x.createLinearGradient(0, 0, W, 0); gr.addColorStop(0, '#FFFFFF'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = gr; x.fillRect(0, 0, W, H);
+    gr = x.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, '#000000');
+    x.fillStyle = gr; x.fillRect(0, 0, W, H);
+    const mx = Math.min(W - 12, Math.max(12, p.s * W)), my = Math.min(H - 12, Math.max(12, (1 - p.v) * H));
+    x.beginPath(); x.arc(mx, my, 11, 0, Math.PI * 2);
+    x.lineWidth = 4; x.strokeStyle = '#FFFFFF'; x.stroke();
+    x.lineWidth = 1.5; x.strokeStyle = 'rgba(0,0,0,0.45)'; x.stroke();
+  }
+
+  gridColors() {
+    if (this._grid) return this._grid;
+    const hex = (h, s, v) => { const c = this.hsvToRgb(h, s, v); return '#' + c.map(x => x.toString(16).padStart(2, '0')).join(''); };
+    const g = ['#FFFFFF', '#F2F2F2', '#D9D9D9', '#BFBFBF', '#A6A6A6', '#808080', '#595959', '#404040', '#262626', '#000000'];
+    const hues = [0, 25, 45, 60, 110, 160, 195, 220, 265, 320];
+    [[0.18, 1], [0.4, 1], [0.75, 1], [0.85, 0.8], [0.85, 0.55]].forEach(([s, v]) => hues.forEach(h => g.push(hex(h, s, v))));
+    this._grid = g.map(x => x.toUpperCase());
+    return this._grid;
+  }
+
+  drawWheel2() {
+    const c = this._wh2;
+    const p = c ? this.pkHsva() : null;
+    if (!c || !p) return;
+    const x = c.getContext('2d'), N = c.width, R = N / 2;
+    const vk = Math.round(p.v * 100);
+    if (!this._wh2Img || this._wh2Img.v !== vk) {
+      const img = x.createImageData(N, N), d = img.data, v = p.v;
+      for (let py = 0; py < N; py++) for (let px = 0; px < N; px++) {
+        const dx = px - R + 0.5, dy = py - R + 0.5, rr = Math.sqrt(dx * dx + dy * dy) / R, o = (py * N + px) * 4;
+        if (rr > 1) { d[o + 3] = 0; continue; }
+        const hh = ((Math.atan2(dy, dx) * 180 / Math.PI) + 360) % 360;
+        const ff = (n) => { const k = (n + hh / 60) % 6; return v - v * rr * Math.max(0, Math.min(k, 4 - k, 1)); };
+        d[o] = ff(5) * 255; d[o + 1] = ff(3) * 255; d[o + 2] = ff(1) * 255;
+        d[o + 3] = rr > 0.985 ? Math.max(0, (1 - rr) / 0.015) * 255 : 255;
+      }
+      this._wh2Img = { v: vk, img };
+    }
+    x.clearRect(0, 0, N, N);
+    x.putImageData(this._wh2Img.img, 0, 0);
+    const mx = R + Math.cos(p.h * Math.PI / 180) * p.s * R, my = R + Math.sin(p.h * Math.PI / 180) * p.s * R;
+    x.beginPath(); x.arc(mx, my, 12, 0, Math.PI * 2);
+    x.lineWidth = 4; x.strokeStyle = '#FFFFFF'; x.stroke();
+    x.lineWidth = 1.5; x.strokeStyle = 'rgba(0,0,0,0.45)'; x.stroke();
+  }
+
+  wheel2Pick(e) {
+    const p = this.pkHsva();
+    if (!p) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const dx = e.clientX - r.left - r.width / 2, dy = e.clientY - r.top - r.height / 2;
+    const h = ((Math.atan2(dy, dx) * 180 / Math.PI) + 360) % 360;
+    const s = Math.min(1, Math.sqrt(dx * dx + dy * dy) / (r.width / 2));
+    this.applyHsva(h, s, p.v < 0.05 ? 1 : p.v, p.a === 0 ? 1 : p.a);
+  }
+
+  svPick(e) {
+    const p = this.pkHsva();
+    if (!p) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const s = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    const v = 1 - Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+    this.applyHsva(p.h, s, v, p.a === 0 ? 1 : p.a);
+  }
+
+  // give the SVG a real width and height so it draws at a sensible size
+  fixSvg(text) {
+    try {
+      const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+      const root = doc.documentElement;
+      if (!root || root.nodeName.toLowerCase() !== 'svg' || doc.getElementsByTagName('parsererror').length) return text;
+      const vb = (root.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+      const bad = (a) => !a || /%$/.test(a);
+      if ((bad(root.getAttribute('width')) || bad(root.getAttribute('height'))) && vb.length === 4 && vb[2] > 0 && vb[3] > 0) {
+        const k = 1000 / Math.max(vb[2], vb[3]);
+        root.setAttribute('width', String(Math.round(vb[2] * k)));
+        root.setAttribute('height', String(Math.round(vb[3] * k)));
+      }
+      if (!root.getAttribute('xmlns')) root.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      return new XMLSerializer().serializeToString(root);
+    } catch (e) { return text; }
+  }
+
+  colorsFor(key) {
+    if (!key) return [];
+    if (key.indexOf('up') === 0) return this._svgColors[key] || [];
+    return this.starterColors(key);
+  }
+
+  dims(m) { return [m.naturalWidth || m.width || 512, m.naturalHeight || m.height || 512]; }
+
+  // ---------- drawing ----------
+  canvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+
+  stamp(ctx, m, x, y, longest, deg, flip) {
+    const [w, h] = this.dims(m);
+    const f = longest / Math.max(w, h);
+    ctx.save(); ctx.translate(x, y); ctx.rotate(deg * Math.PI / 180);
+    if (flip) ctx.scale(-1, 1);
+    ctx.drawImage(m, -w * f / 2, -h * f / 2, w * f, h * f);
+    ctx.restore();
+  }
+
+  stampWrapped(ctx, m, x, y, longest, deg, W, H, flip) {
+    for (const dx of [-W, 0, W]) for (const dy of [-H, 0, H]) this.stamp(ctx, m, x + dx, y + dy, longest, deg, flip);
+  }
+
+  buildTile(S) {
+    const s = this.state, c = this.canvas(S, S), x = c.getContext('2d');
+    if (s.bg !== 'transparent') { x.fillStyle = s.bg; x.fillRect(0, 0, S, S); }
+    s.items.forEach(it => this.stampWrapped(x, this.motifImg(it), it.x * S, it.y * S, S * it.scale / 100, it.rot, S, S, it.flip));
+    return c;
+  }
+
+  rng(seed) {
+    let a = seed >>> 0;
+    return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  }
+
+  // where each copy of the tile goes for a layout: unit size plus canvas transforms (a, b, c, d, e, f)
+  layoutSpec(L, S) {
+    const I = [1, 0, 0, 1, 0, 0];
+    const t = (e, f) => [1, 0, 0, 1, e, f];
+    switch (L) {
+      case 'halfdrop': return { w: 2 * S, h: S, xf: [I, t(S, S / 2)] };
+      case 'brick': return { w: S, h: 2 * S, xf: [I, t(S / 2, S)] };
+      case 'mirror': return { w: 2 * S, h: S, xf: [I, [-1, 0, 0, 1, 2 * S, 0]] };
+      case 'squaremirror': return { w: 2 * S, h: 2 * S, xf: [I, [-1, 0, 0, 1, 2 * S, 0], [1, 0, 0, -1, 0, 2 * S], [-1, 0, 0, -1, 2 * S, 2 * S]] };
+      case 'halfturn': return { w: 2 * S, h: 2 * S, xf: [I, [-1, 0, 0, -1, 2 * S, S], [-1, 0, 0, -1, S, 2 * S], t(S, S)] };
+      case 'footsteps': return { w: S, h: 2 * S, xf: [I, [1, 0, 0, -1, S / 2, 2 * S]] };
+      case 'pinwheel': return { w: 2 * S, h: 2 * S, xf: [I, [0, 1, -1, 0, 2 * S, 0], [-1, 0, 0, -1, 2 * S, 2 * S], [0, -1, 1, 0, 0, 2 * S]] };
+      case 'offsetmirror': return { w: 2 * S, h: 2 * S, xf: [I, [-1, 0, 0, 1, 2 * S, 0], t(S, S), [-1, 0, 0, 1, 3 * S, S]] };
+    }
+    return null;
+  }
+
+  drawItems(x, S) {
+    this.state.items.forEach(it => this.stamp(x, this.motifImg(it), it.x * S, it.y * S, S * it.scale / 100, it.rot, it.flip));
+  }
+
+  buildUnit(T, S) {
+    const s = this.state, L = s.layout;
+    let c, x;
+    if (L === 'grid') return T;
+    const spec = this.layoutSpec(L, S);
+    if (spec) {
+      c = this.canvas(spec.w, spec.h); x = c.getContext('2d');
+      if (s.bg !== 'transparent') { x.fillStyle = s.bg; x.fillRect(0, 0, spec.w, spec.h); }
+      for (const m of spec.xf) for (const ox of [-spec.w, 0, spec.w]) for (const oy of [-spec.h, 0, spec.h]) {
+        x.save(); x.translate(ox, oy); x.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
+        this.drawItems(x, S);
+        x.restore();
+      }
+      return c;
+    }
+    if (L === 'honeycomb') {
+      // six-way mirror: a 30-60-90 wedge from the middle of the tile, mirrored 12 times round each hexagon centre
+      const w = S, h = Math.round(S * Math.sqrt(3)), R = S / 2, tv = R * Math.tan(Math.PI / 6);
+      c = this.canvas(w, h); x = c.getContext('2d');
+      if (s.bg !== 'transparent') { x.fillStyle = s.bg; x.fillRect(0, 0, w, h); }
+      const pts = [[0, 0], [w, 0], [0, h], [w, h], [w / 2, h / 2]];
+      for (const [px, py] of pts) for (let k = 0; k < 6; k++) for (let m = 0; m < 2; m++) {
+        x.save();
+        x.translate(px, py); x.rotate(k * Math.PI / 3);
+        if (m) { x.rotate(Math.PI / 3); x.scale(1, -1); }
+        x.beginPath(); x.moveTo(-1, -1); x.lineTo(R + 1.5, -1); x.lineTo(R + 1.5, tv + 1.5); x.closePath(); x.clip();
+        x.drawImage(T, -S / 2, -S / 2);
+        x.restore();
+      }
+      return c;
+    }
+    if (L === 'kaleido') {
+      const k = this.canvas(S, S), kx = k.getContext('2d');
+      kx.save(); kx.beginPath(); kx.moveTo(0, 0); kx.lineTo(0, S); kx.lineTo(S, S); kx.closePath(); kx.clip(); kx.drawImage(T, 0, 0); kx.restore();
+      kx.save(); kx.beginPath(); kx.moveTo(0, 0); kx.lineTo(S, 0); kx.lineTo(S, S); kx.closePath(); kx.clip(); kx.setTransform(0, 1, 1, 0, 0, 0); kx.drawImage(T, 0, 0); kx.restore();
+      return this.quad(k, S);
+    }
+    // tossed
+    const U = 2 * S;
+    c = this.canvas(U, U); x = c.getContext('2d');
+    if (s.bg !== 'transparent') { x.fillStyle = s.bg; x.fillRect(0, 0, U, U); }
+    if (!s.items.length) return c;
+    const r = this.rng(s.seed), n = s.tossCount;
+    const cols = Math.ceil(Math.sqrt(n)), rows = Math.ceil(n / cols), cell = U / cols;
+    for (let i = 0; i < n; i++) {
+      const it = s.items[i % s.items.length];
+      const cx = (i % cols + 0.15 + r() * 0.7) * cell;
+      const cy = (Math.floor(i / cols) + 0.15 + r() * 0.7) * (U / rows);
+      const sz = S * it.scale / 100 * (0.8 + r() * 0.35);
+      this.stampWrapped(x, this.motifImg(it), cx, cy, sz, it.rot + (r() * 360 - 180), U, U, it.flip);
+    }
+    return c;
+  }
+
+  quad(T, S) {
+    const c = this.canvas(2 * S, 2 * S), x = c.getContext('2d');
+    x.drawImage(T, 0, 0);
+    x.save(); x.translate(2 * S, 0); x.scale(-1, 1); x.drawImage(T, 0, 0); x.restore();
+    x.save(); x.translate(0, 2 * S); x.scale(1, -1); x.drawImage(T, 0, 0); x.restore();
+    x.save(); x.translate(2 * S, 2 * S); x.scale(-1, -1); x.drawImage(T, 0, 0); x.restore();
+    return c;
+  }
+
+  draw() {
+    if (!this._tile && !this._preview) return;
+    const S = 480;
+    let T, U;
+    try { T = this.buildTile(S); U = this.buildUnit(T, S); } catch (e) { return; }
+    this._lastUnit = U;
+    this.queueMockups();
+    if (this._tile) {
+      const c = this._tile, x = c.getContext('2d'), W = c.width;
+      x.clearRect(0, 0, W, W);
+      x.drawImage(T, 0, 0, W, W);
+      if (this.state.ruler) this.drawRuler(x, W);
+      // four white corner brackets around the selected motif (drag one to resize); they wrap across edges like the motif
+      const it = this.state.items.find(i => i.id === this.state.sel);
+      if (it) {
+        const [bw, bh] = this.selBox(it, W);
+        const L = Math.max(18, Math.min(44, Math.min(bw, bh) / 3));
+        for (const dx of [-W, 0, W]) for (const dy of [-W, 0, W]) {
+          x.save();
+          x.translate(it.x * W + dx, it.y * W + dy); x.rotate(it.rot * Math.PI / 180);
+          x.lineCap = 'round'; x.lineJoin = 'round';
+          for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+            const px = sx * bw / 2, py = sy * bh / 2;
+            x.beginPath(); x.moveTo(px, py - sy * L); x.lineTo(px, py); x.lineTo(px - sx * L, py);
+            x.strokeStyle = 'rgba(18,18,18,0.75)'; x.lineWidth = 13; x.stroke();
+            x.strokeStyle = '#FFFFFF'; x.lineWidth = 7; x.stroke();
+          }
+          // rotate handle above the top edge
+          const ty = -bh / 2, hy = ty - 52;
+          x.beginPath(); x.moveTo(0, ty - 6); x.lineTo(0, hy + 15);
+          x.strokeStyle = 'rgba(18,18,18,0.75)'; x.lineWidth = 7; x.stroke();
+          x.strokeStyle = '#FFFFFF'; x.lineWidth = 3; x.stroke();
+          x.beginPath(); x.arc(0, hy, 15, 0, Math.PI * 2);
+          x.fillStyle = '#FFFFFF'; x.fill(); x.strokeStyle = 'rgba(18,18,18,0.85)'; x.lineWidth = 3; x.stroke();
+          x.beginPath(); x.arc(0, hy, 7, -Math.PI * 0.9, Math.PI * 0.35);
+          x.strokeStyle = '#121212'; x.lineWidth = 2.5; x.stroke();
+          x.beginPath(); x.moveTo(7 * Math.cos(Math.PI * 0.35) + 3, hy + 7 * Math.sin(Math.PI * 0.35) - 4); x.lineTo(7 * Math.cos(Math.PI * 0.35), hy + 7 * Math.sin(Math.PI * 0.35)); x.lineTo(7 * Math.cos(Math.PI * 0.35) - 5, hy + 7 * Math.sin(Math.PI * 0.35) - 2); x.stroke();
+          x.restore();
+        }
+      }
+    }
+    this._lastUnitS = S;
+    this.drawPreview();
+  }
+
+  drawPreview() {
+    const c = this._preview, U = this._lastUnit, S = this._lastUnitS || 480;
+    if (!c || !U) return;
+    const x = c.getContext('2d');
+    x.setTransform(1, 0, 0, 1, 0, 0);
+    x.clearRect(0, 0, c.width, c.height);
+    const pat = x.createPattern(U, 'repeat');
+    const k = this.state.zoom / S, px = this._pan.x, py = this._pan.y;
+    x.save(); x.translate(px, py); x.scale(k, k);
+    x.fillStyle = pat; x.fillRect(-px / k, -py / k, c.width / k, c.height / k);
+    x.restore();
+  }
+
+  // ---------- live repeat: drag to pan, wheel to zoom ----------
+  prevPoint(e) {
+    const c = this._preview, r = c.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * c.width / r.width, y: (e.clientY - r.top) * c.height / r.height };
+  }
+
+  previewWheel(e) {
+    if (!this._preview) return;
+    e.preventDefault();
+    const p = this.prevPoint(e);
+    const z = this.state.zoom;
+    const z2 = Math.max(60, Math.min(480, z * Math.exp(-e.deltaY * 0.0015)));
+    if (z2 === z) return;
+    // keep the point under the cursor in place
+    this._pan.x = p.x - (p.x - this._pan.x) * z2 / z;
+    this._pan.y = p.y - (p.y - this._pan.y) * z2 / z;
+    this.setState({ zoom: Math.round(z2 * 10) / 10 });
+  }
+
+  drawRuler(x, W) {
+    x.save();
+    x.strokeStyle = 'rgba(52,52,51,0.22)'; x.lineWidth = 1;
+    for (let i = 1; i < 8; i++) {
+      const p = Math.round(W * i / 8) + 0.5;
+      x.beginPath(); x.moveTo(p, 0); x.lineTo(p, W); x.moveTo(0, p); x.lineTo(W, p); x.stroke();
+    }
+    x.strokeStyle = 'rgba(52,52,51,0.55)'; x.lineWidth = 2; x.setLineDash([8, 6]);
+    x.beginPath(); x.moveTo(W / 2, 0); x.lineTo(W / 2, W); x.moveTo(0, W / 2); x.lineTo(W, W / 2); x.stroke();
+    x.setLineDash([]);
+    x.fillStyle = 'rgba(255,255,255,0.88)'; x.fillRect(0, 0, W, 26); x.fillRect(0, 0, 26, W);
+    x.strokeStyle = '#343433'; x.lineWidth = 1.5;
+    for (let i = 0; i <= 32; i++) {
+      const p = W * i / 32, len = i % 8 === 0 ? 22 : i % 4 === 0 ? 15 : 8;
+      x.beginPath(); x.moveTo(p, 0); x.lineTo(p, len); x.moveTo(0, p); x.lineTo(len, p); x.stroke();
+    }
+    x.fillStyle = '#343433'; x.font = '600 15px Inter, sans-serif';
+    [25, 50, 75].forEach(v => { const p = W * v / 100; x.fillText(v + '%', p + 5, 20); x.save(); x.translate(20, p + 5); x.rotate(-Math.PI / 2); x.fillText(v + '%', -40, 0); x.restore(); });
+    x.restore();
+  }
+
+  // ---------- flat mock-ups ----------
+  queueMockups() {
+    if (this._mockQueued) return;
+    this._mockQueued = true;
+    requestAnimationFrame(() => { this._mockQueued = false; this.drawMockups(); });
+  }
+
+  backdropColor() {
+    const b = this.state.backdrop;
+    if (b === 'white') return '#FFFFFF';
+    if (b === 'stone') return '#F2F0ED';
+    // smart: the pattern's average color, softened toward white
+    const U = this._lastUnit;
+    if (!U) return '#F2F0ED';
+    const c = this.canvas(1, 1), x = c.getContext('2d');
+    x.drawImage(U, 0, 0, 1, 1);
+    const d = x.getImageData(0, 0, 1, 1).data;
+    const mix = (v) => Math.round(v * 0.22 + 255 * 0.78);
+    return 'rgb(' + mix(d[0]) + ',' + mix(d[1]) + ',' + mix(d[2]) + ')';
+  }
+
+  drawMockups() {
+    const U = this._lastUnit;
+    if (!U) return;
+    this.drawLightbox();
+    const back = this.backdropColor();
+    Object.keys(this._mockEls).forEach(k => {
+      const c = this._mockEls[k];
+      if (c) { try { this.drawMock(k, c, U, back); } catch (e) {} }
+    });
+  }
+
+  drawMock(kind, c, U, back) {
+    const x = c.getContext('2d');
+    x.setTransform(1, 0, 0, 1, 0, 0);
+    x.clearRect(0, 0, c.width, c.height);
+    x.scale(c.width / 480, c.height / 400);
+    x.fillStyle = back; x.fillRect(0, 0, 480, 400);
+    const pat = x.createPattern(U, 'repeat');
+    const k = this.state.mockScale / 480;
+    if (pat.setTransform && window.DOMMatrix) pat.setTransform(new DOMMatrix([k, 0, 0, k, 0, 0]));
+    const fillPat = (path) => { x.save(); x.fillStyle = pat; x.fill(path); x.restore(); };
+    const shadow = (cx, cy, rx, ry, a) => {
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, rx);
+      g.addColorStop(0, 'rgba(0,0,0,' + a + ')'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      x.save(); x.translate(cx, cy); x.scale(1, ry / rx); x.translate(-cx, -cy);
+      x.fillStyle = g; x.beginPath(); x.arc(cx, cy, rx, 0, Math.PI * 2); x.fill(); x.restore();
+    };
+    const shade = (path, grad) => { x.save(); x.clip(path); x.fillStyle = grad; x.fillRect(0, 0, 480, 400); x.restore(); };
+    const lin = (x0, y0, x1, y1, stops) => { const g = x.createLinearGradient(x0, y0, x1, y1); stops.forEach(s => g.addColorStop(s[0], s[1])); return g; };
+    const edge = (path, w) => { x.save(); x.strokeStyle = 'rgba(30,30,30,0.18)'; x.lineWidth = w || 1.5; x.stroke(path); x.restore(); };
+
+    if (kind === 'cushion') {
+      shadow(240, 350, 175, 24, 0.22);
+      const p = new Path2D();
+      p.moveTo(100, 78); p.quadraticCurveTo(240, 98, 380, 78); p.quadraticCurveTo(366, 200, 384, 330);
+      p.quadraticCurveTo(240, 312, 96, 330); p.quadraticCurveTo(114, 200, 100, 78); p.closePath();
+      fillPat(p);
+      const g = x.createRadialGradient(230, 190, 30, 240, 205, 210);
+      g.addColorStop(0, 'rgba(255,255,255,0.20)'); g.addColorStop(0.55, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(0,0,0,0.28)');
+      shade(p, g);
+      x.save(); x.clip(p); x.strokeStyle = 'rgba(0,0,0,0.10)'; x.lineWidth = 6;
+      x.beginPath(); x.moveTo(130, 110); x.quadraticCurveTo(175, 150, 160, 190); x.moveTo(350, 300); x.quadraticCurveTo(310, 270, 320, 230); x.stroke(); x.restore();
+      edge(p, 2);
+    } else if (kind === 'mug') {
+      shadow(230, 345, 130, 18, 0.25);
+      x.save(); x.lineWidth = 26; x.strokeStyle = '#E9E6E1';
+      x.beginPath(); x.ellipse(332, 215, 52, 66, 0, -Math.PI / 2, Math.PI / 2); x.stroke();
+      x.lineWidth = 1.5; x.strokeStyle = 'rgba(30,30,30,0.18)';
+      x.beginPath(); x.ellipse(332, 215, 65, 79, 0, -Math.PI / 2, Math.PI / 2); x.stroke();
+      x.beginPath(); x.ellipse(332, 215, 39, 53, 0, -Math.PI / 2, Math.PI / 2); x.stroke(); x.restore();
+      const p = new Path2D();
+      p.moveTo(130, 110); p.lineTo(330, 110); p.lineTo(330, 318); p.ellipse(230, 318, 100, 18, 0, 0, Math.PI); p.closePath();
+      fillPat(p);
+      shade(p, lin(130, 0, 330, 0, [[0, 'rgba(0,0,0,0.30)'], [0.18, 'rgba(0,0,0,0.04)'], [0.32, 'rgba(255,255,255,0.28)'], [0.45, 'rgba(255,255,255,0)'], [0.85, 'rgba(0,0,0,0.12)'], [1, 'rgba(0,0,0,0.34)']]));
+      edge(p);
+      x.fillStyle = '#F4F2EE'; x.beginPath(); x.ellipse(230, 110, 100, 18, 0, 0, Math.PI * 2); x.fill();
+      x.fillStyle = '#D9D5CE'; x.beginPath(); x.ellipse(230, 112, 90, 13, 0, 0, Math.PI * 2); x.fill();
+      x.strokeStyle = 'rgba(30,30,30,0.18)'; x.lineWidth = 1.5; x.beginPath(); x.ellipse(230, 110, 100, 18, 0, 0, Math.PI * 2); x.stroke();
+    } else if (kind === 'tote') {
+      shadow(240, 368, 140, 16, 0.2);
+      x.save(); x.lineWidth = 14; x.strokeStyle = '#E3D6C1'; x.lineCap = 'round';
+      x.beginPath(); x.moveTo(180, 152); x.bezierCurveTo(180, 40, 230, 40, 230, 152); x.stroke();
+      x.beginPath(); x.moveTo(250, 152); x.bezierCurveTo(250, 40, 300, 40, 300, 152); x.stroke(); x.restore();
+      const p = new Path2D();
+      p.moveTo(122, 150); p.lineTo(358, 150); p.lineTo(368, 360); p.lineTo(112, 360); p.closePath();
+      fillPat(p);
+      shade(p, lin(0, 150, 0, 360, [[0, 'rgba(0,0,0,0.16)'], [0.12, 'rgba(0,0,0,0)'], [0.7, 'rgba(0,0,0,0.02)'], [1, 'rgba(0,0,0,0.18)']]));
+      x.save(); x.clip(p); x.strokeStyle = 'rgba(0,0,0,0.10)'; x.lineWidth = 5;
+      x.beginPath(); x.moveTo(170, 160); x.quadraticCurveTo(190, 250, 160, 350); x.stroke(); x.restore();
+      x.fillStyle = 'rgba(0,0,0,0.12)'; x.fillRect(122, 150, 236, 8);
+      edge(p);
+    } else if (kind === 'notebook') {
+      shadow(245, 362, 130, 14, 0.25);
+      x.fillStyle = '#FBFAF7'; x.beginPath(); x.roundRect ? x.roundRect(150, 66, 206, 290, 8) : x.rect(150, 66, 206, 290); x.fill();
+      x.strokeStyle = 'rgba(30,30,30,0.15)'; x.lineWidth = 1.2;
+      for (let i = 0; i < 4; i++) { x.beginPath(); x.moveTo(352, 72 + i * 2); x.lineTo(352, 350 - i * 2); x.stroke(); }
+      const p = new Path2D();
+      if (p.roundRect) p.roundRect(140, 60, 206, 290, 8); else p.rect(140, 60, 206, 290);
+      fillPat(p);
+      shade(p, lin(140, 0, 346, 0, [[0, 'rgba(0,0,0,0.35)'], [0.08, 'rgba(0,0,0,0.12)'], [0.12, 'rgba(255,255,255,0.10)'], [0.5, 'rgba(255,255,255,0)'], [1, 'rgba(0,0,0,0.10)']]));
+      x.fillStyle = 'rgba(25,25,25,0.85)'; x.fillRect(318, 60, 9, 290);
+      edge(p);
+    } else if (kind === 'tshirt') {
+      shadow(240, 372, 150, 14, 0.18);
+      const p = new Path2D();
+      p.moveTo(188, 62); p.quadraticCurveTo(240, 98, 292, 62); p.lineTo(378, 92); p.lineTo(428, 168); p.lineTo(372, 196);
+      p.lineTo(352, 168); p.lineTo(356, 362); p.lineTo(124, 362); p.lineTo(128, 168); p.lineTo(108, 196); p.lineTo(52, 168); p.lineTo(102, 92); p.closePath();
+      fillPat(p);
+      shade(p, lin(52, 0, 428, 0, [[0, 'rgba(0,0,0,0.14)'], [0.3, 'rgba(0,0,0,0)'], [0.5, 'rgba(255,255,255,0.10)'], [0.7, 'rgba(0,0,0,0)'], [1, 'rgba(0,0,0,0.14)']]));
+      x.save(); x.clip(p); x.strokeStyle = 'rgba(0,0,0,0.12)'; x.lineWidth = 2;
+      x.beginPath(); x.moveTo(128, 168); x.lineTo(102, 92); x.moveTo(352, 168); x.lineTo(378, 92); x.stroke();
+      x.lineWidth = 6; x.strokeStyle = 'rgba(0,0,0,0.07)';
+      x.beginPath(); x.moveTo(170, 230); x.quadraticCurveTo(200, 300, 180, 360); x.moveTo(310, 220); x.quadraticCurveTo(290, 290, 315, 360); x.stroke(); x.restore();
+      x.save(); x.strokeStyle = 'rgba(255,255,255,0.75)'; x.lineWidth = 7;
+      x.beginPath(); x.moveTo(190, 64); x.quadraticCurveTo(240, 101, 290, 64); x.stroke(); x.restore();
+      edge(p);
+    } else {
+      shadow(250, 360, 190, 16, 0.2);
+      const sheet = new Path2D();
+      sheet.moveTo(70, 48); sheet.lineTo(410, 48); sheet.lineTo(410, 300);
+      sheet.bezierCurveTo(350, 312, 300, 288, 240, 300); sheet.bezierCurveTo(180, 312, 120, 288, 70, 300); sheet.closePath();
+      fillPat(sheet);
+      shade(sheet, lin(70, 0, 410, 0, [[0, 'rgba(0,0,0,0.10)'], [0.25, 'rgba(255,255,255,0.08)'], [0.5, 'rgba(0,0,0,0.06)'], [0.75, 'rgba(255,255,255,0.08)'], [1, 'rgba(0,0,0,0.12)']]));
+      edge(sheet);
+      const roll = new Path2D();
+      roll.moveTo(70, 294); roll.lineTo(410, 294); roll.lineTo(410, 346); roll.lineTo(70, 346); roll.closePath();
+      fillPat(roll);
+      shade(roll, lin(0, 294, 0, 346, [[0, 'rgba(0,0,0,0.32)'], [0.35, 'rgba(255,255,255,0.18)'], [0.55, 'rgba(255,255,255,0)'], [1, 'rgba(0,0,0,0.35)']]));
+      edge(roll);
+      x.fillStyle = '#EDE9E2'; x.beginPath(); x.ellipse(410, 320, 12, 26, 0, 0, Math.PI * 2); x.fill();
+      x.strokeStyle = 'rgba(30,30,30,0.25)'; x.lineWidth = 1.2;
+      for (let r = 4; r <= 24; r += 5) { x.beginPath(); x.ellipse(410, 320, r * 0.46, r, 0, 0, Math.PI * 2); x.stroke(); }
+    }
+  }
+
+  drawLightbox() {
+    const k = this.state.lightbox;
+    if (!k || !this._lb || !this._lastUnit) return;
+    try { this.drawMock(k, this._lb, this._lastUnit, this.backdropColor()); } catch (e) {}
+  }
+
+  saveMock(kind, label) {
+    const c = this._mockEls[kind];
+    if (c) this.save(c, 'mockup-' + kind + '-' + this.state.layout + '.png');
+  }
+
+  // ---------- export ----------
+  save(canvas, name) {
+    try {
+      canvas.toBlob((b) => {
+        if (!b) { this.setState({ status: 'Sorry, that image was too large to save. Try a smaller tile size.' }); return; }
+        const url = URL.createObjectURL(b);
+        const a = document.createElement('a');
+        a.href = url; a.download = name; a.style.display = 'none';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        this.setState({ status: 'Saved ' + name + ' (' + canvas.width + ' × ' + canvas.height + ' px)' });
+      }, 'image/png');
+    } catch (e) {
+      this.setState({ status: 'Download was blocked by the browser. Open the design in full view and try again.' });
+    }
+  }
+
+  // ---------- vector (SVG) export ----------
+  starterSvg(key, map) {
+    map = map || {};
+    const gdefs = [];
+    const col = (h) => this.svgPaint(map[h] || h, gdefs);
+    const INK = col('#343433');
+    const deg = (r) => (r * 180 / Math.PI).toFixed(3);
+    const o = [];
+    if (key === 'sprig') {
+      o.push('<path d="M300 560 C250 420 360 260 300 70" fill="none" stroke="' + INK + '" stroke-width="10" stroke-linecap="round"/>');
+      [[285, 470, -0.9], [322, 400, 0.8], [292, 320, -0.8], [330, 240, 0.7], [300, 165, -0.6]].forEach((l, i) => {
+        o.push('<ellipse transform="translate(' + l[0] + ' ' + l[1] + ') rotate(' + deg(l[2]) + ')" cx="' + (l[2] < 0 ? -62 : 62) + '" cy="0" rx="70" ry="26" fill="' + (i % 2 ? col('#00c978') : col('#00ca48')) + '" stroke="' + INK + '" stroke-width="5"/>');
+      });
+      [[300, 62, 30], [262, 92, 22], [340, 96, 24], [306, 112, 18]].forEach(b => {
+        o.push('<circle cx="' + b[0] + '" cy="' + b[1] + '" r="' + b[2] + '" fill="' + col('#ff58ae') + '" stroke="' + INK + '" stroke-width="5"/>');
+      });
+    } else if (key === 'daisy') {
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        o.push('<ellipse transform="translate(' + (300 + Math.cos(a) * 150).toFixed(2) + ' ' + (300 + Math.sin(a) * 150).toFixed(2) + ') rotate(' + deg(a) + ')" rx="105" ry="40" fill="' + col('#ffffff') + '" stroke="' + INK + '" stroke-width="6"/>');
+      }
+      o.push('<circle cx="300" cy="300" r="80" fill="' + col('#ffcd6c') + '" stroke="' + INK + '" stroke-width="6"/>');
+      for (let i = 0; i < 18; i++) {
+        const a = i * 2.4, rr = 10 + i * 3;
+        o.push('<circle cx="' + (300 + Math.cos(a) * rr).toFixed(2) + '" cy="' + (300 + Math.sin(a) * rr).toFixed(2) + '" r="5" fill="' + col('#ff3e00') + '"/>');
+      }
+    } else {
+      const a0 = Math.PI * 1.1, a1 = Math.PI * 1.45;
+      const p = (a) => (-20 + 100 * Math.cos(a)).toFixed(2) + ' ' + (-10 + 100 * Math.sin(a)).toFixed(2);
+      o.push('<g transform="translate(300 340) rotate(' + deg(-0.35) + ')" stroke="' + INK + '" stroke-width="7" fill="' + col('#ffcd6c') + '">' +
+        '<ellipse rx="200" ry="140"/><ellipse cx="-205" rx="22" ry="18"/><ellipse cx="205" rx="22" ry="18"/>' +
+        '<path d="M' + p(a0) + ' A100 100 0 0 1 ' + p(a1) + '" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="14" stroke-linecap="round"/></g>');
+      o.push('<g transform="translate(250 160) rotate(' + deg(-0.9) + ')" stroke="' + INK + '" stroke-width="6" stroke-linecap="round"><ellipse cy="-70" rx="42" ry="92" fill="' + col('#00c978') + '"/><path d="M0 18 L0 -150" fill="none"/></g>');
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">' + (gdefs.length ? '<defs>' + gdefs.join('') + '</defs>' : '') + o.join('') + '</svg>';
+  }
+
+  // vector markup for one item's motif, plus its natural size
+  motifSvg(it) {
+    const key = it.motif || '';
+    if (key.indexOf('up') === 0) {
+      const m = this._uploads[key];
+      const [w, h] = m ? this.dims(m) : [512, 512];
+      if (this._svgSrc[key]) {
+        let src = this.recolor(this._svgSrc[key], it.colors || {}, key);
+        src = src.replace(/<\?xml[^>]*>/i, '').replace(/<!DOCTYPE[^>]*>/i, '');
+        src = src.replace(/<svg\b/i, '<svg width="' + w + '" height="' + h + '"').replace(/(<svg[^>]*?)\swidth="[^"]*"([^>]*?)\swidth="[^"]*"/i, '$1 width="' + w + '"$2').replace(/(<svg[^>]*?)\sheight="[^"]*"([^>]*?)\sheight="[^"]*"/i, '$1 height="' + h + '"$2');
+        return { w, h, svg: src, raster: false };
+      }
+      return { w, h, svg: '<image width="' + w + '" height="' + h + '" href="' + (this._rasterSrc[key] || '') + '"/>', raster: true };
+    }
+    return { w: 600, h: 600, svg: this.starterSvg(key, it.colors), raster: false };
+  }
+
+  buildSvg(S) {
+    const s = this.state, L = s.layout;
+    const defs = [], ids = {};
+    let raster = false;
+    const ref = (it) => {
+      const k = it.motif + '|' + JSON.stringify(it.colors || {});
+      if (!ids[k]) {
+        const m = this.motifSvg(it);
+        if (m.raster) raster = true;
+        ids[k] = { id: 'm' + Object.keys(ids).length, w: m.w, h: m.h };
+        defs.push('<g id="' + ids[k].id + '">' + m.svg + '</g>');
+      }
+      return ids[k];
+    };
+    const n2 = (v) => +v.toFixed(3);
+    const stamp = (it, x, y, longest, rot, flip) => {
+      const d = ref(it), f = longest / Math.max(d.w, d.h);
+      return '<g transform="translate(' + n2(x) + ' ' + n2(y) + ') rotate(' + n2(rot) + ')' + (flip ? ' scale(-1 1)' : '') + '"><use href="#' + d.id + '" transform="translate(' + n2(-d.w * f / 2) + ' ' + n2(-d.h * f / 2) + ') scale(' + n2(f) + ')"/></g>';
+    };
+    const items = (wrap) => {
+      let out = '';
+      s.items.forEach(it => {
+        const offs = wrap ? [-wrap, 0, wrap] : [0];
+        for (const dx of offs) for (const dy of offs) out += stamp(it, it.x * S + dx, it.y * S + dy, S * it.scale / 100, it.rot, it.flip);
+      });
+      return out;
+    };
+    const bgRect = (w, h) => s.bg === 'transparent' ? '' : '<rect width="' + w + '" height="' + h + '" fill="' + s.bg + '"/>';
+    // one wrapped tile, clipped to its square
+    const tileDef = () => {
+      defs.push('<clipPath id="tclip"><rect width="' + S + '" height="' + S + '"/></clipPath>');
+      defs.push('<g id="tile"><g clip-path="url(#tclip)">' + bgRect(S, S) + items(S) + '</g></g>');
+    };
+    let w = S, h = S, body = '';
+    const spec = this.layoutSpec(L, S);
+    if (L === 'grid') {
+      tileDef(); body = '<use href="#tile"/>';
+    } else if (spec) {
+      w = spec.w; h = spec.h; body = bgRect(w, h);
+      const inner = items(0);
+      for (const m of spec.xf) for (const ox of [-w, 0, w]) for (const oy of [-h, 0, h])
+        body += '<g transform="translate(' + ox + ' ' + oy + ') matrix(' + m.map(n2).join(' ') + ')">' + inner + '</g>';
+    } else if (L === 'kaleido') {
+      tileDef();
+      w = h = 2 * S;
+      defs.push('<clipPath id="klo"><path d="M0 0 L0 ' + S + ' L' + S + ' ' + S + ' Z"/></clipPath><clipPath id="kup"><path d="M0 0 L' + S + ' 0 L' + S + ' ' + S + ' Z"/></clipPath>');
+      defs.push('<g id="kal"><g clip-path="url(#klo)"><use href="#tile"/></g><g clip-path="url(#kup)"><g transform="matrix(0 1 1 0 0 0)"><use href="#tile"/></g></g></g>');
+      body = '<use href="#kal"/><use href="#kal" transform="translate(' + 2 * S + ' 0) scale(-1 1)"/><use href="#kal" transform="translate(0 ' + 2 * S + ') scale(1 -1)"/><use href="#kal" transform="translate(' + 2 * S + ' ' + 2 * S + ') scale(-1 -1)"/>';
+    } else if (L === 'honeycomb') {
+      tileDef();
+      w = S; h = Math.round(S * Math.sqrt(3));
+      const R = S / 2, tv = R * Math.tan(Math.PI / 6);
+      defs.push('<clipPath id="wedge"><path d="M-3 -3 L' + n2(R + 3) + ' -3 L' + n2(R + 3) + ' ' + n2(tv + 3) + ' Z"/></clipPath>');
+      body = bgRect(w, h);
+      for (const [px, py] of [[0, 0], [w, 0], [0, h], [w, h], [w / 2, h / 2]]) for (let k = 0; k < 6; k++) for (let m = 0; m < 2; m++)
+        body += '<g transform="translate(' + n2(px) + ' ' + n2(py) + ') rotate(' + k * 60 + ')' + (m ? ' rotate(60) scale(1 -1)' : '') + '"><g clip-path="url(#wedge)"><use href="#tile" transform="translate(' + (-S / 2) + ' ' + (-S / 2) + ')"/></g></g>';
+    } else {
+      // tossed: same arrangement as the preview
+      const U = 2 * S; w = h = U; body = bgRect(U, U);
+      if (s.items.length) {
+        const rr = this.rng(s.seed), n = s.tossCount;
+        const cols = Math.ceil(Math.sqrt(n)), rows = Math.ceil(n / cols), cell = U / cols;
+        for (let i = 0; i < n; i++) {
+          const it = s.items[i % s.items.length];
+          const cx = (i % cols + 0.15 + rr() * 0.7) * cell;
+          const cy = (Math.floor(i / cols) + 0.15 + rr() * 0.7) * (U / rows);
+          const sz = S * it.scale / 100 * (0.8 + rr() * 0.35);
+          const rot = it.rot + (rr() * 360 - 180);
+          for (const dx of [-U, 0, U]) for (const dy of [-U, 0, U]) body += stamp(it, cx + dx, cy + dy, sz, rot, it.flip);
+        }
+      }
+    }
+    const svg = '<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+      '<defs>' + defs.join('') + '</defs>' + body + '</svg>';
+    return { svg, w, h, raster };
+  }
+
+  saveBlob(blob, name, msg) {
+    try {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; a.style.display = 'none';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      this.setState({ status: msg });
+    } catch (e) {
+      this.setState({ status: 'Download was blocked by the browser. Open the design in full view and try again.' });
+    }
+  }
+
+  exportTile() {
+    if (this.state.exportFormat === 'svg') {
+      const S = this.state.exportSize;
+      const out = this.buildSvg(S);
+      const name = 'seamless-' + this.state.layout + '-' + S + '.svg';
+      this.saveBlob(new Blob([out.svg], { type: 'image/svg+xml' }), name, 'Saved ' + name + ' (' + out.w + ' × ' + out.h + ')' + (out.raster ? ' — photos and PNG/JPG images stay as pictures inside it.' : ''));
+      return;
+    }
+    const S = this.state.exportSize;
+    const T = this.buildTile(S);
+    const U = this.buildUnit(T, S);
+    this.save(U, 'seamless-' + this.state.layout + '-' + S + '.png');
+  }
+
+  exportPreview() {
+    if (this._preview) this.save(this._preview, 'pattern-preview-' + this.state.layout + '.png');
+  }
+
+  // ---------- upload ----------
+  handleFile(e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const ok = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'];
+    if (ok.indexOf(f.type) < 0) { this.setState({ error: 'That file type isn’t supported. Please choose an SVG, PNG, JPG or WebP.' }); return; }
+    if (f.size > 8 * 1024 * 1024) { this.setState({ error: 'That image is over 8 MB. Please choose a smaller file.' }); return; }
+    const reader = new FileReader();
+    const isSvg = f.type === 'image/svg+xml';
+    let svgText = null;
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const key = 'up' + (++this._upN);
+        this._uploads[key] = img;
+        if (!svgText) this._rasterSrc[key] = this._pendingRaster;
+        if (svgText) {
+          this._svgSrc[key] = svgText;
+          let cols = this.extractColors(svgText);
+          if (!cols.length) { cols = ['#000000']; this._svgDefault[key] = true; }
+          this._svgColors[key] = cols;
+        }
+        this.addItem(key);
+        this.setState({ fileName: f.name, error: '' });
+      };
+      img.onerror = () => this.setState({ error: 'We couldn’t read that image. Try another file.' });
+      if (!isSvg) this._pendingRaster = reader.result;
+      if (isSvg) {
+        svgText = this.fixSvg(String(reader.result));
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText);
+      } else {
+        img.src = reader.result;
+      }
+    };
+    if (isSvg) reader.readAsText(f); else reader.readAsDataURL(f);
+  }
+
+  // ---------- color wheel ----------
+  hexToHsv(hex) {
+    const n = parseInt(hex.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+    let h = 0;
+    if (d) h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return [((h * 60) + 360) % 360, mx ? d / mx : 0, mx];
+  }
+
+  hsvToHex(h, s, v) {
+    const f = (n) => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); };
+    return '#' + [f(5), f(3), f(1)].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
+  }
+
+  activeColor() {
+    const it = this.state.items.find(i => i.id === this.state.sel);
+    if (!it) return null;
+    const list = this.colorsFor(it.motif);
+    if (!list.length) return null;
+    const orig = list.indexOf(this.state.recolorKey) >= 0 ? this.state.recolorKey : list[0];
+    return { it, orig, cur: (it.colors && it.colors[orig]) || orig };
+  }
+
+  setActive(hex, tag) {
+    const a = this.activeColor();
+    if (!a) return;
+    hex = hex.toLowerCase();
+    this.updateSel({ colors: Object.assign({}, a.it.colors || {}, { [a.orig]: hex }) }, tag === undefined ? 'color' + a.orig : tag);
+    this.setState({ hexDraft: hex.slice(1).toUpperCase() });
+  }
+
+  drawWheel() {
+    const c = this._wheel;
+    const a = this.activeColor();
+    if (!c || !a) return;
+    const [h, sat, v] = this._hsv && this._hsv.hex === a.cur ? this._hsv.v3 : this.hexToHsv(a.cur);
+    const x = c.getContext('2d'), N = c.width, R = N / 2;
+    const vk = Math.round(v * 100);
+    if (!this._wheelImg || this._wheelImg.v !== vk) {
+      const img = x.createImageData(N, N), d = img.data;
+      for (let py = 0; py < N; py++) for (let px = 0; px < N; px++) {
+        const dx = px - R + 0.5, dy = py - R + 0.5, r = Math.sqrt(dx * dx + dy * dy) / R, o = (py * N + px) * 4;
+        if (r > 1) { d[o + 3] = 0; continue; }
+        const hh = ((Math.atan2(dy, dx) * 180 / Math.PI) + 360) % 360;
+        const ff = (n) => { const k = (n + hh / 60) % 6; return v - v * r * Math.max(0, Math.min(k, 4 - k, 1)); };
+        d[o] = ff(5) * 255; d[o + 1] = ff(3) * 255; d[o + 2] = ff(1) * 255;
+        d[o + 3] = r > 0.985 ? Math.max(0, (1 - r) / 0.015) * 255 : 255;
+      }
+      this._wheelImg = { v: vk, img };
+    }
+    x.clearRect(0, 0, N, N);
+    x.putImageData(this._wheelImg.img, 0, 0);
+    const mx = R + Math.cos(h * Math.PI / 180) * sat * R, my = R + Math.sin(h * Math.PI / 180) * sat * R;
+    x.beginPath(); x.arc(mx, my, 13, 0, Math.PI * 2);
+    x.lineWidth = 6; x.strokeStyle = '#121212'; x.stroke();
+    x.lineWidth = 3; x.strokeStyle = '#FFFFFF'; x.stroke();
+  }
+
+  wheelPick(e) {
+    const a = this.activeColor();
+    if (!a) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const dx = e.clientX - r.left - r.width / 2, dy = e.clientY - r.top - r.height / 2;
+    const h = ((Math.atan2(dy, dx) * 180 / Math.PI) + 360) % 360;
+    const sat = Math.min(1, Math.sqrt(dx * dx + dy * dy) / (r.width / 2));
+    let v = this.hexToHsv(a.cur)[2];
+    if (v < 0.05) v = 1;
+    const hex = this.hsvToHex(h, sat, v);
+    this._hsv = { hex, v3: [h, sat, v] };
+    this.setActive(hex);
+  }
+
+  // ---------- items & history ----------
+  wrap(v) { return Math.round((((v % 1) + 1) % 1) * 1000) / 1000; }
+
+  pushHistory(tag) {
+    const now = Date.now();
+    if (tag && tag === this._lastTag && now - this._lastT < 1000) { this._lastT = now; return; }
+    this._lastTag = tag; this._lastT = now;
+    this._history.push(JSON.stringify({ items: this.state.items, sel: this.state.sel }));
+    if (this._history.length > 60) this._history.shift();
+    this._future = [];
+  }
+
+  undo() {
+    const snap = this._history.pop();
+    if (!snap) return;
+    this._future = this._future || [];
+    this._future.push(JSON.stringify({ items: this.state.items, sel: this.state.sel }));
+    this._lastTag = null;
+    const v = JSON.parse(snap);
+    this.setState({ items: v.items, sel: v.sel });
+  }
+
+  redo() {
+    const snap = this._future && this._future.pop();
+    if (!snap) return;
+    this._history.push(JSON.stringify({ items: this.state.items, sel: this.state.sel }));
+    this._lastTag = null;
+    const v = JSON.parse(snap);
+    this.setState({ items: v.items, sel: v.sel });
+  }
+
+  addItem(motif) {
+    this.pushHistory();
+    const id = this._nextId++;
+    const n = this.state.items.length;
+    const off = n ? ((n % 5) - 2) * 0.06 : 0;
+    this.setState({ items: this.state.items.concat([{ id, motif, x: this.wrap(0.5 + off), y: this.wrap(0.5 + off), scale: 40, rot: 0, flip: false }]), sel: id });
+  }
+
+  updateSel(patch, tag) {
+    const sel = this.state.sel;
+    if (!this.state.items.some(i => i.id === sel)) return;
+    if (tag !== false) this.pushHistory(tag);
+    this.setState({ items: this.state.items.map(i => i.id === sel ? Object.assign({}, i, patch) : i) });
+  }
+
+  duplicate() {
+    const it = this.state.items.find(i => i.id === this.state.sel);
+    if (!it) return;
+    this.pushHistory();
+    const id = this._nextId++;
+    this.setState({ items: this.state.items.concat([Object.assign({}, it, { id, x: this.wrap(it.x + 0.08), y: this.wrap(it.y + 0.08) })]), sel: id });
+  }
+
+  remove() {
+    if (!this.state.items.some(i => i.id === this.state.sel)) return;
+    this.pushHistory();
+    this.setState({ items: this.state.items.filter(i => i.id !== this.state.sel), sel: null });
+  }
+
+  clearAll() {
+    if (!this.state.items.length) return;
+    this.pushHistory();
+    this.setState({ items: [], sel: null });
+  }
+
+  hitTest(u, v) {
+    const items = this.state.items;
+    for (let k = items.length - 1; k >= 0; k--) {
+      const it = items[k];
+      const [w, h] = this.dims(this.motifImg(it));
+      const f = (it.scale / 100) / Math.max(w, h);
+      const hw = w * f / 2 + 0.02, hh = h * f / 2 + 0.02;
+      const a = -it.rot * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+      for (const dx of [-1, 0, 1]) for (const dy of [-1, 0, 1]) {
+        const px = u + dx - it.x, py = v + dy - it.y;
+        const lx = px * ca - py * sa, ly = px * sa + py * ca;
+        if (Math.abs(lx) <= hw && Math.abs(ly) <= hh) return it;
+      }
+    }
+    return null;
+  }
+
+  // size of the selection frame, in canvas units for a tile drawn W wide
+  selBox(it, W) {
+    const [mw, mh] = this.dims(this.motifImg(it));
+    const f = (W * it.scale / 100) / Math.max(mw, mh);
+    return [mw * f + 24, mh * f + 24];
+  }
+
+  // is (u, v) on one of the selected motif's corner brackets? returns that copy's center (tile units)
+  hitHandle(u, v) {
+    const it = this.state.items.find(i => i.id === this.state.sel);
+    if (!it || !this._tile) return null;
+    const W = this._tile.width;
+    const [bw, bh] = this.selBox(it, W);
+    const a = -it.rot * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+    for (const dx of [-1, 0, 1]) for (const dy of [-1, 0, 1]) {
+      const cx = it.x + dx, cy = it.y + dy;
+      const px = (u - cx) * W, py = (v - cy) * W;
+      const lx = px * ca - py * sa, ly = px * sa + py * ca;
+      if (Math.hypot(lx, ly - (-bh / 2 - 52)) < 34) return { it, cx, cy, kind: 'rotate' };
+      for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+        if (Math.hypot(lx - sx * bw / 2, ly - sy * bh / 2) < 42) return { it, cx, cy, kind: 'resize' };
+      }
+    }
+    return null;
+  }
+
+  // ---------- drag ----------
+  startDrag(e) {
+    const r = e.currentTarget.getBoundingClientRect();
+    const u = (e.clientX - r.left) / r.width, v = (e.clientY - r.top) / r.height;
+    const h = this.hitHandle(u, v);
+    if (h) {
+      try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+      if (h.kind === 'rotate') {
+        this._drag = { mode: 'rotate', rect: r, cx: h.cx, cy: h.cy, a0: Math.atan2(v - h.cy, u - h.cx), r0: h.it.rot, pushed: false };
+        return;
+      }
+      const d0 = Math.max(0.01, Math.hypot(u - h.cx, v - h.cy));
+      this._drag = { mode: 'resize', rect: r, cx: h.cx, cy: h.cy, d0, s0: h.it.scale, pushed: false };
+      return;
+    }
+    const it = this.hitTest(u, v);
+    if (!it) { this._drag = null; this.setState({ sel: null }); return; }
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+    this._drag = { mode: 'move', x: e.clientX, y: e.clientY, w: r.width, h: r.height, ox: it.x, oy: it.y, pushed: false };
+    this.setState({ sel: it.id });
+  }
+
+  moveDrag(e) {
+    const d = this._drag;
+    if (!d) return;
+    if (!d.pushed) { this.pushHistory(); d.pushed = true; }
+    if (d.mode === 'rotate') {
+      const u = (e.clientX - d.rect.left) / d.rect.width, v = (e.clientY - d.rect.top) / d.rect.height;
+      let deg = d.r0 + (Math.atan2(v - d.cy, u - d.cx) - d.a0) * 180 / Math.PI;
+      deg = ((deg + 180) % 360 + 360) % 360 - 180;
+      const snap = Math.round(deg / 45) * 45;
+      if (Math.abs(deg - snap) < 4) deg = snap;
+      if (deg === 180) deg = -180;
+      this.updateSel({ rot: Math.round(deg) }, false);
+      return;
+    }
+    if (d.mode === 'resize') {
+      const u = (e.clientX - d.rect.left) / d.rect.width, v = (e.clientY - d.rect.top) / d.rect.height;
+      const k = Math.hypot(u - d.cx, v - d.cy) / d.d0;
+      this.updateSel({ scale: Math.round(Math.min(160, Math.max(5, d.s0 * k))) }, false);
+      return;
+    }
+    this.updateSel({ x: this.wrap(d.ox + (e.clientX - d.x) / d.w), y: this.wrap(d.oy + (e.clientY - d.y) / d.h) }, false);
+  }
+
+  pickerVals(open) {
+    const t = open ? this.pkTarget() : null;
+    const p = (t && this.pkHsva()) || { h: 0, s: 0, v: 0, a: 1 };
+    const mode = t && t.grad ? t.v.type : 'solid';
+    const view = this.state.pkView || 'solid';
+    const rgb = this.hsvToRgb(p.h, p.s, p.v), r = rgb[0], g = rgb[1], b = rgb[2];
+    const fmt = this.state.pkFmt || 'hex';
+    const text = t && t.str === 'none' ? 'none' : (fmt === 'hex' ? ('#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('')).toUpperCase() : r + ', ' + g + ', ' + b);
+    const draftOn = this.state.pkDraft != null && this.state.pkDraftKey === (t && t.key);
+    return {
+      pkModes: [['solid', 'Grid'], ['radial', 'Radial']].map(([id, label]) => ({
+        label, pressed: String(view === id),
+        bg: view === id ? '#FFFFFF' : 'transparent', fg: view === id ? '#121212' : '#6B6B73', weight: view === id ? '600' : '500',
+        shadow: view === id ? 'rgba(0,0,0,0.08) 0px 1px 3px 0px' : 'none',
+        pick: () => this.setState({ pkView: id })
+      })),
+      pkViewSolid: view !== 'radial', pkViewRadial: view === 'radial',
+      pkGrid: this.gridColors().map(hex => {
+        const on = t && typeof t.str === 'string' && t.str.toLowerCase() === hex.toLowerCase();
+        return {
+          hex, pressed: String(!!on),
+          ring: on ? '0 0 0 2px #FFFFFF, 0 0 0 4px #121212' : 'rgba(0,0,0,0.12) 0px 0px 0px 1px inset',
+          pick: () => {
+            const c = this.parseColor(hex), q = this.pkHsva();
+            const hsv = this.rgbToHsv(c.r, c.g, c.b);
+            this.applyHsva(hsv[1] === 0 ? (q ? q.h : 0) : hsv[0], hsv[1], hsv[2], q && q.a > 0 ? q.a : 1);
+          }
+        };
+      }),
+      wheel2Ref: this._wh2Ref,
+      pkBright: Math.round(p.v * 100),
+      pkBrightBg: (() => { const c = this.hsvToRgb(p.h, p.s, 1); return 'linear-gradient(to right, #000000, rgb(' + c[0] + ',' + c[1] + ',' + c[2] + '))'; })(),
+      onPkBright: (e) => { const q = this.pkHsva(); if (q) this.applyHsva(q.h, q.s, +e.target.value / 100, q.a === 0 ? 1 : q.a, 'bright'); },
+      onWhDown: (e) => { try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {} this._whDrag = true; this.wheel2Pick(e); },
+      onWhMove: (e) => { if (this._whDrag) this.wheel2Pick(e); },
+      onWhUp: () => { this._whDrag = false; this._lastTag = null; },
+      pkIsGrad: !!(t && t.grad), pkIsLinear: !!(t && t.grad && t.v.type === 'linear'),
+      pkGradCss: t && t.grad ? (t.v.type === 'radial' ? 'radial-gradient(circle, ' + this.paintCss(t.v.stops[0]) + ', ' + this.paintCss(t.v.stops[1]) + ')' : 'linear-gradient(to right, ' + this.paintCss(t.v.stops[0]) + ', ' + this.paintCss(t.v.stops[1]) + ')') : 'none',
+      pkStops: (t && t.grad ? [0, 1] : []).map(i => ({
+        label: i ? 'End' : 'Start', css: this.paintCss(t.v.stops[i]), pressed: String(t.stop === i),
+        bg: t.stop === i ? '#F1F1F4' : '#FFFFFF', ring: t.stop === i ? '0 0 0 2px #121212' : 'rgba(0,0,0,0.12) 0px 0px 0px 1px inset',
+        pick: () => this.setState({ pkStop: i, pkDraft: null })
+      })),
+      pkAngle: t && t.grad ? (t.v.angle || 0) : 90,
+      onPkAngle: (e) => {
+        const tt = this.pkTarget();
+        if (tt && tt.grad) this.updateSel({ colors: Object.assign({}, tt.act.it.colors || {}, { [tt.act.orig]: Object.assign({}, tt.v, { angle: +e.target.value }) }) }, 'angle');
+      },
+      pkHue: Math.round(p.h), pkAlpha: Math.round(p.a * 100),
+      pkAlphaBg: 'linear-gradient(to right, rgba(' + r + ',' + g + ',' + b + ',0), rgb(' + r + ',' + g + ',' + b + ')), repeating-conic-gradient(#CCCCCC 0% 25%, #FFFFFF 0% 50%) 50% / 10px 10px',
+      onPkHue: (e) => {
+        const q = this.pkHsva();
+        if (q) this.applyHsva(+e.target.value, q.v === 0 ? 1 : q.s, q.v === 0 ? 1 : q.v, q.a === 0 ? 1 : q.a, 'hue');
+      },
+      onPkAlpha: (e) => { const q = this.pkHsva(); if (q) this.applyHsva(q.h, q.s, q.v, +e.target.value / 100, 'alpha'); },
+      pkFmt: fmt,
+      onPkFmt: (e) => this.setState({ pkFmt: e.target.value, pkDraft: null }),
+      pkText: draftOn ? this.state.pkDraft : text,
+      onPkText: (e) => {
+        const val = e.target.value;
+        const tt = this.pkTarget();
+        this.setState({ pkDraft: val, pkDraftKey: tt && tt.key });
+        let c = null;
+        if (fmt === 'hex') { if (/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(val.trim())) c = this.parseColor(val.trim()); }
+        else c = this.parseColor('rgb(' + val + ')');
+        if (c) {
+          const q = this.pkHsva();
+          const hsv = this.rgbToHsv(c.r, c.g, c.b);
+          this.applyHsva(hsv[1] === 0 ? (q ? q.h : 0) : hsv[0], hsv[1], hsv[2], q && q.a > 0 ? q.a : 1);
+        }
+      },
+      onPkTextBlur: () => this.setState({ pkDraft: null }),
+      pkAlphaText: String(Math.round(p.a * 100)),
+      onPkAlphaText: (e) => {
+        const n = parseFloat(e.target.value);
+        const q = this.pkHsva();
+        if (q && !isNaN(n)) this.applyHsva(q.h, q.s, q.v, Math.max(0, Math.min(100, n)) / 100, 'alpha');
+      },
+      onPkNone: () => this.setPkString('none'),
+      noEyedrop: !(typeof window !== 'undefined' && window.EyeDropper),
+      onEyedrop: () => {
+        if (!window.EyeDropper) return;
+        try {
+          new window.EyeDropper().open().then(res => {
+            const c = this.parseColor(res.sRGBHex);
+            const q = this.pkHsva();
+            if (c) { const hsv = this.rgbToHsv(c.r, c.g, c.b); this.applyHsva(hsv[0], hsv[1], hsv[2], q && q.a > 0 ? q.a : 1); }
+          }).catch(() => {});
+        } catch (err) {}
+      },
+      onSvDown: (e) => { try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {} this._svDrag = true; this.svPick(e); },
+      onSvMove: (e) => { if (this._svDrag) this.svPick(e); },
+      onSvUp: () => { this._svDrag = false; this._lastTag = null; },
+      pkClose: () => this.setState({ colorOpenFor: null, bgPick: false })
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const LAYOUTS = [
+      ['grid', 'Grid', '#FFCD6C', 'Straight repeat — each tile sits directly beside the next.'],
+      ['halfdrop', 'Half-drop', '#FF58AE', 'Every other column drops by half a tile. A classic for florals and wallpaper.'],
+      ['brick', 'Brick', '#FF3E00', 'Every other row shifts across by half a tile, like brickwork.'],
+      ['mirror', 'Mirror', '#64C6FF', 'Each tile flips left to right, making a symmetrical repeat.'],
+      ['squaremirror', 'Square Mirror', '#9F4FFF', 'Tiles flip in both directions for four-way symmetry.'],
+      ['halfturn', 'Half-Turn', '#00C978', 'Every other tile is turned upside down. Lively without looking busy — lovely for leaves and abstract marks.'],
+      ['footsteps', 'Footsteps', '#FFCD6C', 'Each row is flipped and slid along by half a tile, like alternating footprints. Great for birds, leaves and anything with a direction.'],
+      ['pinwheel', 'Pinwheel', '#FF58AE', 'Four copies turn around a center point in quarter turns, like a spinning windmill. Great for curved leaves and petals.'],
+      ['tossed', 'Tossed', '#00CA48', 'Your motif is scattered at random angles. Press Shuffle for a new arrangement.'],
+      ['offsetmirror', 'Offset Mirror', '#64C6FF', 'A mirrored pair, repeated half a tile across and half a tile down, for a woven, diamond rhythm.'],
+      ['honeycomb', 'Honeycomb', '#9F4FFF', 'A wedge from the middle of your tile is mirrored six ways into a snowflake. The download is a tall rectangle (about 1 × 1.7).'],
+      ['kaleido', 'Kaleidoscope', '#0086FC', 'Your tile is folded along its diagonal and mirrored into an eight-way pattern.']
+    ];
+    const cur = LAYOUTS.find(l => l[0] === s.layout) || LAYOUTS[0];
+    const heroCur = LAYOUTS.find(l => l[0] === (s.heroLayout || 'grid')) || LAYOUTS[0];
+    const SW = [['#FFFFFF', 'White'], ['#F2F0ED', 'Stone'], ['#FFCD6C', 'Sun yellow'], ['#64C6FF', 'Sky blue'], ['#FF58AE', 'Coral pink'], ['#9F4FFF', 'Plum violet'], ['#00CA48', 'Mint'], ['#121212', 'Black'], ['transparent', 'Transparent']];
+    const zoomX = Math.round(s.zoom / 480 * 100);
+    const P = this.props || {};
+    const sky = false;
+    const ink = sky ? '#0F1015' : (P.ink ?? '#121212');
+    const SKYDOT = { '#FFCD6C': '#FF6105', '#FF58AE': '#E950F7', '#FF3E00': '#FF3D4D', '#64C6FF': '#00C4CC', '#9F4FFF': '#8B3DFF', '#00C978': '#00B100', '#00CA48': '#007D26', '#0086FC': '#7D2AE8' };
+    const dotc = (c) => sky ? (SKYDOT[c] || c) : c;
+    const SWL = sky ? [['#FFFFFF', 'White'], ['#F3EEFF', 'Lilac mist'], ['#D7D9DE', 'Pale mist'], ['#00C4CC', 'Teal'], ['#7D2AE8', 'Violet'], ['#E950F7', 'Plasma pink'], ['#FF3D4D', 'Ember red'], ['#FF6105', 'Solar orange']] : SW;
+    const FONTS = { 'Bricolage Grotesque': "'Bricolage Grotesque', 'Inter', sans-serif", 'Fraunces': "'Fraunces', Georgia, serif", 'Instrument Serif': "'Instrument Serif', Georgia, serif" };
+    const selItem = s.items.find(i => i.id === s.sel);
+    const act = this.activeColor();
+    const colorOpen = !s.bgPick && s.sel != null && s.colorOpenFor === s.sel;
+    return {
+      accent: P.accent ?? '#FF58AE', ink, pageBg: P.pageBg ?? '#FBFAF9',
+      radius: P.cornerRadius ?? 10, showArt: P.showHeaderArt ?? true,
+      headFont: FONTS[P.headingFont] || FONTS['Bricolage Grotesque'],
+      t: sky ? {
+        card: '#FFFFFF', shadow: 'rgba(64,79,109,0.06) 0px 0px 0px 0.5px, rgba(24,44,89,0.137) 0px 2px 4px 0px, rgba(24,44,89,0.07) 0px 6px 12px 0px',
+        radius: 8, stone: '#F3EEFF', sand: '#EEF0F4', chip: '8px', page: '#FFFFFF',
+        headFont: "'Plus Jakarta Sans', sans-serif", headWeight: 400, bodyFont: "'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif",
+        heroInk: '#FFFFFF', heroAccent: '#FFD9F8', heroSub: 'rgba(255,255,255,0.88)',
+        heroBg: 'linear-gradient(135deg, #00C4CC 0%, #7D2AE8 100%)', heroPad: '48px', heroGap: '32px', heroRadius: 16,
+        exportBg: 'linear-gradient(120deg, #5B1FC4 0%, #8B3DFF 55%, #E950F7 100%)',
+        ink1: '#0F1015', ink2: '#0F1015', muted: '#575A5F', c1: '#FF6105', c2: '#E950F7', c3: '#8B3DFF', line: '#D7D9DE', onDark: 'rgba(255,255,255,0.88)'
+      } : {
+        card: '#FFFFFF', shadow: 'rgba(0,0,0,0.04) 0px 0px 0px 1px inset, rgba(0,0,0,0.04) 0px 1px 6px 0px',
+        radius: P.cornerRadius ?? 10, stone: '#F2F0ED', sand: (sky ? '#EEF0F4' : '#F6F4EF'), chip: '9999px', page: P.pageBg ?? '#FBFAF9',
+        headFont: FONTS[P.headingFont] || FONTS['Bricolage Grotesque'], headWeight: 500, bodyFont: "'Inter', ui-sans-serif, system-ui, sans-serif",
+        heroInk: '#121212', heroAccent: P.accent ?? '#FF58AE', heroSub: '#474645',
+        heroBg: 'transparent', heroPad: '0 0 32px 0', heroGap: '0px', heroRadius: 0,
+        exportBg: ink,
+        ink1: '#121212', ink2: '#343433', muted: '#474645', c1: '#FFCD6C', c2: '#FF58AE', c3: '#64C6FF', line: '#E5D5C3', onDark: '#E7E5E2'
+      },
+      layouts: LAYOUTS.map(([id, label, color]) => ({
+        label, pressed: String(s.layout === id), dot: dotc(color),
+        bg: s.layout === id ? ink : (sky ? '#EEF0F4' : '#F6F4EF'),
+        fg: s.layout === id ? '#FFFFFF' : ink,
+        ring: s.layout === id ? '#FFFFFF' : '#343433',
+        pick: () => this.setState({ layout: id })
+      })),
+      heroFill: 'url(#sdi-pat-' + heroCur[0] + ')', heroLabel: heroCur[1] + ' repeat',
+      onHeroNext: () => {
+        const i = LAYOUTS.findIndex(l => l[0] === (this.state.heroLayout || 'grid'));
+        this.setState({ heroLayout: LAYOUTS[(i + 1) % LAYOUTS.length][0] });
+      },
+      heroNextLabel: 'Show the next repeat style. Now showing ' + heroCur[1],
+      layoutHint: cur[3], layoutName: cur[1], layoutDot: dotc(cur[2]),
+      motifs: [['daisy', 'Daisy'], ['sprig', 'Sprig'], ['lemon', 'Lemon']].map(([id, label]) => ({
+        label, pick: () => this.addItem(id)
+      })),
+      fileLabel: s.fileName || 'No file selected',
+      error: s.error, status: s.status,
+      onFile: (e) => this.handleFile(e),
+      scale: selItem ? selItem.scale : 50, rotation: selItem ? selItem.rot : 0,
+      scaleLabel: selItem ? selItem.scale + '%' : '—', rotLabel: selItem ? selItem.rot + '°' : '—',
+      noSel: !selItem, noItems: !s.items.length, noUndo: !this._history.length,
+      zoom: s.zoom, tossCount: s.tossCount,
+      zoomLabel: zoomX + '%',
+      isTossed: s.layout === 'tossed',
+      onScale: (e) => this.updateSel({ scale: +e.target.value }, 'scale'),
+      onRotation: (e) => this.updateSel({ rot: +e.target.value }, 'rot'),
+      onZoom: (e) => this.setState({ zoom: +e.target.value }),
+      onCount: (e) => this.setState({ tossCount: +e.target.value }),
+      onCenter: () => this.updateSel({ x: 0.5, y: 0.5 }),
+      onShuffle: () => this.setState({ seed: Math.floor(Math.random() * 1e9) }),
+      onReset: () => { this._history = []; this._future = []; this.setState(this.defaults()); },
+      onUndo: () => this.undo(),
+      onRedo: () => this.redo(),
+      noRedo: !(this._future && this._future.length),
+      onDuplicate: () => this.duplicate(),
+      onDelete: () => this.remove(),
+      onFlip: () => { const it = this.state.items.find(i => i.id === this.state.sel); if (it) this.updateSel({ flip: !it.flip }); },
+      onRuler: () => this.setState({ ruler: !s.ruler }),
+      onClear: () => this.clearAll(),
+      isVector: !!(selItem && this.colorsFor(selItem.motif).length),
+      svgColors: (selItem ? this.colorsFor(selItem.motif) : []).map((orig, i) => {
+        const cur = (selItem.colors && selItem.colors[orig]) || orig;
+        const on = act && act.orig === orig;
+        return {
+          cur, css: this.paintCss(cur), label: 'Color ' + (i + 1),
+          pressed: String(!!on && colorOpen), weight: on ? '700' : '500',
+          ring: on && colorOpen ? '0 0 0 3px #F2F0ED, 0 0 0 5px #121212' : '0 0 0 1.5px #343433',
+          pick: () => {
+            const isOpen = this.state.colorOpenFor === this.state.sel && act && act.orig === orig;
+            this.setState({ recolorKey: orig, pkStop: 0, pkDraft: null, bgPick: false, colorOpenFor: isOpen ? null : this.state.sel });
+          }
+        };
+      }),
+      wheelRef: this._wheelRef,
+      svRef: this._svRef,
+      ...this.pickerVals(colorOpen || !!s.bgPick),
+      colorOpen,
+      onResetColors: () => this.updateSel({ colors: {} }),
+      lbOpen: !!s.lightbox,
+      lbTitle: s.lightbox ? ({ cushion: 'Cushion', mug: 'Mug', tote: 'Tote bag', notebook: 'Notebook', tshirt: 'T-shirt', fabric: 'Fabric' })[s.lightbox] + ' mock-up' : '',
+      lbRef: this._lbRef,
+      lbClose: () => this.setState({ lightbox: null }),
+      lbStop: (e) => e.stopPropagation(),
+      lbKey: (e) => { if (e.key === 'Escape') this.setState({ lightbox: null }); },
+      lbSave: () => { if (this._lb) this.save(this._lb, 'mockup-' + s.lightbox + '-large-' + s.layout + '.png'); },
+      mockScale: s.mockScale, mockScaleLabel: Math.round(s.mockScale / 120 * 100) + '%',
+      onMockScale: (e) => this.setState({ mockScale: +e.target.value }),
+      backdrops: [['smart', 'Smart'], ['white', 'White'], ['stone', 'Stone']].map(([id, label]) => ({
+        label, pressed: String(s.backdrop === id),
+        bg: s.backdrop === id ? ink : (sky ? '#EEF0F4' : '#F6F4EF'), fg: s.backdrop === id ? '#FFFFFF' : ink,
+        pick: () => this.setState({ backdrop: id })
+      })),
+      mockups: [['cushion', 'Cushion'], ['mug', 'Mug'], ['tote', 'Tote bag'], ['notebook', 'Notebook'], ['tshirt', 'T-shirt'], ['fabric', 'Fabric']].map(([id, label]) => ({
+        label, ref: this._mockRefs[id], alt: label + ' mock-up showing your pattern',
+        save: () => this.saveMock(id, label),
+        zoom: () => this.setState({ lightbox: id })
+      })),
+      rulerPressed: String(s.ruler), rulerBg: s.ruler ? ink : '#FFFFFF', rulerFg: s.ruler ? '#FFFFFF' : ink,
+      swatches: SWL.map(([hex, name]) => {
+        const on = s.bg.toLowerCase() === hex.toLowerCase();
+        return {
+          hex, name, css: this.paintCss(hex === 'transparent' ? 'none' : hex), pressed: String(on),
+          ring: on ? '0 0 0 3px #FFFFFF, 0 0 0 5px #121212' : 'rgba(0,0,0,0.08) 0px 0px 0px 1px inset',
+          pick: () => this.setState({ bg: hex })
+        };
+      }),
+      bg: s.bg === 'transparent' ? '#FFFFFF' : s.bg, bgUpper: s.bg === 'transparent' ? 'Transparent' : s.bg.toUpperCase(),
+      onBg: (e) => this.setState({ bg: e.target.value }),
+      bgPickOpen: !!s.bgPick, bgPickExpanded: String(!!s.bgPick),
+      bgCss: this.paintCss(s.bg === 'transparent' ? 'none' : s.bg),
+      onBgCustom: () => this.setState({ bgPick: !this.state.bgPick, colorOpenFor: null, pkDraft: null }),
+      tileRef: this._tileRef, previewRef: this._previewRef,
+      onPrevDown: (e) => {
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+        e.currentTarget.style.cursor = 'grabbing';
+        this._panDrag = { p: this.prevPoint(e), x: this._pan.x, y: this._pan.y };
+      },
+      onPrevMove: (e) => {
+        const d = this._panDrag;
+        if (!d) return;
+        const p = this.prevPoint(e);
+        this._pan.x = d.x + (p.x - d.p.x); this._pan.y = d.y + (p.y - d.p.y);
+        this.drawPreview();
+      },
+      onPrevUp: (e) => { this._panDrag = null; if (e && e.currentTarget) e.currentTarget.style.cursor = 'grab'; },
+      onPrevReset: () => { this._pan = { x: 0, y: 0 }; this.setState({ zoom: 200 }); this.drawPreview(); },
+      tileNote: s.layout === 'tossed'
+        ? 'Tossed scatters your motif for you — size and rotation still apply.'
+        : 'Click a motif to select it, then drag to move it, drag a white corner to resize it, or drag the round handle on top to rotate it. Anything that crosses an edge comes back on the opposite side, so the repeat stays seamless.',
+      onDown: (e) => this.startDrag(e),
+      onMove: (e) => this.moveDrag(e),
+      onUp: () => { this._drag = null; this._lastTag = null; },
+      sizes: [1000, 1500, 2000].map(n => ({
+        label: n + ' px', pressed: String(s.exportSize === n),
+        bg: s.exportSize === n ? '#FFFFFF' : '#343433', fg: s.exportSize === n ? ink : '#FFFFFF',
+        pick: () => this.setState({ exportSize: n })
+      })),
+      formats: [['png', 'PNG'], ['svg', 'Vector']].map(([id, label]) => ({
+        label, pressed: String(s.exportFormat === id),
+        bg: s.exportFormat === id ? '#FFFFFF' : 'rgba(255,255,255,0.16)', fg: s.exportFormat === id ? ink : '#FFFFFF',
+        pick: () => this.setState({ exportFormat: id })
+      })),
+      tileBtnLabel: s.exportFormat === 'svg' ? 'Download repeat tile (SVG)' : 'Download repeat tile',
+      svgNote: s.exportFormat === 'svg'
+        ? 'SVGs are vector files and stay sharp at any size, and open in Illustrator, Affinity, Inkscape and Canva.' + (s.items.some(i => i.motif && i.motif.indexOf('up') === 0 && !this._svgSrc[i.motif]) ? ' Photos and PNG/JPG images stay as pictures inside the file.' : '')
+        : '',
+      onExportTile: () => this.exportTile(),
+      onExportPreview: () => this.exportPreview()
+    };
+  }
+}
+</script>
+</body>
+</html>
