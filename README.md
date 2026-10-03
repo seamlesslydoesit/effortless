@@ -12,7 +12,7 @@ A copy is kept in the `design/` folder:
 - `design/Main.dc.html` is the "Pattern maker" page
 - `design/canvas.json` is the canvas layout
 
-These copies are a snapshot from 3 October 2026. If the design changes in
+These copies are a snapshot from 3 October 2026 (after the tap-size, font and text-size fixes). If the design changes in
 Claude Design, refresh this copy so the two stay in step.
 
 ### Look and feel (from the design)
