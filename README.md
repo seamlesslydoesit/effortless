@@ -22,5 +22,5 @@ Claude Design, refresh this copy so the two stay in step.
 - Accent: pink `#FF58AE` (other options: `#FF3E00`, `#9F4FFF`, `#0086FC`)
 - Links: blue `#0086FC`
 - Heading font: Bricolage Grotesque (other options: Fraunces, Instrument Serif)
-- Body font: Plus Jakarta Sans
+- Body font: Inter (an alternate "sky" look uses Plus Jakarta Sans throughout)
 - Rounded corners: 10px
