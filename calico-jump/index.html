@@ -1,0 +1,632 @@
+<title>Calico on the Wall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Figtree:wght@400;600&display=swap">
+<style>
+/* Layout: one dusk-lit stage with its controls, then the jump broken into the seven moves a cat makes */
+:root {
+  --night: #171a2b;
+  --panel: #22263b;
+  --panel-on: #2d2a3c;
+  --cream: #f3e9dc;
+  --muted: #aaa7ba;
+  --calico: #e8893a;
+  --line: #363b57;
+  --display: "Gloock", Georgia, "Times New Roman", serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+html { background: var(--night); }
+body {
+  background: var(--night);
+  color: var(--cream);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-inline: 16px;
+}
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-block: 28px 48px;
+  display: grid;
+  gap: 20px;
+}
+header { display: grid; gap: 8px; }
+h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.1rem, 5.5vw, 3.4rem);
+  line-height: 1.05;
+  margin: 0;
+  text-wrap: balance;
+}
+h1 em { font-style: normal; color: var(--calico); }
+header p { margin: 0; color: var(--muted); max-width: 62ch; }
+.stage {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  max-width: 100%;
+}
+canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+button {
+  font: 600 15px/1 var(--body);
+  color: var(--night);
+  background: var(--calico);
+  border: 1px solid var(--calico);
+  border-radius: 999px;
+  padding: 11px 18px;
+  cursor: pointer;
+}
+button.ghost { background: transparent; color: var(--cream); border-color: var(--line); }
+button.ghost[aria-pressed="true"] { background: var(--cream); color: var(--night); border-color: var(--cream); }
+button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cream); outline-offset: 2px; }
+.fact { margin-left: auto; color: var(--muted); font-size: 14px; }
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+.steps li { min-width: 0; display: flex; }
+.steps button {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid transparent;
+  transition: border-color .2s, background-color .2s;
+}
+.steps button:hover { border-color: var(--line); }
+.steps .num { font-family: var(--display); color: var(--calico); font-size: 1.5rem; line-height: 1.1; grid-row: span 2; }
+.steps b { font-weight: 600; color: var(--cream); }
+.steps span.txt { color: var(--muted); font-size: 14px; line-height: 1.45; }
+.steps li.on button { border-color: var(--calico); background: var(--panel-on); }
+@media (max-width: 520px) { .fact { margin-left: 0; width: 100%; } }
+</style>
+
+<main>
+  <header>
+    <h1>How a <em>calico</em> gets onto a high wall</h1>
+    <p>Watch her measure the wall, coil, leap, catch the edge and scramble over. Tap any step below to jump straight to that moment.</p>
+  </header>
+
+  <div class="stage">
+    <canvas id="scene" width="960" height="540" aria-label="Animation of a calico cat walking up to a brick wall, crouching, leaping, grabbing the top edge, pulling herself up and sitting down on top."></canvas>
+  </div>
+
+  <div class="controls">
+    <button id="play" type="button">Pause</button>
+    <button id="replay" class="ghost" type="button">Start over</button>
+    <button id="slow" class="ghost" type="button" aria-pressed="false">Slow motion</button>
+    <span class="fact">A cat can leap about five times her own height.</span>
+  </div>
+
+  <ol class="steps" id="steps">
+    <li><button type="button" data-step="0"><span class="num">1</span><b>Walk up</b><span class="txt">She stops a couple of body lengths away and looks up at the top.</span></button></li>
+    <li><button type="button" data-step="1"><span class="num">2</span><b>Crouch and wiggle</b><span class="txt">Back legs fold like springs. The little bottom wiggle sets her feet.</span></button></li>
+    <li><button type="button" data-step="2"><span class="num">3</span><b>Leap</b><span class="txt">Back legs push off hard. She aims so the top of the jump meets the edge.</span></button></li>
+    <li><button type="button" data-step="3"><span class="num">4</span><b>Grab the edge</b><span class="txt">Front paws hook over the top, claws out.</span></button></li>
+    <li><button type="button" data-step="4"><span class="num">5</span><b>Scramble</b><span class="txt">Back legs pedal against the bricks to push her higher.</span></button></li>
+    <li><button type="button" data-step="5"><span class="num">6</span><b>Pull over</b><span class="txt">Elbows bend, and she hauls herself up onto the top.</span></button></li>
+    <li><button type="button" data-step="6"><span class="num">7</span><b>Settle in</b><span class="txt">A few proud steps, then she sits and wraps her tail around her paws.</span></button></li>
+  </ol>
+</main>
+
+<script>
+(() => {
+  const cv = document.getElementById('scene');
+  const ctx = cv.getContext('2d');
+  const W = 960, H = 540;
+  const GROUND = 452;       // garden level
+  const WALL_X = 560;       // front face of the wall
+  const WALL_TOP = 172;     // top of the coping stones
+
+  const C = {
+    fur: '#f7f2ea', shade: '#cfc5b8', orange: '#d97a30', black: '#2a2422',
+    ink: '#1d1918', pink: '#e79a9a', eye: '#a4c64a'
+  };
+
+  // ---------- canvas sizing ----------
+  function resize() {
+    const w = cv.getBoundingClientRect().width || W;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(w * 9 / 16 * dpr);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ---------- helpers ----------
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, u) => a + (b - a) * u;
+  const ease = u => u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+  const mix = (A, B, u) => { const o = {}; for (const k in A) o[k] = lerp(A[k], B[k], u); return o; };
+  function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+
+  // ---------- cat poses ----------
+  // rot: body tilt (negative = nose up). fa/fk, ba/bk: front/back leg angle and joint bend.
+  // hd: head tilt. ta/tc: tail angle and curl. sw*/ph: walking swing.
+  const base = { x: 0, y: 0, rot: 0, st: 1, fa: 0, fk: 0, ba: 0, bk: .45, hd: 0, ta: .5, tc: .6, swF: 0, swB: 0, ph: 0 };
+  const P_STAND  = { ...base };
+  const P_CROUCH = { ...base, rot: .07, st: .95, fa: -.5, fk: -.6, ba: .2, bk: 1.0, hd: -.3, ta: .05, tc: .15 };
+  const P_LEAP   = { ...base, rot: -.7, st: 1.2, fa: 1.4, fk: .1, ba: -1.3, bk: .05, hd: .35, ta: -.25, tc: .1 };
+  const P_HANG   = { ...base, rot: -1.25, st: 1.1, fa: 1.25, fk: .65, ba: .1, bk: .6, hd: .95, ta: .9, tc: -1.0 };
+  const P_CLIMB  = { ...base, rot: -.95, st: 1.05, fa: 0, fk: -.6, ba: -.2, bk: .7, hd: .7, ta: .6, tc: -.6 };
+  const P_SIT    = { ...base, rot: -.5, st: .9, fa: -.5, fk: 0, ba: 1.0, bk: .8, hd: .4, ta: -.3, tc: -2.4 };
+
+  function legPts(ax, ay, a, k, l1, l2) {
+    const kx = ax + l1 * Math.sin(a + k), ky = ay + l1 * Math.cos(a + k);
+    return [ax, ay, kx, ky, kx + l2 * Math.sin(a - k), ky + l2 * Math.cos(a - k)];
+  }
+  function geom(p) {
+    const L = 45 * p.st, s = Math.sin(p.ph), c = Math.cos(p.ph);
+    const liftF = p.swF / .45, liftB = p.swB / .45;
+    return {
+      L,
+      fN: legPts(L * .6, 8, p.fa + p.swF * s, p.fk - .7 * liftF * Math.max(0, c), 18, 18),
+      fF: legPts(L * .6 - 7, 8, p.fa - p.swF * s, p.fk - .7 * liftF * Math.max(0, -c), 18, 18),
+      bN: legPts(-L * .6, 6, p.ba - p.swB * s, p.bk + .5 * liftB * Math.max(0, -c), 20, 20),
+      bF: legPts(-L * .6 + 7, 6, p.ba + p.swB * s, p.bk + .5 * liftB * Math.max(0, c), 20, 20)
+    };
+  }
+  function toWorld(p, lx, ly) {
+    const c = Math.cos(p.rot), s = Math.sin(p.rot);
+    return [p.x + lx * c - ly * s, p.y + lx * s + ly * c];
+  }
+  // Put the lowest paw (or the sitting haunch) on the given surface.
+  function solve(p, level) {
+    p.y = 0;
+    const g = geom(p);
+    let m = -1e9;
+    for (const l of [g.fN, g.fF, g.bN, g.bF]) m = Math.max(m, toWorld(p, l[4], l[5])[1] + 4);
+    m = Math.max(m, toWorld(p, -g.L * .56, 17)[1]);
+    p.y = level - m;
+    return p;
+  }
+  // Place the cat so her near front paw lands on a point.
+  function placeByPaw(p, tx, ty) {
+    p.x = 0; p.y = 0;
+    const g = geom(p);
+    const w = toWorld(p, g.fN[4], g.fN[5]);
+    p.x = tx - w[0]; p.y = ty - 4 - w[1];
+    return p;
+  }
+
+  const X_CROUCH = 392, X_TOP = 614, X_SIT = 690;
+  const crouchP = solve({ ...P_CROUCH, x: X_CROUCH }, GROUND);
+  const hangP   = placeByPaw({ ...P_HANG }, 572, WALL_TOP);
+  const climbP  = placeByPaw({ ...P_CLIMB }, 606, WALL_TOP);
+  const topP    = solve({ ...P_STAND, x: X_TOP }, WALL_TOP);
+
+  // ---------- timeline ----------
+  const T = { walk: 2.4, crouch: 3.6, leap: 4.25, grab: 4.6, scramble: 5.45, pull: 6.15, stroll: 7.05, sit: 7.75, end: 11.5 };
+  const STEP_STARTS = [0, T.walk, T.crouch, T.leap, T.grab, T.scramble, T.pull];
+
+  function poseAt(t) {
+    let p, u;
+    if (t < T.walk) {
+      u = t / T.walk;
+      const x = lerp(-110, X_CROUCH, u * (1.25 - .25 * u));
+      const amp = .45 * clamp((1 - u) * 5, 0, 1);
+      p = solve({ ...P_STAND, x, swF: amp, swB: amp, ph: x / 11 }, GROUND);
+    } else if (t < T.crouch) {
+      u = (t - T.walk) / (T.crouch - T.walk);
+      p = mix({ ...P_STAND, x: X_CROUCH }, crouchP, ease(clamp(u / .45, 0, 1)));
+      if (u > .5) {
+        const w = Math.sin((u - .5) / .5 * Math.PI);
+        p.rot += .035 * Math.sin(t * 34) * w;
+        p.tc += .5 * Math.sin(t * 14) * w;
+      }
+      solve(p, GROUND);
+    } else if (t < T.leap) {
+      u = (t - T.crouch) / (T.leap - T.crouch);
+      const L1 = { ...P_LEAP, x: 0, y: 0 };
+      p = u < .3 ? mix(crouchP, L1, ease(u / .3)) : mix(L1, hangP, ease((u - .3) / .7));
+      // steady forward speed, rising fast then slowing: she arrives at the top of her arc
+      p.x = lerp(crouchP.x, hangP.x, u);
+      p.y = crouchP.y + (hangP.y - crouchP.y) * (1 - (1 - u) * (1 - u));
+    } else if (t < T.grab) {
+      u = (t - T.leap) / (T.grab - T.leap);
+      p = { ...hangP };
+      p.y += 5 * Math.sin(u * Math.PI);
+    } else if (t < T.scramble) {
+      u = (t - T.grab) / (T.scramble - T.grab);
+      p = mix(hangP, climbP, ease(u));
+      p.swB = .85 * Math.sin(u * Math.PI);
+      p.ph = t * 24;
+    } else if (t < T.pull) {
+      u = (t - T.scramble) / (T.pull - T.scramble);
+      p = mix(climbP, topP, ease(u));
+      p.y -= 12 * Math.sin(u * Math.PI);
+    } else if (t < T.stroll) {
+      u = (t - T.pull) / (T.stroll - T.pull);
+      const x = lerp(X_TOP, X_SIT, u * (1.25 - .25 * u));
+      const amp = .4 * clamp(u * 6, 0, 1) * clamp((1 - u) * 5, 0, 1);
+      p = solve({ ...P_STAND, x, swF: amp, swB: amp, ph: (x - X_TOP) / 11 }, WALL_TOP);
+    } else if (t < T.sit) {
+      u = (t - T.stroll) / (T.sit - T.stroll);
+      p = solve(mix({ ...P_STAND, x: X_SIT }, { ...P_SIT, x: X_SIT }, ease(u)), WALL_TOP);
+    } else {
+      const r = t - T.sit;
+      p = { ...P_SIT, x: X_SIT };
+      p.tc += .22 * Math.sin(r * 2.2);
+      p.hd += .1 * Math.sin(r * .9);
+      solve(p, WALL_TOP);
+    }
+    return p;
+  }
+
+  function stepAt(t) {
+    let s = 0;
+    for (let i = 0; i < STEP_STARTS.length; i++) if (t >= STEP_STARTS[i]) s = i;
+    return s;
+  }
+
+  // ---------- scenery ----------
+  const rand = rng(7);
+  const stars = Array.from({ length: 70 }, () => [rand() * W, rand() * 260, rand() * 1.3 + .3, rand() * 6]);
+  const roofs = [];
+  for (let x = -20; x < W; ) {
+    const w = 60 + rand() * 90, h = 50 + rand() * 80;
+    roofs.push([x, w, h, rand() < .5]);
+    x += w - 4;
+  }
+  const brickTint = Array.from({ length: 400 }, () => rand());
+  const grass = Array.from({ length: 140 }, () => [rand() * W, rand() * 10 + 6, rand() * .6 - .3]);
+
+  function drawScene(clock) {
+    const sky = ctx.createLinearGradient(0, 0, 0, GROUND);
+    sky.addColorStop(0, '#1b2042');
+    sky.addColorStop(.55, '#4f4470');
+    sky.addColorStop(1, '#e49a72');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, GROUND);
+
+    for (const [x, y, r, ph] of stars) {
+      ctx.globalAlpha = (.35 + .35 * Math.sin(clock * 1.3 + ph)) * (1 - y / 300);
+      ctx.fillStyle = '#fff6e0';
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // moon
+    const glow = ctx.createRadialGradient(170, 95, 10, 170, 95, 90);
+    glow.addColorStop(0, 'rgba(255,240,205,.35)');
+    glow.addColorStop(1, 'rgba(255,240,205,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(80, 5, 180, 180);
+    ctx.fillStyle = '#f6ecd3';
+    ctx.beginPath(); ctx.arc(170, 95, 26, 0, 7); ctx.fill();
+
+    // distant rooftops
+    ctx.fillStyle = '#2c2a49';
+    for (const [x, w, h, peak] of roofs) {
+      const top = GROUND - 40 - h;
+      ctx.beginPath();
+      ctx.moveTo(x, GROUND);
+      ctx.lineTo(x, top);
+      if (peak) ctx.lineTo(x + w / 2, top - 26);
+      ctx.lineTo(x + w, top);
+      ctx.lineTo(x + w, GROUND);
+      ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(255,205,130,.55)';
+    for (let i = 0; i < roofs.length; i += 2) {
+      const [x, w, h] = roofs[i];
+      ctx.fillRect(x + w * .3, GROUND - 40 - h + 22, 8, 10);
+    }
+
+    // garden
+    ctx.fillStyle = '#2d4433';
+    ctx.fillRect(0, GROUND, W, H - GROUND);
+    ctx.fillStyle = '#3a5a40';
+    ctx.fillRect(0, GROUND, W, 6);
+    ctx.strokeStyle = '#4c7350';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    for (const [x, h, lean] of grass) {
+      if (x > WALL_X) continue;
+      ctx.beginPath(); ctx.moveTo(x, GROUND + 4); ctx.lineTo(x + lean * h, GROUND + 4 - h); ctx.stroke();
+    }
+
+    // wall
+    const BR_H = 22, BR_W = 54, wallTopBricks = WALL_TOP + 16;
+    ctx.fillStyle = '#7a3a2b';
+    ctx.fillRect(WALL_X, wallTopBricks, W - WALL_X, GROUND - wallTopBricks);
+    let n = 0;
+    for (let y = wallTopBricks, row = 0; y < GROUND; y += BR_H, row++) {
+      for (let x = WALL_X - (row % 2 ? BR_W / 2 : 0); x < W; x += BR_W) {
+        const tint = brickTint[n++ % brickTint.length];
+        const x0 = Math.max(WALL_X, x + 2), x1 = x + BR_W - 2;
+        if (x1 <= x0) continue;
+        ctx.fillStyle = `hsl(${10 + tint * 8}, ${42 + tint * 12}%, ${34 + tint * 9}%)`;
+        ctx.fillRect(x0, y + 2, x1 - x0, Math.min(BR_H - 4, GROUND - y - 2));
+      }
+    }
+    const faceShade = ctx.createLinearGradient(WALL_X, 0, WALL_X + 70, 0);
+    faceShade.addColorStop(0, 'rgba(20,10,30,.45)');
+    faceShade.addColorStop(1, 'rgba(20,10,30,0)');
+    ctx.fillStyle = faceShade;
+    ctx.fillRect(WALL_X, wallTopBricks, 70, GROUND - wallTopBricks);
+    // coping stones
+    ctx.fillStyle = '#b3a797';
+    ctx.fillRect(WALL_X - 8, WALL_TOP, W - WALL_X + 8, 16);
+    ctx.fillStyle = '#d6cbbb';
+    ctx.fillRect(WALL_X - 8, WALL_TOP, W - WALL_X + 8, 3);
+    ctx.fillStyle = 'rgba(0,0,0,.25)';
+    ctx.fillRect(WALL_X - 8, WALL_TOP + 16, W - WALL_X + 8, 3);
+    for (let x = WALL_X + 70; x < W; x += 90) ctx.fillRect(x, WALL_TOP + 3, 2, 13);
+
+    // height marker
+    const mx = WALL_X - 34;
+    ctx.strokeStyle = 'rgba(243,233,220,.55)';
+    ctx.fillStyle = 'rgba(243,233,220,.8)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath(); ctx.moveTo(mx, WALL_TOP); ctx.lineTo(mx, GROUND); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(mx - 6, WALL_TOP); ctx.lineTo(mx + 6, WALL_TOP);
+    ctx.moveTo(mx - 6, GROUND); ctx.lineTo(mx + 6, GROUND);
+    ctx.stroke();
+    ctx.save();
+    ctx.translate(mx - 10, (WALL_TOP + GROUND) / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.font = '600 15px Figtree, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('1.4 m', 0, 0);
+    ctx.restore();
+  }
+
+  // ---------- the cat ----------
+  function drawLeg(l, col) {
+    ctx.beginPath();
+    ctx.moveTo(l[0], l[1]); ctx.lineTo(l[2], l[3]); ctx.lineTo(l[4], l[5]);
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 12; ctx.stroke();
+    ctx.strokeStyle = col; ctx.lineWidth = 9; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(l[4] + 1.5, l[5], 6, 4.5, 0, 0, 7);
+    ctx.fillStyle = col; ctx.fill();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6; ctx.stroke();
+  }
+
+  function drawTail(p, L) {
+    const d = th => [-Math.cos(th), -Math.sin(th)];
+    const [x0, y0] = [-L + 5, -6];
+    const d1 = d(p.ta), d2 = d(p.ta + p.tc);
+    const c1 = [x0 + 24 * d1[0], y0 + 24 * d1[1]];
+    const c2 = [c1[0] + 22 * d2[0], c1[1] + 22 * d2[1]];
+    const e = [c2[0] + 12 * d2[0], c2[1] + 12 * d2[1]];
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], e[0], e[1]);
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 11; ctx.stroke();
+    ctx.strokeStyle = C.orange; ctx.lineWidth = 8; ctx.stroke();
+    ctx.setLineDash([7, 9]);
+    ctx.strokeStyle = C.black; ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawHead(p, blink) {
+    ctx.save();
+    ctx.rotate(p.hd);
+    // ears
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = C.ink;
+    ctx.fillStyle = C.black;
+    ctx.beginPath(); ctx.moveTo(-13, -6); ctx.lineTo(-10, -28); ctx.lineTo(1, -14); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.orange;
+    ctx.beginPath(); ctx.moveTo(-1, -15); ctx.lineTo(8, -30); ctx.lineTo(14, -8); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.pink;
+    ctx.beginPath(); ctx.moveTo(3, -15); ctx.lineTo(8, -25); ctx.lineTo(11, -11); ctx.closePath(); ctx.fill();
+
+    // head + muzzle as one outlined shape
+    const shape = () => {
+      ctx.beginPath(); ctx.arc(0, 0, 16, 0, 7);
+      ctx.moveTo(22, 5); ctx.ellipse(13, 5, 9, 6.5, 0, 0, 7);
+    };
+    shape(); ctx.lineWidth = 3.6; ctx.stroke();
+    shape(); ctx.fillStyle = C.fur; ctx.fill();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(0, 0, 16, 0, 7); ctx.clip();
+    ctx.fillStyle = C.orange;
+    ctx.beginPath(); ctx.ellipse(-10, -7, 12, 13, -.3, 0, 7); ctx.fill();
+    ctx.fillStyle = C.black;
+    ctx.beginPath(); ctx.ellipse(6, -15, 10, 6, .2, 0, 7); ctx.fill();
+    ctx.restore();
+
+    // eye
+    if (blink) {
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(3, -2); ctx.quadraticCurveTo(7, 1, 11, -2); ctx.stroke();
+    } else {
+      ctx.fillStyle = C.eye;
+      ctx.beginPath(); ctx.ellipse(7, -3, 4, 3.4, -.15, 0, 7); ctx.fill();
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.3; ctx.stroke();
+      ctx.fillStyle = C.ink;
+      ctx.beginPath(); ctx.ellipse(7.6, -3, 1.1, 3, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(8.8, -4.5, .9, 0, 7); ctx.fill();
+    }
+    // nose, mouth, whiskers
+    ctx.fillStyle = C.pink;
+    ctx.beginPath(); ctx.moveTo(19, 1); ctx.lineTo(22.5, 1.5); ctx.lineTo(21, 4); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(21, 4); ctx.lineTo(20, 7.5); ctx.quadraticCurveTo(17, 9.5, 15, 8); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = .9;
+    ctx.beginPath();
+    ctx.moveTo(17, 5); ctx.lineTo(36, 1);
+    ctx.moveTo(17, 6); ctx.lineTo(37, 7);
+    ctx.moveTo(16, 7); ctx.lineTo(33, 12);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawCat(p, blink) {
+    const g = geom(p), L = g.L;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    drawTail(p, L);
+    drawLeg(g.fF, C.shade);
+    drawLeg(g.bF, C.shade);
+    drawLeg(g.bN, C.fur);
+    drawLeg(g.fN, C.fur);
+
+    // body + chest as one outlined shape
+    const body = () => {
+      ctx.beginPath(); ctx.ellipse(0, 0, L, 19, 0, 0, 7);
+      ctx.moveTo(L * .72 + 15, -6); ctx.ellipse(L * .72, -6, 15, 15, 0, 0, 7);
+    };
+    ctx.strokeStyle = C.ink;
+    body(); ctx.lineWidth = 3.6; ctx.stroke();
+    body(); ctx.fillStyle = C.fur; ctx.fill();
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(0, 0, L, 19, 0, 0, 7); ctx.clip();
+    ctx.fillStyle = C.orange;
+    ctx.beginPath(); ctx.ellipse(-L * .45, -9, 22, 15, .1, 0, 7); ctx.fill();
+    ctx.fillStyle = C.black;
+    ctx.beginPath(); ctx.ellipse(L * .2, -16, 19, 10, -.1, 0, 7); ctx.fill();
+    ctx.fillStyle = C.orange;
+    ctx.beginPath(); ctx.ellipse(-L * .02, -18, 8, 6, 0, 0, 7); ctx.fill();
+    ctx.restore();
+
+    // haunch
+    ctx.beginPath(); ctx.ellipse(-L * .56, 3, 16, 14, -.2, 0, 7);
+    ctx.fillStyle = C.fur; ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.fillStyle = C.black;
+    ctx.beginPath(); ctx.ellipse(-L * .56 - 6, -8, 15, 9, -.3, 0, 7); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.ellipse(-L * .56, 3, 16, 14, -.2, Math.PI * 1.05, Math.PI * 2.2); ctx.stroke();
+
+    ctx.translate(L * .82, -16);
+    drawHead(p, blink);
+    ctx.restore();
+  }
+
+  function drawShadow(p) {
+    const onWall = p.x > WALL_X - 6;
+    if (!onWall && p.x > WALL_X - 40) return;
+    const surface = onWall ? WALL_TOP : GROUND;
+    const gap = surface - (p.y + 45);
+    if (gap < -30) return;
+    const a = clamp(.32 - Math.max(0, gap) / 500, 0, .32);
+    const s = clamp(1 - Math.max(0, gap) / 400, .4, 1);
+    ctx.fillStyle = `rgba(10,8,20,${a})`;
+    ctx.beginPath(); ctx.ellipse(p.x, surface + 2, 50 * s, 6 * s, 0, 0, 7); ctx.fill();
+  }
+
+  // ---------- dust and crumbs ----------
+  const bits = [];
+  function puff(x, y, n, col, spread, up) {
+    for (let i = 0; i < n; i++) {
+      bits.push({ x, y, vx: (Math.random() - .5) * spread, vy: -Math.random() * up, life: 0, max: .6 + Math.random() * .5, r: 1.5 + Math.random() * 2.5, col });
+    }
+  }
+  function updateBits(dt) {
+    for (let i = bits.length - 1; i >= 0; i--) {
+      const b = bits[i];
+      b.life += dt;
+      if (b.life > b.max) { bits.splice(i, 1); continue; }
+      b.vy += 380 * dt;
+      b.x += b.vx * dt; b.y += b.vy * dt;
+      if (b.y > GROUND) { b.y = GROUND; b.vy *= -.2; b.vx *= .6; }
+    }
+  }
+  function drawBits() {
+    for (const b of bits) {
+      ctx.globalAlpha = 1 - b.life / b.max;
+      ctx.fillStyle = b.col;
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---------- playback ----------
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let t = reduce ? 9 : 0;
+  let playing = !reduce;
+  let speed = 1;
+  let last = null;
+  let crumbTick = 0;
+
+  const playBtn = document.getElementById('play');
+  const slowBtn = document.getElementById('slow');
+  const stepEls = [...document.querySelectorAll('#steps li')];
+  function syncPlay() { playBtn.textContent = playing ? 'Pause' : 'Play'; }
+  syncPlay();
+
+  playBtn.addEventListener('click', () => { playing = !playing; syncPlay(); });
+  document.getElementById('replay').addEventListener('click', () => { t = 0; bits.length = 0; playing = true; syncPlay(); });
+  slowBtn.addEventListener('click', () => {
+    const on = slowBtn.getAttribute('aria-pressed') !== 'true';
+    slowBtn.setAttribute('aria-pressed', String(on));
+    speed = on ? .3 : 1;
+  });
+  document.getElementById('steps').addEventListener('click', e => {
+    const b = e.target.closest('button[data-step]');
+    if (!b) return;
+    t = STEP_STARTS[+b.dataset.step] + .001;
+    bits.length = 0;
+    playing = true; syncPlay();
+  });
+
+  let shownStep = -1;
+  function frame(now) {
+    if (last === null) last = now;
+    const dt = Math.min(.05, (now - last) / 1000);
+    last = now;
+    const prev = t;
+    if (playing) {
+      t += dt * speed;
+      if (t >= T.end) { t = 0; bits.length = 0; }
+      // kick up dust on take-off, knock crumbs off the bricks while scrambling
+      if (prev < T.crouch && t >= T.crouch) puff(X_CROUCH - 20, GROUND, 18, 'rgba(214,190,150,.9)', 160, 120);
+      if (t > T.grab && t < T.scramble) {
+        crumbTick += dt * speed;
+        if (crumbTick > .09) {
+          crumbTick = 0;
+          const p = poseAt(t), g = geom(p);
+          const w = toWorld(p, g.bN[4], g.bN[5]);
+          puff(Math.min(w[0], WALL_X - 2), w[1], 2, '#b8664c', 60, 30);
+        }
+      }
+      updateBits(dt * speed);
+    }
+
+    const p = poseAt(t);
+    const clock = now / 1000;
+    const blink = t > T.crouch && t < T.pull ? false : (clock % 3.4) < .14;
+
+    ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+    drawScene(clock);
+    drawShadow(p);
+    drawCat(p, blink);
+    drawBits();
+
+    const s = stepAt(t);
+    if (s !== shownStep) {
+      stepEls.forEach((el, i) => el.classList.toggle('on', i === s));
+      shownStep = s;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
