@@ -1,77 +1,87 @@
 <title>Calico on the Wall</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Figtree:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;700&family=Patrick+Hand&display=swap">
 <style>
-/* Layout: one dusk-lit stage with its controls, then the jump broken into the seven moves a cat makes */
+/* Layout: a storybook-page stage with hand-lettered step tags, controls beneath, then the seven moves as colored cards */
 :root {
-  --night: #171a2b;
-  --panel: #22263b;
-  --panel-on: #2d2a3c;
-  --cream: #f3e9dc;
-  --muted: #aaa7ba;
-  --calico: #e8893a;
-  --line: #363b57;
-  --display: "Gloock", Georgia, "Times New Roman", serif;
-  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-  color-scheme: dark;
+  --paper: #fff7ea;
+  --card: #ffffff;
+  --ink: #4a3226;
+  --muted: #7d6656;
+  --rose: #ef7d95;
+  --leaf: #5fae62;
+  --sun: #ffc94a;
+  --edge: #f1dfc8;
+  --display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --hand: "Patrick Hand", "Comic Sans MS", cursive;
+  --s1: #f4846c; --s2: #f6a243; --s3: #f2c53d; --s4: #7cc576; --s5: #4fc0b0; --s6: #6aaee8; --s7: #b38ce0;
 }
-html { background: var(--night); }
+html { background: var(--paper); }
 body {
-  background: var(--night);
-  color: var(--cream);
+  background: var(--paper);
+  background-image: radial-gradient(circle at 1px 1px, rgba(74, 50, 38, .07) 1px, transparent 0);
+  background-size: 14px 14px;
+  color: var(--ink);
   font-family: var(--body);
   font-size: 16px;
   line-height: 1.55;
   padding-inline: 16px;
 }
 main {
-  max-width: 980px;
+  max-width: 1000px;
   margin: 0 auto;
   padding-block: 28px 48px;
   display: grid;
   gap: 20px;
 }
-header { display: grid; gap: 8px; }
+header { display: grid; gap: 6px; }
 h1 {
   font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(2.1rem, 5.5vw, 3.4rem);
-  line-height: 1.05;
+  font-weight: 600;
+  font-size: clamp(2rem, 5.5vw, 3.2rem);
+  line-height: 1.08;
   margin: 0;
   text-wrap: balance;
 }
-h1 em { font-style: normal; color: var(--calico); }
-header p { margin: 0; color: var(--muted); max-width: 62ch; }
+h1 .o { color: var(--s2); }
+h1 .b { color: var(--ink); }
+h1 .w { color: var(--rose); }
+header p { margin: 0; color: var(--muted); max-width: 62ch; font-size: 17px; }
 .stage {
-  border-radius: 14px;
+  border-radius: 22px;
   overflow: hidden;
-  border: 1px solid var(--line);
-  background: var(--panel);
+  border: 3px solid var(--ink);
+  background: #bfe7f7;
+  box-shadow: 6px 6px 0 var(--edge);
   max-width: 100%;
 }
 canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
 .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 button {
-  font: 600 15px/1 var(--body);
-  color: var(--night);
-  background: var(--calico);
-  border: 1px solid var(--calico);
+  font: 600 16px/1 var(--display);
+  color: var(--ink);
+  background: var(--sun);
+  border: 2.5px solid var(--ink);
   border-radius: 999px;
-  padding: 11px 18px;
+  padding: 10px 20px;
   cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
 }
-button.ghost { background: transparent; color: var(--cream); border-color: var(--line); }
-button.ghost[aria-pressed="true"] { background: var(--cream); color: var(--night); border-color: var(--cream); }
-button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cream); outline-offset: 2px; }
-.fact { margin-left: auto; color: var(--muted); font-size: 14px; }
+button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+button.ghost { background: var(--card); }
+button.ghost[aria-pressed="true"] { background: var(--s6); color: #fff; }
+button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--rose); outline-offset: 3px; }
+.fact { margin-left: auto; color: var(--muted); font-family: var(--hand); font-size: 20px; }
 .steps {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 12px;
 }
 .steps li { min-width: 0; display: flex; }
 .steps button {
@@ -81,46 +91,56 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
   cursor: pointer;
   display: grid;
   grid-template-columns: auto 1fr;
-  column-gap: 10px;
+  column-gap: 12px;
+  align-items: start;
   padding: 12px 14px;
-  border-radius: 10px;
-  background: var(--panel);
-  border: 1px solid transparent;
-  transition: border-color .2s, background-color .2s;
+  border-radius: 16px;
+  background: var(--card);
+  border: 2.5px solid var(--edge);
+  transition: border-color .2s, transform .2s;
 }
-.steps button:hover { border-color: var(--line); }
-.steps .num { font-family: var(--display); color: var(--calico); font-size: 1.5rem; line-height: 1.1; grid-row: span 2; }
-.steps b { font-weight: 600; color: var(--cream); }
-.steps span.txt { color: var(--muted); font-size: 14px; line-height: 1.45; }
-.steps li.on button { border-color: var(--calico); background: var(--panel-on); }
-@media (max-width: 520px) { .fact { margin-left: 0; width: 100%; } }
+.steps button:hover { border-color: var(--c); }
+.steps .num {
+  grid-row: span 2;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--c);
+  color: #fff;
+  font: 600 18px/1 var(--display);
+  border: 2.5px solid var(--ink);
+}
+.steps b { font-family: var(--display); font-weight: 600; font-size: 17px; }
+.steps span.txt { color: var(--muted); font-size: 14.5px; line-height: 1.45; }
+.steps li.on button { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, white); transform: translateY(-2px); }
+@media (max-width: 560px) { .fact { margin-left: 0; width: 100%; } }
 </style>
 
 <main>
   <header>
-    <h1>How a <em>calico</em> gets onto a high wall</h1>
-    <p>Watch her measure the wall, coil, leap, catch the edge and scramble over. Tap any step below to jump straight to that moment.</p>
+    <h1>How a <span class="o">cal</span><span class="b">i</span><span class="w">co</span> hops onto a high wall</h1>
+    <p>Follow her on a sunny garden afternoon as she measures the wall, coils, leaps, catches the edge and scrambles over. Tap any step to see that moment.</p>
   </header>
 
   <div class="stage">
-    <canvas id="scene" width="960" height="540" aria-label="Animation of a calico cat walking up to a brick wall, crouching, leaping, grabbing the top edge, pulling herself up and sitting down on top."></canvas>
+    <canvas id="scene" width="960" height="540" aria-label="Illustrated animation of a calico cat in a sunny flower garden. She walks up to a brick wall, crouches, leaps, grabs the top edge, scrambles up, pulls herself over and sits on top. Each step is labelled."></canvas>
   </div>
 
   <div class="controls">
     <button id="play" type="button">Pause</button>
     <button id="replay" class="ghost" type="button">Start over</button>
     <button id="slow" class="ghost" type="button" aria-pressed="false">Slow motion</button>
-    <span class="fact">A cat can leap about five times her own height.</span>
+    <span class="fact">A cat can leap about five times her own height!</span>
   </div>
 
   <ol class="steps" id="steps">
-    <li><button type="button" data-step="0"><span class="num">1</span><b>Walk up</b><span class="txt">She stops a couple of body lengths away and looks up at the top.</span></button></li>
-    <li><button type="button" data-step="1"><span class="num">2</span><b>Crouch and wiggle</b><span class="txt">Back legs fold like springs. The little bottom wiggle sets her feet.</span></button></li>
-    <li><button type="button" data-step="2"><span class="num">3</span><b>Leap</b><span class="txt">Back legs push off hard. She aims so the top of the jump meets the edge.</span></button></li>
-    <li><button type="button" data-step="3"><span class="num">4</span><b>Grab the edge</b><span class="txt">Front paws hook over the top, claws out.</span></button></li>
-    <li><button type="button" data-step="4"><span class="num">5</span><b>Scramble</b><span class="txt">Back legs pedal against the bricks to push her higher.</span></button></li>
-    <li><button type="button" data-step="5"><span class="num">6</span><b>Pull over</b><span class="txt">Elbows bend, and she hauls herself up onto the top.</span></button></li>
-    <li><button type="button" data-step="6"><span class="num">7</span><b>Settle in</b><span class="txt">A few proud steps, then she sits and wraps her tail around her paws.</span></button></li>
+    <li style="--c: var(--s1)"><button type="button" data-step="0"><span class="num">1</span><b>Walk up</b><span class="txt">She stops a couple of body lengths away and looks up at the top.</span></button></li>
+    <li style="--c: var(--s2)"><button type="button" data-step="1"><span class="num">2</span><b>Crouch and wiggle</b><span class="txt">Back legs fold like springs. The little bottom wiggle sets her feet.</span></button></li>
+    <li style="--c: var(--s3)"><button type="button" data-step="2"><span class="num">3</span><b>Leap</b><span class="txt">Back legs push off hard. She aims so the top of the jump meets the edge.</span></button></li>
+    <li style="--c: var(--s4)"><button type="button" data-step="3"><span class="num">4</span><b>Grab the edge</b><span class="txt">Front paws hook over the top, claws out.</span></button></li>
+    <li style="--c: var(--s5)"><button type="button" data-step="4"><span class="num">5</span><b>Scramble</b><span class="txt">Back legs pedal against the bricks to push her higher.</span></button></li>
+    <li style="--c: var(--s6)"><button type="button" data-step="5"><span class="num">6</span><b>Pull over</b><span class="txt">Elbows bend, and she hauls herself up onto the top.</span></button></li>
+    <li style="--c: var(--s7)"><button type="button" data-step="6"><span class="num">7</span><b>Settle in</b><span class="txt">A few proud steps, then she sits by the flowers and wraps her tail round her paws.</span></button></li>
   </ol>
 </main>
 
@@ -133,10 +153,13 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
   const WALL_X = 560;       // front face of the wall
   const WALL_TOP = 172;     // top of the coping stones
 
+  const INK = '#4a3226';
   const C = {
-    fur: '#f7f2ea', shade: '#cfc5b8', orange: '#d97a30', black: '#2a2422',
-    ink: '#1d1918', pink: '#e79a9a', eye: '#a4c64a'
+    fur: '#fffaf2', shade: '#e6d9c8', orange: '#f08a3c', black: '#3b2f2c',
+    ink: INK, pink: '#f4a0a8', eye: '#8fcf4f', blush: 'rgba(244,140,160,.55)'
   };
+  const STEP_COLORS = ['#f4846c', '#f6a243', '#f2c53d', '#7cc576', '#4fc0b0', '#6aaee8', '#b38ce0'];
+  const STEP_NAMES = ['Walk up', 'Crouch & wiggle', 'Leap!', 'Grab the edge', 'Scramble', 'Pull over', 'Settle in'];
 
   // ---------- canvas sizing ----------
   function resize() {
@@ -154,6 +177,10 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
   const ease = u => u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
   const mix = (A, B, u) => { const o = {}; for (const k in A) o[k] = lerp(A[k], B[k], u); return o; };
   function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+  function rrect(x, y, w, h, r) {
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+  }
 
   // ---------- cat poses ----------
   // rot: body tilt (negative = nose up). fa/fk, ba/bk: front/back leg angle and joint bend.
@@ -274,131 +301,352 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
     return s;
   }
 
-  // ---------- scenery ----------
-  const rand = rng(7);
-  const stars = Array.from({ length: 70 }, () => [rand() * W, rand() * 260, rand() * 1.3 + .3, rand() * 6]);
-  const roofs = [];
-  for (let x = -20; x < W; ) {
-    const w = 60 + rand() * 90, h = 50 + rand() * 80;
-    roofs.push([x, w, h, rand() < .5]);
-    x += w - 4;
-  }
+  // ---------- scenery data ----------
+  const rand = rng(11);
+  const clouds = [[120, 70, 1], [420, 50, .8], [700, 105, .7], [980, 60, .9]];
   const brickTint = Array.from({ length: 400 }, () => rand());
-  const grass = Array.from({ length: 140 }, () => [rand() * W, rand() * 10 + 6, rand() * .6 - .3]);
+  const tufts = Array.from({ length: 60 }, () => [rand() * (WALL_X - 10), GROUND + 6 + rand() * 70]);
+  const PETALS = ['#ef7d95', '#f6a243', '#f2c53d', '#b38ce0', '#ffffff', '#f4846c', '#6aaee8'];
+  function makeFlowers(n, y0, y1, xMax, hMin, hMax) {
+    return Array.from({ length: n }, () => ({
+      x: rand() * xMax, y: y0 + rand() * (y1 - y0), h: hMin + rand() * (hMax - hMin),
+      col: PETALS[Math.floor(rand() * PETALS.length)], kind: Math.floor(rand() * 3), ph: rand() * 6, s: .8 + rand() * .5
+    })).sort((a, b) => a.y - b.y);
+  }
+  const backFlowers = makeFlowers(16, GROUND - 2, GROUND + 4, WALL_X - 20, 18, 34);
+  const wallFlowers = makeFlowers(14, GROUND - 2, GROUND + 4, W - WALL_X, 22, 40).map(f => ({ ...f, x: f.x + WALL_X + 6 }));
+  const frontFlowers = makeFlowers(26, 500, 540, W, 26, 46);
+  const roses = [[770, 230], [792, 262], [760, 300], [905, 210], [930, 248], [895, 330], [915, 372]];
+  const butterflies = [
+    { cx: 250, cy: 330, rx: 120, ry: 50, sp: .45, col: '#f2c53d', ph: 0 },
+    { cx: 760, cy: 120, rx: 90, ry: 40, sp: .6, col: '#ef7d95', ph: 2 },
+    { cx: 130, cy: 220, rx: 70, ry: 60, sp: .5, col: '#6aaee8', ph: 4 }
+  ];
+
+  // paper grain overlay
+  const grain = document.createElement('canvas');
+  grain.width = grain.height = 160;
+  (() => {
+    const g = grain.getContext('2d'), r = rng(3);
+    for (let i = 0; i < 1400; i++) {
+      g.fillStyle = r() < .5 ? 'rgba(74,50,38,.06)' : 'rgba(255,255,255,.08)';
+      g.fillRect(r() * 160, r() * 160, 1.4, 1.4);
+    }
+  })();
+  const grainPattern = ctx.createPattern(grain, 'repeat');
+
+  // ---------- scenery drawing ----------
+  function cloud(x, y, s) {
+    ctx.save();
+    ctx.translate(x, y); ctx.scale(s, s);
+    const blobs = [[0, 0, 26], [28, -14, 32], [62, -4, 26], [86, 6, 18], [-22, 8, 18]];
+    ctx.fillStyle = '#dcebf3';
+    for (const [bx, by, r] of blobs) { ctx.beginPath(); ctx.arc(bx + 3, by + 6, r, 0, 7); ctx.fill(); }
+    ctx.fillStyle = '#ffffff';
+    for (const [bx, by, r] of blobs) { ctx.beginPath(); ctx.arc(bx, by, r, 0, 7); ctx.fill(); }
+    ctx.fillRect(-22, 8, 108, 18);
+    ctx.restore();
+  }
+
+  function flower(f, clock, scale = 1) {
+    const sway = Math.sin(clock * 1.6 + f.ph) * .08;
+    const h = f.h * scale, s = f.s * scale;
+    ctx.save();
+    ctx.translate(f.x, f.y);
+    ctx.rotate(sway);
+    ctx.strokeStyle = '#4f9a4f'; ctx.lineWidth = 2.5 * scale; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(4 * scale, -h / 2, 0, -h); ctx.stroke();
+    ctx.fillStyle = '#6fbf63';
+    ctx.beginPath(); ctx.ellipse(5 * scale, -h * .4, 7 * scale, 3 * scale, -.6, 0, 7); ctx.fill();
+    ctx.translate(0, -h);
+    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = INK;
+    if (f.kind === 0) { // daisy-style
+      ctx.fillStyle = f.col;
+      for (let i = 0; i < 6; i++) {
+        ctx.save(); ctx.rotate(i * Math.PI / 3);
+        ctx.beginPath(); ctx.ellipse(0, -7 * s, 3.6 * s, 6.5 * s, 0, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.restore();
+      }
+      ctx.fillStyle = '#f2c53d';
+      ctx.beginPath(); ctx.arc(0, 0, 4.2 * s, 0, 7); ctx.fill(); ctx.stroke();
+    } else if (f.kind === 1) { // tulip
+      ctx.fillStyle = f.col;
+      ctx.beginPath();
+      ctx.moveTo(-7 * s, -2 * s);
+      ctx.lineTo(-7 * s, -12 * s); ctx.lineTo(-3.5 * s, -8 * s); ctx.lineTo(0, -13 * s);
+      ctx.lineTo(3.5 * s, -8 * s); ctx.lineTo(7 * s, -12 * s); ctx.lineTo(7 * s, -2 * s);
+      ctx.quadraticCurveTo(0, 6 * s, -7 * s, -2 * s);
+      ctx.fill(); ctx.stroke();
+    } else { // round bloom
+      ctx.fillStyle = f.col;
+      for (let i = 0; i < 5; i++) {
+        const a = i * Math.PI * 2 / 5;
+        ctx.beginPath(); ctx.arc(Math.cos(a) * 5 * s, Math.sin(a) * 5 * s, 5 * s, 0, 7); ctx.fill(); ctx.stroke();
+      }
+      ctx.fillStyle = '#fff3c4';
+      ctx.beginPath(); ctx.arc(0, 0, 3.2 * s, 0, 7); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function butterfly(b, clock) {
+    const a = clock * b.sp + b.ph;
+    const x = b.cx + Math.sin(a) * b.rx, y = b.cy + Math.sin(a * 2.1) * b.ry;
+    const flap = .35 + .65 * Math.abs(Math.sin(clock * 12 + b.ph));
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(Math.cos(a) * .25);
+    ctx.fillStyle = b.col; ctx.strokeStyle = INK; ctx.lineWidth = 1.5;
+    for (const side of [-1, 1]) {
+      ctx.save(); ctx.scale(side * flap, 1);
+      ctx.beginPath(); ctx.ellipse(6, -5, 7, 6, -.4, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(5, 4, 5, 4, .4, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+    ctx.fillStyle = INK;
+    ctx.beginPath(); ctx.ellipse(0, 0, 1.6, 7, 0, 0, 7); ctx.fill();
+    ctx.restore();
+  }
 
   function drawScene(clock) {
+    // sky
     const sky = ctx.createLinearGradient(0, 0, 0, GROUND);
-    sky.addColorStop(0, '#1b2042');
-    sky.addColorStop(.55, '#4f4470');
-    sky.addColorStop(1, '#e49a72');
+    sky.addColorStop(0, '#8fd3f4');
+    sky.addColorStop(1, '#e4f6fc');
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, GROUND);
 
-    for (const [x, y, r, ph] of stars) {
-      ctx.globalAlpha = (.35 + .35 * Math.sin(clock * 1.3 + ph)) * (1 - y / 300);
-      ctx.fillStyle = '#fff6e0';
-      ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+    // sun
+    ctx.save();
+    ctx.translate(892, 70);
+    ctx.rotate(clock * .15);
+    ctx.fillStyle = '#ffe08a';
+    for (let i = 0; i < 12; i++) {
+      ctx.rotate(Math.PI / 6);
+      ctx.beginPath(); ctx.moveTo(-6, -42); ctx.lineTo(0, -58); ctx.lineTo(6, -42); ctx.fill();
     }
-    ctx.globalAlpha = 1;
+    ctx.restore();
+    ctx.fillStyle = '#ffc94a'; ctx.strokeStyle = INK; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(892, 70, 34, 0, 7); ctx.fill(); ctx.stroke();
 
-    // moon
-    const glow = ctx.createRadialGradient(170, 95, 10, 170, 95, 90);
-    glow.addColorStop(0, 'rgba(255,240,205,.35)');
-    glow.addColorStop(1, 'rgba(255,240,205,0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(80, 5, 180, 180);
-    ctx.fillStyle = '#f6ecd3';
-    ctx.beginPath(); ctx.arc(170, 95, 26, 0, 7); ctx.fill();
-
-    // distant rooftops
-    ctx.fillStyle = '#2c2a49';
-    for (const [x, w, h, peak] of roofs) {
-      const top = GROUND - 40 - h;
-      ctx.beginPath();
-      ctx.moveTo(x, GROUND);
-      ctx.lineTo(x, top);
-      if (peak) ctx.lineTo(x + w / 2, top - 26);
-      ctx.lineTo(x + w, top);
-      ctx.lineTo(x + w, GROUND);
-      ctx.fill();
-    }
-    ctx.fillStyle = 'rgba(255,205,130,.55)';
-    for (let i = 0; i < roofs.length; i += 2) {
-      const [x, w, h] = roofs[i];
-      ctx.fillRect(x + w * .3, GROUND - 40 - h + 22, 8, 10);
+    // drifting clouds
+    for (const [x, y, s] of clouds) {
+      const cx = ((x + clock * 12 * s) % (W + 260)) - 130;
+      cloud(cx, y, s);
     }
 
-    // garden
-    ctx.fillStyle = '#2d4433';
+    // rolling hills
+    ctx.fillStyle = '#b7e39a';
+    ctx.beginPath(); ctx.moveTo(0, GROUND);
+    ctx.bezierCurveTo(120, 300, 300, 330, 420, 360);
+    ctx.bezierCurveTo(560, 400, 700, 300, W, 340);
+    ctx.lineTo(W, GROUND); ctx.fill();
+    ctx.fillStyle = '#9ad47f';
+    ctx.beginPath(); ctx.moveTo(0, 380);
+    ctx.bezierCurveTo(160, 340, 260, 420, 420, 400);
+    ctx.bezierCurveTo(560, 385, 640, 420, W, 395);
+    ctx.lineTo(W, GROUND); ctx.lineTo(0, GROUND); ctx.fill();
+    // lollipop trees
+    for (const [x, y, r, col] of [[90, 352, 26, '#6fbf63'], [150, 366, 18, '#86cc6c'], [330, 380, 22, '#6fbf63']]) {
+      ctx.strokeStyle = INK; ctx.lineWidth = 2.5;
+      ctx.fillStyle = '#a8794f';
+      ctx.fillRect(x - 3, y, 6, r + 12); ctx.strokeRect(x - 3, y, 6, r + 12);
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(x, y - 4, r, 0, 7); ctx.fill(); ctx.stroke();
+    }
+
+    // lawn
+    ctx.fillStyle = '#8fd46b';
     ctx.fillRect(0, GROUND, W, H - GROUND);
-    ctx.fillStyle = '#3a5a40';
-    ctx.fillRect(0, GROUND, W, 6);
-    ctx.strokeStyle = '#4c7350';
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
-    for (const [x, h, lean] of grass) {
-      if (x > WALL_X) continue;
-      ctx.beginPath(); ctx.moveTo(x, GROUND + 4); ctx.lineTo(x + lean * h, GROUND + 4 - h); ctx.stroke();
+    ctx.fillStyle = '#7cc45b';
+    ctx.fillRect(0, GROUND, W, 5);
+    ctx.strokeStyle = '#6bb04f'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    for (const [x, y] of tufts) {
+      ctx.beginPath();
+      ctx.moveTo(x - 4, y); ctx.lineTo(x - 6, y - 7);
+      ctx.moveTo(x, y); ctx.lineTo(x, y - 9);
+      ctx.moveTo(x + 4, y); ctx.lineTo(x + 6, y - 7);
+      ctx.stroke();
     }
 
     // wall
-    const BR_H = 22, BR_W = 54, wallTopBricks = WALL_TOP + 16;
-    ctx.fillStyle = '#7a3a2b';
-    ctx.fillRect(WALL_X, wallTopBricks, W - WALL_X, GROUND - wallTopBricks);
+    const BR_H = 22, BR_W = 54, top = WALL_TOP + 16;
+    ctx.fillStyle = '#f6dcc4';
+    ctx.fillRect(WALL_X, top, W - WALL_X, GROUND - top);
     let n = 0;
-    for (let y = wallTopBricks, row = 0; y < GROUND; y += BR_H, row++) {
+    for (let y = top, row = 0; y < GROUND; y += BR_H, row++) {
       for (let x = WALL_X - (row % 2 ? BR_W / 2 : 0); x < W; x += BR_W) {
         const tint = brickTint[n++ % brickTint.length];
-        const x0 = Math.max(WALL_X, x + 2), x1 = x + BR_W - 2;
+        const x0 = Math.max(WALL_X + 3, x + 3), x1 = x + BR_W - 3;
         if (x1 <= x0) continue;
-        ctx.fillStyle = `hsl(${10 + tint * 8}, ${42 + tint * 12}%, ${34 + tint * 9}%)`;
-        ctx.fillRect(x0, y + 2, x1 - x0, Math.min(BR_H - 4, GROUND - y - 2));
+        ctx.fillStyle = `hsl(${12 + tint * 10}, ${62 + tint * 10}%, ${62 + tint * 8}%)`;
+        rrect(x0, y + 3, x1 - x0, Math.min(BR_H - 6, GROUND - y - 4), 5);
+        ctx.fill();
       }
     }
-    const faceShade = ctx.createLinearGradient(WALL_X, 0, WALL_X + 70, 0);
-    faceShade.addColorStop(0, 'rgba(20,10,30,.45)');
-    faceShade.addColorStop(1, 'rgba(20,10,30,0)');
-    ctx.fillStyle = faceShade;
-    ctx.fillRect(WALL_X, wallTopBricks, 70, GROUND - wallTopBricks);
-    // coping stones
-    ctx.fillStyle = '#b3a797';
-    ctx.fillRect(WALL_X - 8, WALL_TOP, W - WALL_X + 8, 16);
-    ctx.fillStyle = '#d6cbbb';
-    ctx.fillRect(WALL_X - 8, WALL_TOP, W - WALL_X + 8, 3);
-    ctx.fillStyle = 'rgba(0,0,0,.25)';
-    ctx.fillRect(WALL_X - 8, WALL_TOP + 16, W - WALL_X + 8, 3);
-    for (let x = WALL_X + 70; x < W; x += 90) ctx.fillRect(x, WALL_TOP + 3, 2, 13);
+    ctx.strokeStyle = INK; ctx.lineWidth = 3;
+    ctx.strokeRect(WALL_X, top, W - WALL_X + 4, GROUND - top);
+    // coping
+    ctx.fillStyle = '#fbeedb';
+    rrect(WALL_X - 10, WALL_TOP, W - WALL_X + 20, 17, 6);
+    ctx.fill(); ctx.stroke();
+
+    // climbing vines with roses
+    ctx.strokeStyle = '#4f9a4f'; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(775, GROUND); ctx.bezierCurveTo(740, 380, 800, 300, 765, 190);
+    ctx.moveTo(910, GROUND); ctx.bezierCurveTo(950, 380, 880, 280, 915, 190);
+    ctx.stroke();
+    ctx.fillStyle = '#6fbf63';
+    for (const [x, y] of [[760, 400], [785, 350], [770, 270], [782, 215], [925, 410], [895, 300], [930, 280], [905, 225]]) {
+      ctx.beginPath(); ctx.ellipse(x, y, 8, 4.5, .7, 0, 7); ctx.fill();
+    }
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.8;
+    for (const [x, y] of roses) {
+      ctx.fillStyle = '#ef7d95';
+      ctx.beginPath(); ctx.arc(x, y, 8, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = '#c64f6c';
+      ctx.beginPath(); ctx.arc(x, y, 4, .5, 5.5); ctx.stroke();
+      ctx.strokeStyle = INK;
+    }
+
+    // flower pot on the wall
+    const px = 862;
+    ctx.fillStyle = '#4f9a4f';
+    for (const [dx, dy] of [[-14, -40], [0, -50], [14, -42], [-6, -30], [8, -30]]) {
+      ctx.beginPath(); ctx.ellipse(px + dx, WALL_TOP - 20 + dy * .5, 8, 5, dx * .05, 0, 7); ctx.fill();
+    }
+    for (const [dx, dy, col] of [[-14, -46, '#f4846c'], [2, -56, '#ef7d95'], [16, -46, '#f4846c'], [-4, -38, '#f6a243']]) {
+      flower({ x: px + dx * .3, y: WALL_TOP - 22, h: -dy - 22, col, kind: 2, ph: dx, s: .9 }, clock);
+    }
+    ctx.fillStyle = '#e07b52'; ctx.strokeStyle = INK; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(px - 20, WALL_TOP - 30); ctx.lineTo(px + 20, WALL_TOP - 30);
+    ctx.lineTo(px + 15, WALL_TOP); ctx.lineTo(px - 15, WALL_TOP); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    rrect(px - 23, WALL_TOP - 34, 46, 9, 3); ctx.fill(); ctx.stroke();
+
+    // flowers growing at the foot of the lawn and wall
+    for (const f of backFlowers) flower(f, clock);
+    for (const f of wallFlowers) flower(f, clock);
+
+    for (const b of butterflies) butterfly(b, clock);
 
     // height marker
-    const mx = WALL_X - 34;
-    ctx.strokeStyle = 'rgba(243,233,220,.55)';
-    ctx.fillStyle = 'rgba(243,233,220,.8)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 5]);
-    ctx.beginPath(); ctx.moveTo(mx, WALL_TOP); ctx.lineTo(mx, GROUND); ctx.stroke();
+    const mx = WALL_X - 30;
+    ctx.strokeStyle = 'rgba(74,50,38,.45)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([3, 6]);
+    ctx.beginPath(); ctx.moveTo(mx, WALL_TOP + 2); ctx.lineTo(mx, GROUND - 2); ctx.stroke();
     ctx.setLineDash([]);
     ctx.beginPath();
-    ctx.moveTo(mx - 6, WALL_TOP); ctx.lineTo(mx + 6, WALL_TOP);
-    ctx.moveTo(mx - 6, GROUND); ctx.lineTo(mx + 6, GROUND);
+    ctx.moveTo(mx - 6, WALL_TOP + 2); ctx.lineTo(mx + 6, WALL_TOP + 2);
+    ctx.moveTo(mx - 6, GROUND - 2); ctx.lineTo(mx + 6, GROUND - 2);
     ctx.stroke();
     ctx.save();
-    ctx.translate(mx - 10, (WALL_TOP + GROUND) / 2);
+    ctx.translate(mx - 9, 400);
     ctx.rotate(-Math.PI / 2);
-    ctx.font = '600 15px Figtree, system-ui, sans-serif';
+    ctx.fillStyle = 'rgba(74,50,38,.75)';
+    ctx.font = '19px "Patrick Hand", "Comic Sans MS", cursive';
     ctx.textAlign = 'center';
-    ctx.fillText('1.4 m', 0, 0);
+    ctx.fillText('1.4 m tall', 0, 0);
     ctx.restore();
+  }
+
+  // ---------- route and step labels ----------
+  // [tag x, tag y, point x, point y]
+  const TAGS = [
+    [120, 500, 200, 452],
+    [330, 500, 392, 452],
+    [300, 250, 462, 300],
+    [420, 112, 566, 170],
+    [350, 352, 546, 236],
+    [590, 70, 616, 138],
+    [690, 232, 716, 176]
+  ];
+  function drawRoute() {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)';
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.setLineDash([2, 10]);
+    ctx.beginPath();
+    ctx.moveTo(-10, GROUND - 22);
+    ctx.lineTo(392, GROUND - 22);
+    ctx.quadraticCurveTo(470, 180, 548, 205);
+    ctx.quadraticCurveTo(570, 150, 640, 140);
+    ctx.lineTo(704, 140);
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawTags(active, clock) {
+    ctx.font = '22px "Patrick Hand", "Comic Sans MS", cursive';
+    ctx.textBaseline = 'middle';
+    TAGS.forEach(([tx, ty, px, py], i) => {
+      const on = i === active;
+      const col = STEP_COLORS[i];
+      const label = STEP_NAMES[i];
+      const w = ctx.measureText(label).width + 46;
+      const bob = on ? Math.sin(clock * 5) * 2 : 0;
+      ctx.globalAlpha = on ? 1 : .78;
+      // leader line
+      ctx.strokeStyle = INK; ctx.lineWidth = 2;
+      ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.moveTo(tx + w / 2, ty + bob); ctx.lineTo(px, py); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(px, py, 4.5, 0, 7); ctx.fill(); ctx.stroke();
+      // pill
+      ctx.save();
+      ctx.translate(tx, ty + bob);
+      if (on) { ctx.translate(w / 2, 0); ctx.scale(1.1, 1.1); ctx.translate(-w / 2, 0); }
+      ctx.fillStyle = 'rgba(74,50,38,.18)';
+      rrect(3, -15, w, 32, 16); ctx.fill();
+      ctx.fillStyle = on ? col : '#ffffff';
+      ctx.strokeStyle = INK; ctx.lineWidth = 2.5;
+      rrect(0, -18, w, 32, 16); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = on ? '#ffffff' : col;
+      ctx.beginPath(); ctx.arc(16, -2, 11, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = on ? INK : '#ffffff';
+      ctx.font = '600 14px Fredoka, "Trebuchet MS", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(String(i + 1), 16, -1);
+      ctx.textAlign = 'left';
+      ctx.font = '22px "Patrick Hand", "Comic Sans MS", cursive';
+      ctx.fillStyle = on ? '#ffffff' : INK;
+      if (on) { ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.strokeText(label, 34, -1); }
+      ctx.fillText(label, 34, -1);
+      ctx.restore();
+    });
+    ctx.globalAlpha = 1;
+    ctx.textBaseline = 'alphabetic';
+  }
+  function drawBanner(active) {
+    const text = `Step ${active + 1} of 7 · ${STEP_NAMES[active]}`;
+    ctx.font = '600 22px Fredoka, "Trebuchet MS", sans-serif';
+    const w = ctx.measureText(text).width + 36;
+    ctx.fillStyle = 'rgba(74,50,38,.2)';
+    rrect(22, 22, w, 42, 21); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.strokeStyle = INK; ctx.lineWidth = 3;
+    rrect(18, 18, w, 42, 21); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = STEP_COLORS[active];
+    ctx.beginPath(); ctx.arc(36, 39, 7, 0, 7); ctx.fill(); ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = INK;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 50, 40);
+    ctx.textBaseline = 'alphabetic';
   }
 
   // ---------- the cat ----------
   function drawLeg(l, col) {
     ctx.beginPath();
     ctx.moveTo(l[0], l[1]); ctx.lineTo(l[2], l[3]); ctx.lineTo(l[4], l[5]);
-    ctx.strokeStyle = C.ink; ctx.lineWidth = 12; ctx.stroke();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 13; ctx.stroke();
     ctx.strokeStyle = col; ctx.lineWidth = 9; ctx.stroke();
-    ctx.beginPath(); ctx.ellipse(l[4] + 1.5, l[5], 6, 4.5, 0, 0, 7);
+    ctx.beginPath(); ctx.ellipse(l[4] + 1.5, l[5], 6.5, 5, 0, 0, 7);
     ctx.fillStyle = col; ctx.fill();
-    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.stroke();
   }
 
   function drawTail(p, L) {
@@ -411,8 +659,8 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
     ctx.beginPath();
     ctx.moveTo(x0, y0);
     ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], e[0], e[1]);
-    ctx.strokeStyle = C.ink; ctx.lineWidth = 11; ctx.stroke();
-    ctx.strokeStyle = C.orange; ctx.lineWidth = 8; ctx.stroke();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 12.5; ctx.stroke();
+    ctx.strokeStyle = C.orange; ctx.lineWidth = 8.5; ctx.stroke();
     ctx.setLineDash([7, 9]);
     ctx.strokeStyle = C.black; ctx.stroke();
     ctx.setLineDash([]);
@@ -422,7 +670,7 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
     ctx.save();
     ctx.rotate(p.hd);
     // ears
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.strokeStyle = C.ink;
     ctx.fillStyle = C.black;
     ctx.beginPath(); ctx.moveTo(-13, -6); ctx.lineTo(-10, -28); ctx.lineTo(1, -14); ctx.closePath(); ctx.fill(); ctx.stroke();
@@ -436,7 +684,7 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
       ctx.beginPath(); ctx.arc(0, 0, 16, 0, 7);
       ctx.moveTo(22, 5); ctx.ellipse(13, 5, 9, 6.5, 0, 0, 7);
     };
-    shape(); ctx.lineWidth = 3.6; ctx.stroke();
+    shape(); ctx.lineWidth = 4.4; ctx.stroke();
     shape(); ctx.fillStyle = C.fur; ctx.fill();
     ctx.save();
     ctx.beginPath(); ctx.arc(0, 0, 16, 0, 7); ctx.clip();
@@ -444,31 +692,33 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
     ctx.beginPath(); ctx.ellipse(-10, -7, 12, 13, -.3, 0, 7); ctx.fill();
     ctx.fillStyle = C.black;
     ctx.beginPath(); ctx.ellipse(6, -15, 10, 6, .2, 0, 7); ctx.fill();
+    ctx.fillStyle = C.blush;
+    ctx.beginPath(); ctx.ellipse(5, 6, 5, 3.2, 0, 0, 7); ctx.fill();
     ctx.restore();
 
     // eye
     if (blink) {
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.8;
-      ctx.beginPath(); ctx.moveTo(3, -2); ctx.quadraticCurveTo(7, 1, 11, -2); ctx.stroke();
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(3, -2); ctx.quadraticCurveTo(7, 1.5, 11, -2); ctx.stroke();
     } else {
       ctx.fillStyle = C.eye;
-      ctx.beginPath(); ctx.ellipse(7, -3, 4, 3.4, -.15, 0, 7); ctx.fill();
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.3; ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(7, -3, 4.4, 4, -.15, 0, 7); ctx.fill();
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5; ctx.stroke();
       ctx.fillStyle = C.ink;
-      ctx.beginPath(); ctx.ellipse(7.6, -3, 1.1, 3, 0, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(7.6, -3, 1.8, 3.3, 0, 0, 7); ctx.fill();
       ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(8.8, -4.5, .9, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(9, -4.8, 1.3, 0, 7); ctx.fill();
     }
     // nose, mouth, whiskers
     ctx.fillStyle = C.pink;
-    ctx.beginPath(); ctx.moveTo(19, 1); ctx.lineTo(22.5, 1.5); ctx.lineTo(21, 4); ctx.closePath(); ctx.fill();
     ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.moveTo(21, 4); ctx.lineTo(20, 7.5); ctx.quadraticCurveTo(17, 9.5, 15, 8); ctx.stroke();
-    ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = .9;
+    ctx.beginPath(); ctx.moveTo(19, 1); ctx.lineTo(23, 1.5); ctx.lineTo(21, 4.5); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(21, 4.5); ctx.lineTo(20, 7.5); ctx.quadraticCurveTo(17, 9.5, 15, 8); ctx.stroke();
+    ctx.strokeStyle = 'rgba(74,50,38,.55)'; ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(17, 5); ctx.lineTo(36, 1);
-    ctx.moveTo(17, 6); ctx.lineTo(37, 7);
-    ctx.moveTo(16, 7); ctx.lineTo(33, 12);
+    ctx.moveTo(17, 5); ctx.lineTo(35, 1);
+    ctx.moveTo(17, 6); ctx.lineTo(36, 7);
     ctx.stroke();
     ctx.restore();
   }
@@ -493,7 +743,7 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
       ctx.moveTo(L * .72 + 15, -6); ctx.ellipse(L * .72, -6, 15, 15, 0, 0, 7);
     };
     ctx.strokeStyle = C.ink;
-    body(); ctx.lineWidth = 3.6; ctx.stroke();
+    body(); ctx.lineWidth = 4.4; ctx.stroke();
     body(); ctx.fillStyle = C.fur; ctx.fill();
     ctx.save();
     ctx.beginPath(); ctx.ellipse(0, 0, L, 19, 0, 0, 7); ctx.clip();
@@ -512,7 +762,7 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
     ctx.fillStyle = C.black;
     ctx.beginPath(); ctx.ellipse(-L * .56 - 6, -8, 15, 9, -.3, 0, 7); ctx.fill();
     ctx.restore();
-    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.8;
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 2.2;
     ctx.beginPath(); ctx.ellipse(-L * .56, 3, 16, 14, -.2, Math.PI * 1.05, Math.PI * 2.2); ctx.stroke();
 
     ctx.translate(L * .82, -16);
@@ -526,17 +776,17 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
     const surface = onWall ? WALL_TOP : GROUND;
     const gap = surface - (p.y + 45);
     if (gap < -30) return;
-    const a = clamp(.32 - Math.max(0, gap) / 500, 0, .32);
+    const a = clamp(.25 - Math.max(0, gap) / 600, 0, .25);
     const s = clamp(1 - Math.max(0, gap) / 400, .4, 1);
-    ctx.fillStyle = `rgba(10,8,20,${a})`;
+    ctx.fillStyle = `rgba(74,50,38,${a})`;
     ctx.beginPath(); ctx.ellipse(p.x, surface + 2, 50 * s, 6 * s, 0, 0, 7); ctx.fill();
   }
 
-  // ---------- dust and crumbs ----------
+  // ---------- dust, crumbs and petals ----------
   const bits = [];
-  function puff(x, y, n, col, spread, up) {
+  function puff(x, y, n, cols, spread, up) {
     for (let i = 0; i < n; i++) {
-      bits.push({ x, y, vx: (Math.random() - .5) * spread, vy: -Math.random() * up, life: 0, max: .6 + Math.random() * .5, r: 1.5 + Math.random() * 2.5, col });
+      bits.push({ x, y, vx: (Math.random() - .5) * spread, vy: -Math.random() * up, life: 0, max: .7 + Math.random() * .6, r: 2 + Math.random() * 2.5, col: cols[i % cols.length] });
     }
   }
   function updateBits(dt) {
@@ -544,7 +794,7 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
       const b = bits[i];
       b.life += dt;
       if (b.life > b.max) { bits.splice(i, 1); continue; }
-      b.vy += 380 * dt;
+      b.vy += 300 * dt;
       b.x += b.vx * dt; b.y += b.vy * dt;
       if (b.y > GROUND) { b.y = GROUND; b.vy *= -.2; b.vx *= .6; }
     }
@@ -596,15 +846,15 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
     if (playing) {
       t += dt * speed;
       if (t >= T.end) { t = 0; bits.length = 0; }
-      // kick up dust on take-off, knock crumbs off the bricks while scrambling
-      if (prev < T.crouch && t >= T.crouch) puff(X_CROUCH - 20, GROUND, 18, 'rgba(214,190,150,.9)', 160, 120);
+      // a puff of petals and dust on take-off, brick crumbs while scrambling
+      if (prev < T.crouch && t >= T.crouch) puff(X_CROUCH - 20, GROUND, 20, ['#e8d3a8', '#ef7d95', '#f2c53d', '#ffffff'], 170, 140);
       if (t > T.grab && t < T.scramble) {
         crumbTick += dt * speed;
         if (crumbTick > .09) {
           crumbTick = 0;
           const p = poseAt(t), g = geom(p);
           const w = toWorld(p, g.bN[4], g.bN[5]);
-          puff(Math.min(w[0], WALL_X - 2), w[1], 2, '#b8664c', 60, 30);
+          puff(Math.min(w[0], WALL_X - 2), w[1], 2, ['#e88d6c'], 60, 30);
         }
       }
       updateBits(dt * speed);
@@ -613,14 +863,20 @@ button:focus-visible, .steps button:focus-visible { outline: 3px solid var(--cre
     const p = poseAt(t);
     const clock = now / 1000;
     const blink = t > T.crouch && t < T.pull ? false : (clock % 3.4) < .14;
+    const s = stepAt(t);
 
     ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
     drawScene(clock);
+    drawRoute();
     drawShadow(p);
     drawCat(p, blink);
     drawBits();
+    for (const f of frontFlowers) flower(f, clock, 1.15);
+    drawTags(s, clock);
+    drawBanner(s);
+    ctx.fillStyle = grainPattern;
+    ctx.fillRect(0, 0, W, H);
 
-    const s = stepAt(t);
     if (s !== shownStep) {
       stepEls.forEach((el, i) => el.classList.toggle('on', i === s));
       shownStep = s;
