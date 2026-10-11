@@ -1,0 +1,105 @@
+{
+  "look": "solid",
+  "music": "upbeat",
+  "handle": "@patternparrot",
+  "colors": [
+    "#E8357A",
+    "#4A90E2",
+    "#5DC77A",
+    "#A62FD6",
+    "#2BB5AA",
+    "#F5C242",
+    "#4A3FD0",
+    "#E8357A"
+  ],
+  "slides": [
+    {
+      "kicker": "Meet Pattern Parrot",
+      "headline": "[[Seamless patterns]]|in seconds",
+      "visual": {
+        "type": "image",
+        "image": "images/app-cover.png",
+        "frame": "card"
+      }
+    },
+    {
+      "kicker": "How it works",
+      "headline": "From shape to [[pattern]] in 3 steps",
+      "visual": {
+        "type": "steps",
+        "steps": [
+          "Pick a shape",
+          "Choose your colours",
+          "Hit Shuffle"
+        ]
+      }
+    },
+    {
+      "kicker": "The shapes",
+      "headline": "Start with [[simple shapes]]",
+      "visual": {
+        "type": "image",
+        "image": "images/shapes.jpg",
+        "frame": "card"
+      }
+    },
+    {
+      "kicker": "The result",
+      "headline": "Every tile [[repeats perfectly]]",
+      "visual": {
+        "type": "image",
+        "image": "images/teardrops.jpg",
+        "frame": "card"
+      }
+    },
+    {
+      "kicker": "Downloads",
+      "headline": "Download [[print-ready]] files",
+      "visual": {
+        "type": "checklist",
+        "title": "Every pattern",
+        "items": [
+          "Single tile",
+          "3 x 3 repeat",
+          "PNG or SVG",
+          "Save to My Patterns"
+        ]
+      }
+    },
+    {
+      "kicker": "Who it's for",
+      "headline": "Made for [[pattern lovers]]",
+      "visual": {
+        "type": "icon",
+        "icon": "sparkle",
+        "chips": [
+          "Surface designers",
+          "Graphic designers",
+          "Print on demand"
+        ]
+      }
+    },
+    {
+      "kicker": "Beta access",
+      "headline": "[[Free]] for a limited time",
+      "visual": {
+        "type": "price",
+        "price": "Free",
+        "label": "Pattern Parrot beta",
+        "badge": "LIMITED",
+        "button": "Comment PP"
+      }
+    },
+    {
+      "kicker": "Your turn",
+      "headline": "Comment [[PP]] for beta access",
+      "visual": {
+        "type": "cta",
+        "action": "comment",
+        "keyword": "PP",
+        "reward": "beta access",
+        "icon": "sparkle"
+      }
+    }
+  ]
+}
