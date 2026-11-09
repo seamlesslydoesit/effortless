@@ -95,13 +95,17 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .wallbar .left { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
 #wall { width: 100%; max-width: 100%; aspect-ratio: 1; display: block; border-radius: 4px; }
 #wall.scene { aspect-ratio: 4 / 3; }
-.save { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; }
+.save { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: center; }
+.btn.outline { background: #ffffff; color: #111111; box-shadow: inset 0 0 0 2px #111111; }
+.previews { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.previews figure { margin: 0; display: grid; gap: 4px; }
+.previews figcaption { font-size: 12px; color: var(--muted); text-align: center; }
 .save img { width: 100%; max-width: 100%; aspect-ratio: 1; display: block; border-radius: 4px; border: 1px solid var(--line); }
 .save h2 { font-family: var(--font-display); font-weight: 400; font-size: 22px; margin: 0; }
 .save p { margin: 0; color: var(--muted); font-size: 14px; max-width: 60ch; }
 .save .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .save .copy { display: grid; gap: 10px; min-width: 0; }
-@media (max-width: 520px) { .save { grid-template-columns: minmax(0, 1fr); } .save img { max-width: 220px; } }
+@media (max-width: 520px) { .save { grid-template-columns: minmax(0, 1fr); } }
 .hint { font-size: 13px; color: var(--muted); }
 </style>
 
@@ -113,6 +117,14 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 
 <main>
   <aside class="panel" aria-label="Tile settings">
+    <section class="group">
+      <h2>Save your tile</h2>
+      <div class="chips">
+        <button class="btn" id="quickColour" type="button">Save in colour</button>
+        <button class="btn outline" id="quickBw" type="button">Save black and white outline</button>
+      </div>
+    </section>
+
     <section class="group">
       <h2>Ready-made designs</h2>
       <div class="chips" id="designs"></div>
@@ -186,17 +198,14 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     </section>
 
     <section class="save" aria-label="Save your tile">
-      <img id="tileImg" alt="Your single tile">
+      <div class="previews">
+        <figure><img id="tileImg" alt="Your tile in colour"><figcaption>Colour</figcaption></figure>
+        <figure><img id="tileImgBw" alt="Your tile as a black and white outline"><figcaption>Black and white outline</figcaption></figure>
+      </div>
       <div class="copy">
         <h2>Your tile</h2>
-        <p>This is one tile. Placed side by side it repeats with no visible edge, so you can use it for printing, wallpaper, fabric or as a background. Choose “Black and white outline” for a line drawing you can colour in, trace or cut.</p>
+        <p>This is one tile. Placed side by side it repeats with no visible edge, so you can use it for printing, wallpaper, fabric or as a background. The black and white outline is a line drawing you can colour in, trace or cut.</p>
         <div class="actions">
-          <label class="toggle" for="exportStyle">Style
-            <select id="exportStyle">
-              <option value="colour">In colour</option>
-              <option value="outline">Black and white outline</option>
-            </select>
-          </label>
           <label class="toggle" for="exportSize">Size
             <select id="exportSize">
               <option value="512">512 px</option>
@@ -205,9 +214,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
               <option value="4096">4096 px</option>
             </select>
           </label>
-          <button class="btn" id="download" type="button">Save tile as picture</button>
+          <button class="btn" id="download" type="button">Save in colour</button>
+          <button class="btn outline" id="downloadBw" type="button">Save black and white outline</button>
         </div>
-        <p class="hint">If the button does nothing, right-click the tile picture (or press and hold on a phone) and choose “Save image”.</p>
+        <p class="hint">If the button does nothing, right-click the tile picture you want (or press and hold on a phone) and choose “Save image”.</p>
       </div>
     </section>
   </div>
@@ -377,7 +387,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     pattern: "octagon", angle: 67.5, gap: 0, band: 0.022, repeats: 1,
     inner: true, dots: false, shift: false, double: false,
     colors: Object.assign({}, PALETTES["Lisbon blue"]), paletteName: "Lisbon blue", designName: "Lisbon star",
-    wall: 4, grout: true, glaze: true, exportSize: 1024, exportStyle: "colour", view: "wall", sceneSize: "medium"
+    wall: 4, grout: true, glaze: true, exportSize: 1024, view: "wall", sceneSize: "medium"
   };
 
   // ---------- Drawing ----------
@@ -673,10 +683,11 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   var stripCanvas = document.createElement("canvas");
   var tileImg = document.getElementById("tileImg");
   var strip = document.getElementById("strip");
-  function exportState() { return Object.assign({}, state, { outlineOnly: state.exportStyle === "outline" }); }
   function renderExport() {
-    renderTile(exportCanvas, state.exportSize, exportState());
+    renderTile(exportCanvas, state.exportSize, state);
     try { tileImg.src = exportCanvas.toDataURL("image/png"); } catch (e) {}
+    renderTile(exportCanvas, state.exportSize, Object.assign({}, state, { outlineOnly: true }));
+    try { $("tileImgBw").src = exportCanvas.toDataURL("image/png"); } catch (e) {}
     renderTile(stripCanvas, 88, state);
     try { strip.style.backgroundImage = "url(" + stripCanvas.toDataURL("image/png") + ")"; } catch (e) {}
   }
@@ -749,7 +760,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   });
   $("sceneSize").addEventListener("change", function () { state.sceneSize = $("sceneSize").value; schedule(false); });
   $("wallSize").addEventListener("change", function () { state.wall = parseInt($("wallSize").value, 10); schedule(false); });
-  $("exportStyle").addEventListener("change", function () { state.exportStyle = $("exportStyle").value; schedule(false); });
   $("exportSize").addEventListener("change", function () { state.exportSize = parseInt($("exportSize").value, 10); schedule(true); });
 
   $("surprise").addEventListener("click", function () {
@@ -770,9 +780,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   if (window.claude && typeof window.claude.use === "function") {
     window.claude.use("downloads").then(function (d) { downloadsApi = d; }, function () {});
   }
-  $("download").addEventListener("click", function () {
-    renderTile(exportCanvas, state.exportSize, exportState());
-    var name = "star-tile-" + state.pattern + (state.exportStyle === "outline" ? "-outline-" : "-") + state.exportSize + ".png";
+  function saveTile(outline) {
+    renderTile(exportCanvas, state.exportSize, Object.assign({}, state, { outlineOnly: outline }));
+    var name = "star-tile-" + state.pattern + (outline ? "-outline-" : "-") + state.exportSize + ".png";
     if (downloadsApi) {
       exportCanvas.toBlob(function (blob) {
         if (blob) downloadsApi.save({ filename: name, data: blob }).catch(function () {});
@@ -783,7 +793,11 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     a.download = name;
     a.href = exportCanvas.toDataURL("image/png");
     document.body.appendChild(a); a.click(); a.remove();
-  });
+  }
+  $("download").addEventListener("click", function () { saveTile(false); });
+  $("quickColour").addEventListener("click", function () { saveTile(false); });
+  $("downloadBw").addEventListener("click", function () { saveTile(true); });
+  $("quickBw").addEventListener("click", function () { saveTile(true); });
 
   function syncControls() {
     $("angle").value = state.angle; $("angleOut").textContent = state.angle + "°";
