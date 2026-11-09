@@ -294,7 +294,31 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   TILINGS.diamond = { label: "Diamond", cell: function () {
     return [{ pts: poly(0, 0, 0.5, 4, 0), cls: "a" }, { pts: poly(0.5, 0.5, 0.5, 4, 0), cls: "b" }];
   } };
-  TILINGS.cairo = { label: "Cairo", cell: function () { return dualCell("snub"); } };
+  // Classic Cairo: equal-sided pentagons whose short edges line up with the tile edges.
+  function cairoCell() {
+    var s = (Math.sqrt(8) - 1) / 14;  // makes all five sides the same length
+    var base = [[0, 0], [s, 0.5 - s], [0.5, 0.5], [0.5 + s, s], [0.5 - s, -s]];
+    var rots = [0, 1, 2, 3].map(function (k) {
+      return base.map(function (p) {
+        var x = p[0], y = p[1];
+        for (var r = 0; r < k; r++) { var t = x; x = -y; y = t; }
+        return [x, y];
+      });
+    });
+    var out = [], c = Math.SQRT1_2;
+    for (var i = -3; i <= 3; i++) for (var j = -3; j <= 3; j++) {
+      rots.forEach(function (pg, k) {
+        var pts = pg.map(function (p) {
+          var x = p[0] + i, y = p[1] + j;
+          return [(x - y) * c * c, (x + y) * c * c];  // turn 45° and shrink so the repeat is one tile
+        });
+        var cx = 0, cy = 0; pts.forEach(function (p) { cx += p[0]; cy += p[1]; }); cx /= 5; cy /= 5;
+        if (cx >= 0 && cx < 1 && cy >= 0 && cy < 1) out.push({ pts: pts, cls: k % 2 ? "a" : "b" });
+      });
+    }
+    return out;
+  }
+  TILINGS.cairo = { label: "Cairo", cell: cairoCell };
   TILINGS.fan = { label: "Triangle fan", cell: function () { return dualCell("octagon"); } };
   TILINGS.diagfan = { label: "Diagonal fan", cell: function () { return dualCell("diagonal"); } };
 
