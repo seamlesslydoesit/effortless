@@ -501,10 +501,22 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     update();
   });
 
+  // Saving: inside claude.ai use the viewer's save prompt; when opened as a plain file, use a normal download link.
+  var downloadsApi = null;
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("downloads").then(function (d) { downloadsApi = d; }, function () {});
+  }
   $("download").addEventListener("click", function () {
     renderTile(exportCanvas, state.exportSize, state);
+    var name = "star-tile-" + state.pattern + "-" + state.exportSize + ".png";
+    if (downloadsApi) {
+      exportCanvas.toBlob(function (blob) {
+        if (blob) downloadsApi.save({ filename: name, data: blob }).catch(function () {});
+      }, "image/png");
+      return;
+    }
     var a = document.createElement("a");
-    a.download = "star-tile-" + state.pattern + "-" + state.exportSize + ".png";
+    a.download = name;
     a.href = exportCanvas.toDataURL("image/png");
     document.body.appendChild(a); a.click(); a.remove();
   });
