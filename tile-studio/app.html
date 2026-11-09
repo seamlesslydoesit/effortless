@@ -30,6 +30,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   background: var(--bg); color: var(--ink);
   font-family: var(--font-body); font-size: 15px; line-height: 1.5;
@@ -91,6 +92,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .wallbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
 .wallbar .left { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
 #wall { width: 100%; max-width: 100%; aspect-ratio: 1; display: block; border-radius: 4px; }
+#wall.scene { aspect-ratio: 4 / 3; }
 .save { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; }
 .save img { width: 100%; max-width: 100%; aspect-ratio: 1; display: block; border-radius: 4px; border: 1px solid var(--line); }
 .save h2 { font-family: var(--font-display); font-weight: 400; font-size: 22px; margin: 0; }
@@ -137,6 +139,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
       <label class="toggle"><input type="checkbox" id="inner"> Small star inside each big star</label>
       <label class="toggle"><input type="checkbox" id="dots"> Dots where shapes meet</label>
       <label class="toggle"><input type="checkbox" id="shift"> Put the big star on the tile corners</label>
+      <label class="toggle"><input type="checkbox" id="double"> Double lines</label>
     </section>
 
     <section class="group">
@@ -148,9 +151,22 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 
   <div class="stage">
     <section class="wallbox" aria-label="Wall preview">
+      <div class="chips" id="views" role="group" aria-label="Show the tile on">
+        <button type="button" class="chip" data-view="wall">Tile wall</button>
+        <button type="button" class="chip" data-view="kitchen">Kitchen splashback</button>
+        <button type="button" class="chip" data-view="floor">Floor</button>
+        <button type="button" class="chip" data-view="living">Living room wall</button>
+      </div>
       <div class="wallbar">
         <div class="left">
-          <label class="toggle" for="wallSize">Wall
+          <label class="toggle" for="sceneSize" id="sceneSizeWrap">Tile size
+            <select id="sceneSize">
+              <option value="small">Small tiles</option>
+              <option value="medium">Medium tiles</option>
+              <option value="large">Large tiles</option>
+            </select>
+          </label>
+          <label class="toggle" for="wallSize" id="wallSizeWrap">Wall
             <select id="wallSize">
               <option value="2">2 × 2 tiles</option>
               <option value="3">3 × 3 tiles</option>
@@ -160,9 +176,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
             </select>
           </label>
           <label class="toggle"><input type="checkbox" id="grout"> Grout lines</label>
-          <label class="toggle"><input type="checkbox" id="glaze"> Glaze shine</label>
+          <label class="toggle" id="glazeWrap"><input type="checkbox" id="glaze"> Glaze shine</label>
         </div>
-        <span class="hint">Turn off grout to check the tile joins without a seam.</span>
+        <span class="hint" id="viewHint">Turn off grout to check the tile joins without a seam.</span>
       </div>
       <canvas id="wall"></canvas>
     </section>
@@ -249,6 +265,37 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   var cellCache = {};
   function cellOf(name) { return cellCache[name] || (cellCache[name] = TILINGS[name].cell()); }
 
+  // The "dual" of a tiling: one new shape around every corner point of the old one.
+  function dualCell(baseName) {
+    var base = cellOf(baseName), faces = [], map = {}, keys = [];
+    var key = function (v) { return Math.round(v[0] * 1e5) + "," + Math.round(v[1] * 1e5); };
+    for (var i = -2; i <= 2; i++) for (var j = -2; j <= 2; j++) {
+      base.forEach(function (c) { faces.push(c.pts.map(function (v) { return [v[0] + i, v[1] + j]; })); });
+    }
+    faces.forEach(function (f) {
+      var cx = 0, cy = 0; f.forEach(function (v) { cx += v[0]; cy += v[1]; }); cx /= f.length; cy /= f.length;
+      f.forEach(function (v) {
+        var k = key(v);
+        if (!map[k]) { map[k] = { v: v, cs: [] }; keys.push(k); }
+        map[k].cs.push([cx, cy]);
+      });
+    });
+    var out = [], eps = 1e-7;
+    keys.forEach(function (k) {
+      var m = map[k], v = m.v;
+      if (v[0] < -eps || v[0] >= 1 - eps || v[1] < -eps || v[1] >= 1 - eps || m.cs.length < 3) return;
+      var pts = m.cs.slice().sort(function (a, b) { return Math.atan2(a[1] - v[1], a[0] - v[0]) - Math.atan2(b[1] - v[1], b[0] - v[0]); });
+      out.push({ pts: pts, cls: "a" });
+    });
+    return out;
+  }
+  TILINGS.diamond = { label: "Diamond", cell: function () {
+    return [{ pts: poly(0, 0, 0.5, 4, 0), cls: "a" }, { pts: poly(0.5, 0.5, 0.5, 4, 0), cls: "b" }];
+  } };
+  TILINGS.cairo = { label: "Cairo", cell: function () { return dualCell("snub"); } };
+  TILINGS.fan = { label: "Triangle fan", cell: function () { return dualCell("octagon"); } };
+  TILINGS.diagfan = { label: "Diagonal fan", cell: function () { return dualCell("diagonal"); } };
+
   function buildPolys(st) {
     var cell = cellOf(st.pattern), r = st.repeats, sh = st.shift ? 0.5 : 0, out = [];
     for (var i = -2; i <= r + 1; i++) for (var j = -2; j <= r + 1; j++) {
@@ -313,14 +360,16 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     "Puebla rosette":  { pattern: "diagonal", angle: 60,   gap: 0.18, band: 0.016, repeats: 1, inner: true,  dots: true,  shift: false, palette: "Talavera" },
     "Fez weave":       { pattern: "snub",     angle: 70,   gap: 0,    band: 0.024,  repeats: 1, inner: false, dots: true,  shift: false, palette: "Fez green" },
     "Seville cross":   { pattern: "octagon",  angle: 45,   gap: 0,    band: 0.014, repeats: 2, inner: true,  dots: true,  shift: true,  palette: "Seville" },
-    "Night garden":    { pattern: "diagonal", angle: 67.5, gap: 0,    band: 0.02,  repeats: 1, inner: false, dots: false,  shift: false, palette: "Midnight gold" }
+    "Night garden":    { pattern: "diagonal", angle: 67.5, gap: 0,    band: 0.02,  repeats: 1, inner: false, dots: false,  shift: false, palette: "Midnight gold" },
+    "Cairo garden":    { pattern: "cairo",    angle: 58,   gap: 0,    band: 0.03,  repeats: 1, inner: true,  dots: false, shift: false, double: true, palette: "Puebla pink" },
+    "Marrakesh fan":   { pattern: "fan",      angle: 55,   gap: 0,    band: 0.024, repeats: 1, inner: false, dots: true,  shift: false, double: true, palette: "Seville" }
   };
 
   var state = {
     pattern: "octagon", angle: 67.5, gap: 0, band: 0.022, repeats: 1,
-    inner: true, dots: false, shift: false,
+    inner: true, dots: false, shift: false, double: false,
     colors: Object.assign({}, PALETTES["Lisbon blue"]), paletteName: "Lisbon blue", designName: "Lisbon star",
-    wall: 4, grout: true, glaze: true, exportSize: 1024
+    wall: 4, grout: true, glaze: true, exportSize: 1024, view: "wall", sceneSize: "medium"
   };
 
   // ---------- Drawing ----------
@@ -343,7 +392,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 
     if (st.inner) {
       stars.forEach(function (h) {
-        if (h.cls !== "a") return;
+        if (h.cls !== "a" || h.verts.length < 4) return;
         var k = 0.52, c = h.center;
         var inner = h.star.map(function (p) { return [c[0] + (p[0] - c[0]) * k, c[1] + (p[1] - c[1]) * k]; });
         ctx.beginPath(); pathPts(ctx, inner, S);
@@ -364,6 +413,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
       });
       ctx.lineWidth = bw + ow * 2; ctx.strokeStyle = col.outline; ctx.stroke();
       ctx.lineWidth = bw; ctx.strokeStyle = col.band; ctx.stroke();
+      if (st.double && bw > ow * 2) { ctx.lineWidth = Math.max(1, bw * 0.22); ctx.strokeStyle = col.outline; ctx.stroke(); }
     } else {
       stars.forEach(function (h) { ctx.beginPath(); pathPts(ctx, h.star, S); ctx.lineWidth = Math.max(1, cellPx * 0.006); ctx.strokeStyle = col.outline; ctx.stroke(); });
     }
@@ -409,6 +459,201 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     }
   }
 
+  // ---------- Room scenes ----------
+  function groutTile(px) {
+    var c = document.createElement("canvas");
+    renderTile(c, px, state);
+    var x = c.getContext("2d");
+    var g = x.createLinearGradient(0, 0, px, px);
+    g.addColorStop(0, "rgba(255,255,255,0.16)"); g.addColorStop(0.4, "rgba(255,255,255,0)"); g.addColorStop(1, "rgba(0,0,0,0.06)");
+    x.fillStyle = g; x.fillRect(0, 0, px, px);
+    if (state.grout) {
+      var w = Math.max(1, Math.round(px * 0.03));
+      x.fillStyle = "#d4cec2"; x.fillRect(0, 0, px, w); x.fillRect(0, 0, w, px);
+    }
+    return c;
+  }
+  function fillTiles(ctx, x, y, w, h, tp, tile) {
+    var pat = ctx.createPattern(tile, "repeat");
+    if (pat.setTransform && window.DOMMatrix) pat.setTransform(new DOMMatrix([1, 0, 0, 1, x, y]));
+    ctx.fillStyle = pat; ctx.fillRect(x, y, w, h);
+  }
+  function rr(ctx, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath(); ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function box(ctx, x, y, w, h, color, r) { ctx.fillStyle = color; if (r) { rr(ctx, x, y, w, h, r); ctx.fill(); } else ctx.fillRect(x, y, w, h); }
+  function leaves(ctx, cx, cy, s, color) {
+    ctx.fillStyle = color;
+    [[-0.9, -1.4, -0.5], [0.9, -1.5, 0.5], [0, -2.1, 0], [-1.5, -0.6, -1], [1.5, -0.7, 1], [-0.4, -1.9, -0.2], [0.5, -1.0, 0.3]].forEach(function (l) {
+      ctx.save(); ctx.translate(cx + l[0] * s * 0.5, cy + l[1] * s * 0.5); ctx.rotate(l[2]);
+      ctx.beginPath(); ctx.ellipse(0, 0, s * 0.22, s * 0.62, 0, 0, TAU); ctx.fill(); ctx.restore();
+    });
+  }
+  function shade(ctx, x0, y0, x1, y1, c0, c1, rx, ry, rw, rh) {
+    var g = ctx.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, c0); g.addColorStop(1, c1);
+    ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh);
+  }
+
+  var SCENES = {
+    kitchen: function (ctx, W, H) {
+      var n = { small: 16, medium: 11, large: 7 }[state.sceneSize], tp = Math.max(8, Math.round(W / n)), tile = groutTile(tp);
+      var top = 0.30 * H, ct = 0.63 * H, hx0 = 0.58 * W, hx1 = 0.80 * W;
+      box(ctx, 0, 0, W, H, "#ece7de");
+      fillTiles(ctx, 0, top, W, ct - top, tp, tile);
+      fillTiles(ctx, hx0, 0, hx1 - hx0, top, tp, tile);
+      shade(ctx, 0, top, 0, top + 0.07 * H, "rgba(0,0,0,0.28)", "rgba(0,0,0,0)", 0, top, W, 0.07 * H);
+      // upper cabinets
+      [[0, hx0], [hx1, W]].forEach(function (seg) {
+        box(ctx, seg[0], 0, seg[1] - seg[0], top, "#f3f1ec");
+        var doors = Math.max(1, Math.round((seg[1] - seg[0]) / (0.145 * W))), dw = (seg[1] - seg[0]) / doors;
+        for (var d = 0; d < doors; d++) {
+          var x = seg[0] + d * dw;
+          ctx.strokeStyle = "#d3cdc2"; ctx.lineWidth = Math.max(1, W * 0.002);
+          ctx.strokeRect(x + W * 0.01, H * 0.02, dw - W * 0.02, top - H * 0.04);
+          box(ctx, x + (d % 2 ? W * 0.02 : dw - W * 0.026), top - H * 0.09, W * 0.006, H * 0.05, "#b08d57", W * 0.003);
+        }
+      });
+      box(ctx, 0, top - H * 0.008, hx0, H * 0.008, "#e2ddd3"); box(ctx, hx1, top - H * 0.008, W - hx1, H * 0.008, "#e2ddd3");
+      // cooker hood
+      box(ctx, 0.655 * W, 0, 0.07 * W, 0.13 * H, "#b9bec4");
+      ctx.fillStyle = "#c8ccd1"; ctx.beginPath();
+      ctx.moveTo(0.64 * W, 0.13 * H); ctx.lineTo(0.74 * W, 0.13 * H); ctx.lineTo(0.79 * W, 0.235 * H); ctx.lineTo(0.59 * W, 0.235 * H); ctx.closePath(); ctx.fill();
+      box(ctx, 0.59 * W, 0.235 * H, 0.2 * W, 0.03 * H, "#a6abb2");
+      shade(ctx, 0, 0.265 * H, 0, 0.32 * H, "rgba(0,0,0,0.18)", "rgba(0,0,0,0)", 0.59 * W, 0.265 * H, 0.2 * W, 0.055 * H);
+      // cutting boards leaning on the tiles
+      box(ctx, 0.07 * W, ct - 0.22 * H, 0.12 * W, 0.22 * H, "#c89b65", W * 0.012);
+      box(ctx, 0.15 * W, ct - 0.16 * H, 0.09 * W, 0.16 * H, "#a8794a", W * 0.01);
+      ctx.fillStyle = "#ece7de"; ctx.beginPath(); ctx.arc(0.13 * W, ct - 0.19 * H, W * 0.009, 0, TAU); ctx.fill();
+      // tap
+      ctx.strokeStyle = "#d4d8dd"; ctx.lineWidth = W * 0.011; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.beginPath(); ctx.moveTo(0.36 * W, ct); ctx.lineTo(0.36 * W, ct - 0.15 * H);
+      ctx.arc(0.385 * W, ct - 0.15 * H, 0.025 * W, Math.PI, 0); ctx.lineTo(0.41 * W, ct - 0.11 * H); ctx.stroke();
+      box(ctx, 0.345 * W, ct - 0.015 * H, 0.03 * W, 0.015 * H, "#b9bec4", 2);
+      // pot on the hob
+      box(ctx, 0.635 * W, ct - 0.08 * H, 0.11 * W, 0.08 * H, "#2d3035", W * 0.008);
+      box(ctx, 0.625 * W, ct - 0.092 * H, 0.13 * W, 0.016 * H, "#3a3e44", W * 0.006);
+      box(ctx, 0.678 * W, ct - 0.108 * H, 0.024 * W, 0.016 * H, "#3a3e44", W * 0.004);
+      // plant jar
+      box(ctx, 0.49 * W, ct - 0.07 * H, 0.05 * W, 0.07 * H, "#e9e4da", W * 0.008);
+      leaves(ctx, 0.515 * W, ct - 0.07 * H, W * 0.045, "#4f7a52");
+      // worktop
+      box(ctx, 0, ct, W, 0.045 * H, "#3b3d40"); box(ctx, 0, ct, W, Math.max(2, 0.006 * H), "#5a5d62");
+      // lower cabinets
+      var lb = ct + 0.045 * H;
+      box(ctx, 0, lb, W, H - lb, "#3f5d4e");
+      var ld = 5, ldw = W / ld;
+      for (var d = 0; d < ld; d++) {
+        ctx.strokeStyle = "#32493d"; ctx.lineWidth = Math.max(1, W * 0.003);
+        ctx.strokeRect(d * ldw + W * 0.008, lb + H * 0.02, ldw - W * 0.016, H * 0.9 - lb);
+        box(ctx, d * ldw + ldw / 2 - W * 0.03, lb + H * 0.05, W * 0.06, H * 0.01, "#c3a066", H * 0.005);
+      }
+      box(ctx, 0, 0.94 * H, W, 0.06 * H, "#2b3d33");
+      shade(ctx, 0, lb, 0, lb + 0.04 * H, "rgba(0,0,0,0.25)", "rgba(0,0,0,0)", 0, lb, W, 0.04 * H);
+    },
+
+    living: function (ctx, W, H) {
+      var n = { small: 18, medium: 12, large: 8 }[state.sceneSize], tp = Math.max(8, Math.round(W / n)), tile = groutTile(tp);
+      var fy = 0.74 * H;
+      fillTiles(ctx, 0, 0, W, fy, tp, tile);
+      // lamp glow
+      var gl = ctx.createRadialGradient(0.08 * W, 0.38 * H, 0, 0.08 * W, 0.38 * H, 0.35 * W);
+      gl.addColorStop(0, "rgba(255,228,170,0.35)"); gl.addColorStop(1, "rgba(255,228,170,0)");
+      ctx.fillStyle = gl; ctx.fillRect(0, 0, W, fy);
+      // floor
+      box(ctx, 0, fy, W, H - fy, "#a87c52");
+      ctx.strokeStyle = "rgba(60,35,15,0.18)"; ctx.lineWidth = Math.max(1, H * 0.002);
+      for (var py = fy, row = 0; py < H; py += 0.04 * H, row++) {
+        ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+        for (var px = (row % 3) * 0.13 * W; px < W; px += 0.38 * W) { ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + 0.04 * H); ctx.stroke(); }
+      }
+      box(ctx, 0, fy - 0.022 * H, W, 0.022 * H, "#f2efe9");
+      // rug
+      ctx.fillStyle = "#e9dec9"; ctx.beginPath();
+      ctx.moveTo(0.14 * W, 0.83 * H); ctx.lineTo(0.86 * W, 0.83 * H); ctx.lineTo(0.95 * W, 0.99 * H); ctx.lineTo(0.05 * W, 0.99 * H); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "#b99f78"; ctx.lineWidth = W * 0.004; ctx.stroke();
+      // shadow behind sofa
+      var sh = ctx.createRadialGradient(0.5 * W, 0.7 * H, 0.05 * W, 0.5 * W, 0.7 * H, 0.42 * W);
+      sh.addColorStop(0, "rgba(0,0,0,0.28)"); sh.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = sh; ctx.fillRect(0, 0.4 * H, W, 0.34 * H);
+      // sofa
+      box(ctx, 0.23 * W, 0.86 * H, 0.015 * W, 0.03 * H, "#3a2a1f"); box(ctx, 0.755 * W, 0.86 * H, 0.015 * W, 0.03 * H, "#3a2a1f");
+      box(ctx, 0.22 * W, 0.47 * H, 0.56 * W, 0.24 * H, "#c4aa82", W * 0.03);
+      box(ctx, 0.2 * W, 0.66 * H, 0.6 * W, 0.2 * H, "#b89c72", W * 0.02);
+      box(ctx, 0.255 * W, 0.51 * H, 0.235 * W, 0.17 * H, "#cfb790", W * 0.025);
+      box(ctx, 0.51 * W, 0.51 * H, 0.235 * W, 0.17 * H, "#cfb790", W * 0.025);
+      box(ctx, 0.165 * W, 0.57 * H, 0.085 * W, 0.3 * H, "#ad9067", W * 0.03);
+      box(ctx, 0.75 * W, 0.57 * H, 0.085 * W, 0.3 * H, "#ad9067", W * 0.03);
+      ctx.save(); ctx.translate(0.33 * W, 0.6 * H); ctx.rotate(-0.12);
+      box(ctx, -0.055 * W, -0.06 * H, 0.11 * W, 0.12 * H, "#9e4a35", W * 0.02); ctx.restore();
+      ctx.save(); ctx.translate(0.67 * W, 0.6 * H); ctx.rotate(0.1);
+      box(ctx, -0.05 * W, -0.055 * H, 0.1 * W, 0.11 * H, state.colors.star, W * 0.02); ctx.restore();
+      // side table with plant
+      box(ctx, 0.865 * W, 0.66 * H, 0.1 * W, 0.016 * H, "#6b4a33", 3);
+      box(ctx, 0.875 * W, 0.67 * H, 0.008 * W, 0.2 * H, "#5a3d2a"); box(ctx, 0.947 * W, 0.67 * H, 0.008 * W, 0.2 * H, "#5a3d2a");
+      leaves(ctx, 0.915 * W, 0.6 * H, W * 0.05, "#4c7550");
+      box(ctx, 0.89 * W, 0.6 * H, 0.05 * W, 0.06 * H, "#e2dbcf", W * 0.008);
+      // floor lamp
+      ctx.fillStyle = "#2f2a26"; ctx.beginPath(); ctx.ellipse(0.08 * W, 0.885 * H, 0.04 * W, 0.012 * H, 0, 0, TAU); ctx.fill();
+      box(ctx, 0.077 * W, 0.4 * H, 0.006 * W, 0.49 * H, "#2f2a26");
+      ctx.fillStyle = "#f1e6cd"; ctx.beginPath();
+      ctx.moveTo(0.05 * W, 0.32 * H); ctx.lineTo(0.11 * W, 0.32 * H); ctx.lineTo(0.13 * W, 0.42 * H); ctx.lineTo(0.03 * W, 0.42 * H); ctx.closePath(); ctx.fill();
+    },
+
+    floor: function (ctx, W, H) {
+      var n = { small: 7, medium: 5, large: 3.5 }[state.sceneSize];
+      var yWall = Math.round(0.40 * H), y0 = 0.16 * H, cx = W / 2;
+      var tp = Math.round(Math.min(512, Math.max(48, W / n))), tile = groutTile(tp);
+      var T = W / (n * (H - y0));
+      var maxSw = W / ((yWall - y0) * T) * tp, K = Math.ceil(maxSw / tp) + 2;
+      var strip = document.createElement("canvas"); strip.width = K * tp; strip.height = tp;
+      var sx2 = strip.getContext("2d"); for (var k = 0; k < K; k++) sx2.drawImage(tile, k * tp, 0);
+      // wall
+      box(ctx, 0, 0, W, yWall, "#ebe5da");
+      var wl = ctx.createLinearGradient(0, 0, W, 0); wl.addColorStop(0, "rgba(0,0,0,0.06)"); wl.addColorStop(0.6, "rgba(255,255,255,0.0)"); wl.addColorStop(1, "rgba(0,0,0,0.05)");
+      ctx.fillStyle = wl; ctx.fillRect(0, 0, W, yWall);
+      box(ctx, 0.08 * W, 0.02 * H, 0.17 * W, yWall - 0.02 * H, "#f6f3ee");
+      box(ctx, 0.095 * W, 0.035 * H, 0.14 * W, yWall - 0.035 * H, "#4a4540");
+      box(ctx, 0.56 * W, 0.05 * H, 0.22 * W, 0.2 * H, "#f6f3ee");
+      box(ctx, 0.57 * W, 0.063 * H, 0.2 * W, 0.174 * H, "#c9d9e3");
+      box(ctx, 0.668 * W, 0.063 * H, 0.004 * W, 0.174 * H, "#f6f3ee");
+      // floor, one screen row at a time
+      ctx.imageSmoothingEnabled = true;
+      for (var y = yWall; y < H; y++) {
+        var denom = y + 0.5 - y0, zW = W / denom;
+        var sw = zW / T * tp, sx = (-cx / denom) / T * tp, v = zW / T * tp;
+        var sxm = ((sx % tp) + tp) % tp, sym = ((v % tp) + tp) % tp;
+        var shh = Math.max(0.5, Math.min(W * tp / (T * denom * denom), tp - sym));
+        ctx.drawImage(strip, sxm, sym, sw, shh, 0, y, W, 1);
+      }
+      shade(ctx, 0, yWall, 0, yWall + 0.3 * H, "rgba(235,229,218,0.55)", "rgba(235,229,218,0)", 0, yWall, W, 0.3 * H);
+      box(ctx, 0, yWall - 0.02 * H, W, 0.02 * H, "#f6f3ee");
+      shade(ctx, 0, yWall, 0, yWall + 0.02 * H, "rgba(0,0,0,0.18)", "rgba(0,0,0,0)", 0, yWall, W, 0.02 * H);
+      // window light on the floor
+      ctx.fillStyle = "rgba(255,248,225,0.18)"; ctx.beginPath();
+      ctx.moveTo(0.58 * W, yWall + 0.02 * H); ctx.lineTo(0.78 * W, yWall + 0.02 * H); ctx.lineTo(0.98 * W, 0.78 * H); ctx.lineTo(0.62 * W, 0.78 * H); ctx.closePath(); ctx.fill();
+      // plant
+      var pg = ctx.createRadialGradient(0.86 * W, 0.9 * H, 0, 0.86 * W, 0.9 * H, 0.1 * W);
+      pg.addColorStop(0, "rgba(0,0,0,0.3)"); pg.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = pg; ctx.fillRect(0.74 * W, 0.84 * H, 0.24 * W, 0.12 * H);
+      leaves(ctx, 0.86 * W, 0.72 * H, W * 0.09, "#46704b");
+      ctx.fillStyle = "#c7714f"; ctx.beginPath();
+      ctx.moveTo(0.8 * W, 0.72 * H); ctx.lineTo(0.92 * W, 0.72 * H); ctx.lineTo(0.905 * W, 0.9 * H); ctx.lineTo(0.815 * W, 0.9 * H); ctx.closePath(); ctx.fill();
+      var vg = ctx.createRadialGradient(W / 2, H * 0.55, H * 0.3, W / 2, H * 0.55, W * 0.75);
+      vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,0.25)"); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+    }
+  };
+
+  function renderView() {
+    if (state.view === "wall" || !SCENES[state.view]) { renderWall(); return; }
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = Math.round((wall.clientWidth || 600) * dpr), H = Math.round(W * 3 / 4);
+    wall.width = W; wall.height = H;
+    var ctx = wall.getContext("2d");
+    ctx.save(); SCENES[state.view](ctx, W, H); ctx.restore();
+  }
+
   var exportCanvas = document.createElement("canvas");
   var stripCanvas = document.createElement("canvas");
   var tileImg = document.getElementById("tileImg");
@@ -448,7 +693,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   });
   function applyDesign(name) {
     var d = DESIGNS[name];
-    Object.assign(state, { pattern: d.pattern, angle: d.angle, gap: d.gap, band: d.band, repeats: d.repeats, inner: d.inner, dots: d.dots, shift: d.shift });
+    Object.assign(state, { pattern: d.pattern, angle: d.angle, gap: d.gap, band: d.band, repeats: d.repeats, inner: d.inner, dots: d.dots, shift: d.shift, double: !!d.double });
     state.colors = Object.assign({}, PALETTES[d.palette]); state.paletteName = d.palette; state.designName = name;
     update();
   }
@@ -481,8 +726,12 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   bindRange("gap", "gap", null, parseFloat);
   bindRange("band", "band", null, parseFloat);
   bindRange("repeats", "repeats", null, function (v) { return parseInt(v, 10); });
-  ["inner", "dots", "shift"].forEach(function (k) { $(k).addEventListener("change", function () { state[k] = $(k).checked; state.designName = null; update(); }); });
+  ["inner", "dots", "shift", "double"].forEach(function (k) { $(k).addEventListener("change", function () { state[k] = $(k).checked; state.designName = null; update(); }); });
   ["grout", "glaze"].forEach(function (k) { $(k).addEventListener("change", function () { state[k] = $(k).checked; schedule(false); }); });
+  document.querySelectorAll("#views .chip").forEach(function (b) {
+    b.addEventListener("click", function () { state.view = b.dataset.view; syncControls(); schedule(false); });
+  });
+  $("sceneSize").addEventListener("change", function () { state.sceneSize = $("sceneSize").value; schedule(false); });
   $("wallSize").addEventListener("change", function () { state.wall = parseInt($("wallSize").value, 10); schedule(false); });
   $("exportSize").addEventListener("change", function () { state.exportSize = parseInt($("exportSize").value, 10); schedule(true); });
 
@@ -494,7 +743,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     state.gap = Math.random() < 0.4 ? 0 : Math.round(Math.random() * 35) / 100;
     state.band = Math.round((0.008 + Math.random() * 0.03) * 500) / 500;
     state.repeats = pick([1, 1, 2, 2, 3]);
-    state.inner = Math.random() < 0.6; state.dots = Math.random() < 0.5; state.shift = Math.random() < 0.4;
+    state.inner = Math.random() < 0.6; state.dots = Math.random() < 0.5; state.shift = Math.random() < 0.4; state.double = Math.random() < 0.4;
     state.paletteName = pick(pals); state.colors = Object.assign({}, PALETTES[state.paletteName]); state.designName = null;
     update();
   });
@@ -524,7 +773,13 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     $("gap").value = state.gap; $("gapOut").textContent = Math.round(state.gap * 100) + "%";
     $("band").value = state.band; $("bandOut").textContent = state.band === 0 ? "none" : (state.band * 100).toFixed(1);
     $("repeats").value = state.repeats; $("repeatsOut").textContent = state.repeats + " × " + state.repeats;
-    $("inner").checked = state.inner; $("dots").checked = state.dots; $("shift").checked = state.shift;
+    $("inner").checked = state.inner; $("double").checked = state.double; $("dots").checked = state.dots; $("shift").checked = state.shift;
+    $("sceneSize").value = state.sceneSize;
+    document.querySelectorAll("#views .chip").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.view === state.view)); });
+    var flat = state.view === "wall";
+    $("wallSizeWrap").hidden = !flat; $("glazeWrap").hidden = !flat; $("sceneSizeWrap").hidden = flat;
+    $("viewHint").textContent = flat ? "Turn off grout to check the tile joins without a seam." : "A quick sketch to show how your tile looks in a room.";
+    wall.classList.toggle("scene", !flat);
     $("grout").checked = state.grout; $("glaze").checked = state.glaze;
     $("wallSize").value = String(state.wall); $("exportSize").value = String(state.exportSize);
     KEYS.forEach(function (k) { $("c-" + k[0]).value = state.colors[k[0]]; });
@@ -537,7 +792,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   function schedule(full) {
     if (full) needThumbs = true;
     if (!rafId) rafId = requestAnimationFrame(function () {
-      rafId = 0; renderWall();
+      rafId = 0; renderView();
       if (needThumbs) { drawThumbs(); needThumbs = false; }
     });
     clearTimeout(exportTimer);
