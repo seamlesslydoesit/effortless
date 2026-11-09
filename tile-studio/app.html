@@ -1,0 +1,541 @@
+<title>Star Tile Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Karla:wght@400;500;700&display=swap">
+<style>
+/* Layout: a working bench. Controls on the left like a glazier's palette, the tiled wall large on the right. */
+:root {
+  --bg: #eef2f7;
+  --surface: #ffffff;
+  --ink: #14213d;
+  --muted: #56627c;
+  --line: #d3dbea;
+  --accent: #1f4e9c;
+  --accent-ink: #ffffff;
+  --accent-soft: #e2eaf8;
+  --font-display: "Marcellus", "Times New Roman", serif;
+  --font-body: "Karla", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1324; --surface: #151d33; --ink: #e8edf8; --muted: #9ba7c3;
+    --line: #29355a; --accent: #86a8ec; --accent-ink: #0d1324; --accent-soft: #1d2a4d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1324; --surface: #151d33; --ink: #e8edf8; --muted: #9ba7c3;
+  --line: #29355a; --accent: #86a8ec; --accent-ink: #0d1324; --accent-soft: #1d2a4d;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+}
+.strip { height: 44px; background-color: var(--accent); background-size: 44px 44px; background-repeat: repeat-x; }
+header {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 18px;
+  max-width: 1320px; margin: 0 auto;
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px;
+}
+h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 4vw, 40px); margin: 0; letter-spacing: .01em; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); max-width: 52ch; }
+main {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 40px;
+  max-width: 1320px; margin: 0 auto;
+  display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start;
+}
+@media (max-width: 860px) {
+  main { grid-template-columns: minmax(0, 1fr); }
+  .stage { order: -1; }
+}
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 6px 18px 18px; display: grid; gap: 0; min-width: 0; }
+.group { padding-block: 14px; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.group:last-child { border-bottom: 0; padding-bottom: 0; }
+.group h2 { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: inherit; font-size: 14px; border: 1px solid var(--line); background: transparent; color: var(--ink);
+  border-radius: 999px; padding: 5px 12px; cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.patterns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.pat { font: inherit; font-size: 12px; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 5px; cursor: pointer; display: grid; gap: 4px; justify-items: center; text-align: center; line-height: 1.2; }
+.pat canvas { width: 100%; aspect-ratio: 1; max-width: 100%; border-radius: 4px; display: block; }
+.pat[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 10px; }
+.row label { font-size: 14px; }
+.row output { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.row input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.toggle { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sw { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
+.sw input { width: 100%; height: 32px; border: 1px solid var(--line); border-radius: 6px; padding: 2px; background: var(--surface); cursor: pointer; }
+.pal { display: inline-flex; align-items: center; gap: 6px; }
+.pal i { display: inline-flex; border-radius: 3px; overflow: hidden; }
+.pal i b { width: 8px; height: 14px; display: block; }
+select { font: inherit; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
+.btn { font: inherit; font-weight: 700; border: 0; border-radius: 8px; padding: 10px 16px; background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+.btn.ghost { background: var(--accent-soft); color: var(--ink); font-weight: 500; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage { display: grid; gap: 16px; min-width: 0; }
+.wallbox { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 12px; min-width: 0; }
+.wallbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.wallbar .left { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+#wall { width: 100%; max-width: 100%; aspect-ratio: 1; display: block; border-radius: 4px; }
+.save { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; }
+.save img { width: 100%; max-width: 100%; aspect-ratio: 1; display: block; border-radius: 4px; border: 1px solid var(--line); }
+.save h2 { font-family: var(--font-display); font-weight: 400; font-size: 22px; margin: 0; }
+.save p { margin: 0; color: var(--muted); font-size: 14px; max-width: 60ch; }
+.save .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.save .copy { display: grid; gap: 10px; min-width: 0; }
+@media (max-width: 520px) { .save { grid-template-columns: minmax(0, 1fr); } .save img { max-width: 220px; } }
+.hint { font-size: 13px; color: var(--muted); }
+</style>
+
+<div class="strip" id="strip" aria-hidden="true"></div>
+<header>
+  <h1>Star Tile Studio</h1>
+  <p>Make seamless tiles with Arabic star patterns, painted in the colours of Portuguese azulejos and Mexican Talavera.</p>
+</header>
+
+<main>
+  <aside class="panel" aria-label="Tile settings">
+    <section class="group">
+      <h2>Ready-made designs</h2>
+      <div class="chips" id="designs"></div>
+      <button class="btn ghost" id="surprise" type="button">Surprise me</button>
+    </section>
+
+    <section class="group">
+      <h2>Pattern</h2>
+      <div class="patterns" id="patterns"></div>
+    </section>
+
+    <section class="group">
+      <h2>Shape</h2>
+      <div class="row"><label for="angle">Star points</label><output id="angleOut"></output>
+        <input type="range" id="angle" min="20" max="80" step="0.5"></div>
+      <div class="row"><label for="gap">Gap between stars</label><output id="gapOut"></output>
+        <input type="range" id="gap" min="0" max="0.6" step="0.01"></div>
+      <div class="row"><label for="band">Line thickness</label><output id="bandOut"></output>
+        <input type="range" id="band" min="0" max="0.08" step="0.002"></div>
+      <div class="row"><label for="repeats">Patterns per tile</label><output id="repeatsOut"></output>
+        <input type="range" id="repeats" min="1" max="4" step="1"></div>
+    </section>
+
+    <section class="group">
+      <h2>Details</h2>
+      <label class="toggle"><input type="checkbox" id="inner"> Small star inside each big star</label>
+      <label class="toggle"><input type="checkbox" id="dots"> Dots where shapes meet</label>
+      <label class="toggle"><input type="checkbox" id="shift"> Put the big star on the tile corners</label>
+    </section>
+
+    <section class="group">
+      <h2>Colours</h2>
+      <div class="chips" id="palettes"></div>
+      <div class="swatches" id="swatches"></div>
+    </section>
+  </aside>
+
+  <div class="stage">
+    <section class="wallbox" aria-label="Wall preview">
+      <div class="wallbar">
+        <div class="left">
+          <label class="toggle" for="wallSize">Wall
+            <select id="wallSize">
+              <option value="2">2 × 2 tiles</option>
+              <option value="3">3 × 3 tiles</option>
+              <option value="4">4 × 4 tiles</option>
+              <option value="6">6 × 6 tiles</option>
+              <option value="8">8 × 8 tiles</option>
+            </select>
+          </label>
+          <label class="toggle"><input type="checkbox" id="grout"> Grout lines</label>
+          <label class="toggle"><input type="checkbox" id="glaze"> Glaze shine</label>
+        </div>
+        <span class="hint">Turn off grout to check the tile joins without a seam.</span>
+      </div>
+      <canvas id="wall"></canvas>
+    </section>
+
+    <section class="save" aria-label="Save your tile">
+      <img id="tileImg" alt="Your single tile">
+      <div class="copy">
+        <h2>Your tile</h2>
+        <p>This is one tile. Placed side by side it repeats with no visible edge, so you can use it for printing, wallpaper, fabric or as a background.</p>
+        <div class="actions">
+          <label class="toggle" for="exportSize">Size
+            <select id="exportSize">
+              <option value="512">512 px</option>
+              <option value="1024" selected>1024 px</option>
+              <option value="2048">2048 px</option>
+              <option value="4096">4096 px</option>
+            </select>
+          </label>
+          <button class="btn" id="download" type="button">Save tile as picture</button>
+        </div>
+        <p class="hint">If the button does nothing, right-click the tile picture (or press and hold on a phone) and choose “Save image”.</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var TAU = Math.PI * 2;
+
+  // ---------- Geometry: regular polygon tilings that repeat on a square ----------
+  function poly(cx, cy, R, n, a0) {
+    var p = [];
+    for (var k = 0; k < n; k++) { var a = a0 + k * TAU / n; p.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); }
+    return p;
+  }
+  function snubCell() {
+    var P = Math.sqrt(2 + Math.sqrt(3)), h = Math.SQRT1_2;
+    var sqA = function (ox, oy) { return poly(ox, oy, h, 4, Math.PI / 4 + Math.PI / 12); };
+    var sqB = function (ox, oy) { return poly(ox + P / 2, oy + P / 2, h, 4, Math.PI / 4 - Math.PI / 12); };
+    var verts = [], seen = {};
+    for (var i = -1; i <= 1; i++) for (var j = -1; j <= 1; j++) {
+      [sqA(i * P, j * P), sqB(i * P, j * P)].forEach(function (sq) {
+        sq.forEach(function (v) {
+          var key = Math.round(v[0] * 1e5) + "," + Math.round(v[1] * 1e5);
+          if (!seen[key]) { seen[key] = 1; verts.push(v); }
+        });
+      });
+    }
+    var near = function (a, b) { return Math.abs(Math.hypot(a[0] - b[0], a[1] - b[1]) - 1) < 1e-6; };
+    var out = [{ pts: sqA(0, 0), cls: "a" }, { pts: sqB(0, 0), cls: "a" }];
+    for (var a = 0; a < verts.length; a++) for (var b = a + 1; b < verts.length; b++) {
+      if (!near(verts[a], verts[b])) continue;
+      for (var c = b + 1; c < verts.length; c++) {
+        if (!near(verts[a], verts[c]) || !near(verts[b], verts[c])) continue;
+        var cx = (verts[a][0] + verts[b][0] + verts[c][0]) / 3, cy = (verts[a][1] + verts[b][1] + verts[c][1]) / 3;
+        if (cx >= 0 && cx < P && cy >= 0 && cy < P) out.push({ pts: [verts[a], verts[b], verts[c]], cls: "c" });
+      }
+    }
+    return out.map(function (o) { return { cls: o.cls, pts: o.pts.map(function (v) { return [v[0] / P, v[1] / P]; }) }; });
+  }
+  var TILINGS = {
+    octagon: { label: "Octagon", cell: function () {
+      return [
+        { pts: poly(0.5, 0.5, 0.5 / Math.cos(Math.PI / 8), 8, Math.PI / 8), cls: "a" },
+        { pts: poly(0, 0, 1 - Math.SQRT1_2, 4, 0), cls: "b" }
+      ];
+    } },
+    diagonal: { label: "Double octagon", cell: function () {
+      var R = (Math.SQRT1_2 / 2) / Math.cos(Math.PI / 8), s = 1 - Math.SQRT1_2;
+      return [
+        { pts: poly(0, 0, R, 8, Math.PI / 8), cls: "a" },
+        { pts: poly(0.5, 0.5, R, 8, Math.PI / 8), cls: "a" },
+        { pts: poly(0.5, 0, s / Math.SQRT2, 4, Math.PI / 4), cls: "b" },
+        { pts: poly(0, 0.5, s / Math.SQRT2, 4, Math.PI / 4), cls: "b" }
+      ];
+    } },
+    snub: { label: "Square & triangle", cell: snubCell },
+    square: { label: "Square", cell: function () {
+      return [{ pts: poly(0.5, 0.5, Math.SQRT1_2, 4, Math.PI / 4), cls: "a" }];
+    } }
+  };
+  var cellCache = {};
+  function cellOf(name) { return cellCache[name] || (cellCache[name] = TILINGS[name].cell()); }
+
+  function buildPolys(st) {
+    var cell = cellOf(st.pattern), r = st.repeats, sh = st.shift ? 0.5 : 0, out = [];
+    for (var i = -2; i <= r + 1; i++) for (var j = -2; j <= r + 1; j++) {
+      cell.forEach(function (c) {
+        var pts = c.pts.map(function (v) { return [(v[0] + i + sh) / r, (v[1] + j + sh) / r]; });
+        var minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
+        pts.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
+        if (maxx < -0.05 || minx > 1.05 || maxy < -0.05 || miny > 1.05) return;
+        out.push({ pts: pts, cls: c.cls });
+      });
+    }
+    return out;
+  }
+
+  // ---------- Star construction (polygons-in-contact method) ----------
+  function intersect(p, a, q, b) {
+    var den = a[0] * b[1] - a[1] * b[0];
+    if (Math.abs(den) < 1e-10) return null;
+    var t = ((q[0] - p[0]) * b[1] - (q[1] - p[1]) * b[0]) / den;
+    return [p[0] + t * a[0], p[1] + t * a[1]];
+  }
+  function starOf(pts, theta, delta) {
+    var n = pts.length, cx = 0, cy = 0;
+    pts.forEach(function (p) { cx += p[0]; cy += p[1]; }); cx /= n; cy /= n;
+    var E = [];
+    for (var i = 0; i < n; i++) {
+      var a = pts[i], b = pts[(i + 1) % n];
+      var L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      var u = [(b[0] - a[0]) / L, (b[1] - a[1]) / L], nn = [-u[1], u[0]];
+      var m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      if ((cx - m[0]) * nn[0] + (cy - m[1]) * nn[1] < 0) nn = [-nn[0], -nn[1]];
+      var d = delta * L / 2;
+      E.push({ u: u, n: nn, qm: [m[0] - d * u[0], m[1] - d * u[1]], qp: [m[0] + d * u[0], m[1] + d * u[1]] });
+    }
+    var c = Math.cos(theta), s = Math.sin(theta), star = [], segs = [];
+    for (var k = 0; k < n; k++) {
+      var e = E[k], f = E[(k + 1) % n];
+      var da = [c * e.u[0] + s * e.n[0], c * e.u[1] + s * e.n[1]];
+      var db = [-c * f.u[0] + s * f.n[0], -c * f.u[1] + s * f.n[1]];
+      var x = intersect(e.qp, da, f.qm, db) || pts[(k + 1) % n];
+      star.push(e.qm, e.qp, x);
+      segs.push([e.qp, x, f.qm]);
+    }
+    return { star: star, segs: segs, center: [cx, cy] };
+  }
+
+  // ---------- Colours ----------
+  var KEYS = [
+    ["ground", "Background"], ["star", "Big stars"], ["star2", "Small stars"], ["star3", "Triangles"],
+    ["inner", "Inner star"], ["band", "Lines"], ["outline", "Outlines"], ["dot", "Dots"]
+  ];
+  var PALETTES = {
+    "Lisbon blue":  { ground: "#f5f7fa", star: "#1f4e9c", star2: "#7b9bd0", star3: "#b8cbe8", inner: "#f5f7fa", band: "#ffffff", outline: "#173d7d", dot: "#1f4e9c" },
+    "Talavera":     { ground: "#f7f0dd", star: "#1d3f8f", star2: "#e2a626", star3: "#2f7d4a", inner: "#e2a626", band: "#f7f0dd", outline: "#1d3f8f", dot: "#c8522d" },
+    "Fez green":    { ground: "#1e6b52", star: "#f2efe6", star2: "#c9963b", star3: "#c9963b", inner: "#1e6b52", band: "#f8f5ed", outline: "#1b1b1b", dot: "#b23a2e" },
+    "Seville":      { ground: "#f3e5c4", star: "#2a5c9a", star2: "#d8861c", star3: "#3f8a5a", inner: "#f3e5c4", band: "#fcf4e0", outline: "#6b3a1f", dot: "#b8462a" },
+    "Puebla pink":  { ground: "#fbf3ea", star: "#c2456b", star2: "#2c6e8f", star3: "#e7b33c", inner: "#fbf3ea", band: "#fbf3ea", outline: "#3b2a4a", dot: "#2c6e8f" },
+    "Midnight gold":{ ground: "#142046", star: "#d9a441", star2: "#3b6db3", star3: "#e8e1cf", inner: "#142046", band: "#e8e1cf", outline: "#0a1130", dot: "#d9a441" }
+  };
+  var DESIGNS = {
+    "Lisbon star":     { pattern: "octagon",  angle: 67.5, gap: 0,    band: 0.022, repeats: 1, inner: true,  dots: false, shift: false, palette: "Lisbon blue" },
+    "Puebla rosette":  { pattern: "diagonal", angle: 60,   gap: 0.18, band: 0.016, repeats: 1, inner: true,  dots: true,  shift: false, palette: "Talavera" },
+    "Fez weave":       { pattern: "snub",     angle: 70,   gap: 0,    band: 0.024,  repeats: 1, inner: false, dots: true,  shift: false, palette: "Fez green" },
+    "Seville cross":   { pattern: "octagon",  angle: 45,   gap: 0,    band: 0.014, repeats: 2, inner: true,  dots: true,  shift: true,  palette: "Seville" },
+    "Night garden":    { pattern: "diagonal", angle: 67.5, gap: 0,    band: 0.02,  repeats: 1, inner: false, dots: false,  shift: false, palette: "Midnight gold" }
+  };
+
+  var state = {
+    pattern: "octagon", angle: 67.5, gap: 0, band: 0.022, repeats: 1,
+    inner: true, dots: false, shift: false,
+    colors: Object.assign({}, PALETTES["Lisbon blue"]), paletteName: "Lisbon blue", designName: "Lisbon star",
+    wall: 4, grout: true, glaze: true, exportSize: 1024
+  };
+
+  // ---------- Drawing ----------
+  function pathPts(ctx, pts, S) {
+    ctx.moveTo(pts[0][0] * S, pts[0][1] * S);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0] * S, pts[i][1] * S);
+    ctx.closePath();
+  }
+  function renderTile(canvas, size, st) {
+    canvas.width = size; canvas.height = size;
+    var ctx = canvas.getContext("2d"), col = st.colors, S = size, cellPx = size / st.repeats;
+    ctx.save();
+    ctx.fillStyle = col.ground; ctx.fillRect(0, 0, S, S);
+    ctx.beginPath(); ctx.rect(0, 0, S, S); ctx.clip();
+    var theta = st.angle * Math.PI / 180;
+    var stars = buildPolys(st).map(function (p) { var h = starOf(p.pts, theta, st.gap); h.cls = p.cls; h.verts = p.pts; return h; });
+    var fillFor = { a: col.star, b: col.star2, c: col.star3 };
+
+    stars.forEach(function (h) { ctx.beginPath(); pathPts(ctx, h.star, S); ctx.fillStyle = fillFor[h.cls]; ctx.fill(); });
+
+    if (st.inner) {
+      stars.forEach(function (h) {
+        if (h.cls !== "a") return;
+        var k = 0.52, c = h.center;
+        var inner = h.star.map(function (p) { return [c[0] + (p[0] - c[0]) * k, c[1] + (p[1] - c[1]) * k]; });
+        ctx.beginPath(); pathPts(ctx, inner, S);
+        ctx.fillStyle = col.inner; ctx.fill();
+        ctx.lineWidth = Math.max(1, cellPx * 0.006); ctx.strokeStyle = col.outline; ctx.lineJoin = "miter"; ctx.stroke();
+        ctx.beginPath(); ctx.arc(c[0] * S, c[1] * S, cellPx * 0.03, 0, TAU); ctx.fillStyle = col.dot; ctx.fill();
+      });
+    }
+
+    if (st.band > 0) {
+      var bw = st.band * cellPx, ow = Math.max(1, cellPx * 0.007);
+      ctx.lineCap = "butt"; ctx.lineJoin = "miter"; ctx.miterLimit = 12;
+      ctx.beginPath();
+      stars.forEach(function (h) {
+        h.segs.forEach(function (sg) {
+          ctx.moveTo(sg[0][0] * S, sg[0][1] * S); ctx.lineTo(sg[1][0] * S, sg[1][1] * S); ctx.lineTo(sg[2][0] * S, sg[2][1] * S);
+        });
+      });
+      ctx.lineWidth = bw + ow * 2; ctx.strokeStyle = col.outline; ctx.stroke();
+      ctx.lineWidth = bw; ctx.strokeStyle = col.band; ctx.stroke();
+    } else {
+      stars.forEach(function (h) { ctx.beginPath(); pathPts(ctx, h.star, S); ctx.lineWidth = Math.max(1, cellPx * 0.006); ctx.strokeStyle = col.outline; ctx.stroke(); });
+    }
+
+    if (st.dots) {
+      var seen = {}, rr = cellPx * 0.035;
+      stars.forEach(function (h) {
+        h.verts.forEach(function (v) {
+          var key = Math.round(v[0] * 1e4) + "," + Math.round(v[1] * 1e4);
+          if (seen[key]) return; seen[key] = 1;
+          ctx.beginPath(); ctx.arc(v[0] * S, v[1] * S, rr, 0, TAU);
+          ctx.fillStyle = col.dot; ctx.fill();
+          ctx.lineWidth = Math.max(1, cellPx * 0.006); ctx.strokeStyle = col.outline; ctx.stroke();
+        });
+      });
+    }
+    ctx.restore();
+    return canvas;
+  }
+
+  var wall = document.getElementById("wall");
+  var tileWork = document.createElement("canvas");
+  function renderWall() {
+    var n = state.wall, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var css = wall.clientWidth || 600, W = Math.round(css * dpr);
+    var grout = state.grout ? Math.max(2, Math.round(W / n * 0.025)) : 0;
+    var tilePx = Math.max(16, Math.floor((W - grout * (n + 1)) / n));
+    var total = tilePx * n + grout * (n + 1);
+    wall.width = total; wall.height = total;
+    renderTile(tileWork, tilePx, state);
+    var ctx = wall.getContext("2d");
+    ctx.fillStyle = "#cfc9bd"; ctx.fillRect(0, 0, total, total);
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+      var x = grout + i * (tilePx + grout), y = grout + j * (tilePx + grout);
+      ctx.drawImage(tileWork, x, y);
+      if (state.glaze) {
+        var g = ctx.createLinearGradient(x, y, x + tilePx, y + tilePx);
+        g.addColorStop(0, "rgba(255,255,255,0.22)"); g.addColorStop(0.35, "rgba(255,255,255,0.04)");
+        g.addColorStop(0.7, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,0.08)");
+        ctx.fillStyle = g; ctx.fillRect(x, y, tilePx, tilePx);
+        if (grout) { ctx.lineWidth = Math.max(1, tilePx * 0.01); ctx.strokeStyle = "rgba(0,0,0,0.12)"; ctx.strokeRect(x + ctx.lineWidth / 2, y + ctx.lineWidth / 2, tilePx - ctx.lineWidth, tilePx - ctx.lineWidth); }
+      }
+    }
+  }
+
+  var exportCanvas = document.createElement("canvas");
+  var stripCanvas = document.createElement("canvas");
+  var tileImg = document.getElementById("tileImg");
+  var strip = document.getElementById("strip");
+  function renderExport() {
+    renderTile(exportCanvas, state.exportSize, state);
+    try { tileImg.src = exportCanvas.toDataURL("image/png"); } catch (e) {}
+    renderTile(stripCanvas, 88, state);
+    try { strip.style.backgroundImage = "url(" + stripCanvas.toDataURL("image/png") + ")"; } catch (e) {}
+  }
+
+  // ---------- UI ----------
+  var $ = function (id) { return document.getElementById(id); };
+  var patternBox = $("patterns"), thumbs = {};
+  Object.keys(TILINGS).forEach(function (name) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "pat"; b.id = "pat-" + name; b.dataset.name = name;
+    var cv = document.createElement("canvas"); thumbs[name] = cv;
+    b.appendChild(cv); b.appendChild(document.createTextNode(TILINGS[name].label));
+    b.addEventListener("click", function () { state.pattern = name; state.designName = null; update(); });
+    patternBox.appendChild(b);
+  });
+  function drawThumbs() {
+    var px = Math.round(72 * Math.min(window.devicePixelRatio || 1, 2));
+    Object.keys(thumbs).forEach(function (name) {
+      var s = Object.assign({}, state, { pattern: name, repeats: 1 });
+      renderTile(thumbs[name], px, s);
+    });
+  }
+
+  var designBox = $("designs");
+  Object.keys(DESIGNS).forEach(function (name) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = name; b.dataset.name = name;
+    b.addEventListener("click", function () { applyDesign(name); });
+    designBox.appendChild(b);
+  });
+  function applyDesign(name) {
+    var d = DESIGNS[name];
+    Object.assign(state, { pattern: d.pattern, angle: d.angle, gap: d.gap, band: d.band, repeats: d.repeats, inner: d.inner, dots: d.dots, shift: d.shift });
+    state.colors = Object.assign({}, PALETTES[d.palette]); state.paletteName = d.palette; state.designName = name;
+    update();
+  }
+
+  var palBox = $("palettes");
+  Object.keys(PALETTES).forEach(function (name) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chip pal"; b.dataset.name = name;
+    var i = document.createElement("i");
+    ["star", "star2", "star3", "ground"].forEach(function (k) { var s = document.createElement("b"); s.style.background = PALETTES[name][k]; i.appendChild(s); });
+    b.appendChild(i); b.appendChild(document.createTextNode(name));
+    b.addEventListener("click", function () { state.colors = Object.assign({}, PALETTES[name]); state.paletteName = name; state.designName = null; update(); });
+    palBox.appendChild(b);
+  });
+
+  var swBox = $("swatches");
+  KEYS.forEach(function (k) {
+    var wrap = document.createElement("label"); wrap.className = "sw";
+    var inp = document.createElement("input"); inp.type = "color"; inp.id = "c-" + k[0];
+    inp.addEventListener("input", function () { state.colors[k[0]] = inp.value; state.paletteName = null; state.designName = null; update(); });
+    wrap.appendChild(inp); wrap.appendChild(document.createTextNode(k[1]));
+    swBox.appendChild(wrap);
+  });
+
+  function bindRange(id, key, fmt, toNum) {
+    var el = $(id);
+    el.addEventListener("input", function () { state[key] = toNum(el.value); state.designName = null; update(); });
+  }
+  bindRange("angle", "angle", null, parseFloat);
+  bindRange("gap", "gap", null, parseFloat);
+  bindRange("band", "band", null, parseFloat);
+  bindRange("repeats", "repeats", null, function (v) { return parseInt(v, 10); });
+  ["inner", "dots", "shift"].forEach(function (k) { $(k).addEventListener("change", function () { state[k] = $(k).checked; state.designName = null; update(); }); });
+  ["grout", "glaze"].forEach(function (k) { $(k).addEventListener("change", function () { state[k] = $(k).checked; schedule(false); }); });
+  $("wallSize").addEventListener("change", function () { state.wall = parseInt($("wallSize").value, 10); schedule(false); });
+  $("exportSize").addEventListener("change", function () { state.exportSize = parseInt($("exportSize").value, 10); schedule(true); });
+
+  $("surprise").addEventListener("click", function () {
+    var pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+    var pals = Object.keys(PALETTES);
+    state.pattern = pick(Object.keys(TILINGS));
+    state.angle = Math.round((35 + Math.random() * 40) * 2) / 2;
+    state.gap = Math.random() < 0.4 ? 0 : Math.round(Math.random() * 35) / 100;
+    state.band = Math.round((0.008 + Math.random() * 0.03) * 500) / 500;
+    state.repeats = pick([1, 1, 2, 2, 3]);
+    state.inner = Math.random() < 0.6; state.dots = Math.random() < 0.5; state.shift = Math.random() < 0.4;
+    state.paletteName = pick(pals); state.colors = Object.assign({}, PALETTES[state.paletteName]); state.designName = null;
+    update();
+  });
+
+  $("download").addEventListener("click", function () {
+    renderTile(exportCanvas, state.exportSize, state);
+    var a = document.createElement("a");
+    a.download = "star-tile-" + state.pattern + "-" + state.exportSize + ".png";
+    a.href = exportCanvas.toDataURL("image/png");
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  function syncControls() {
+    $("angle").value = state.angle; $("angleOut").textContent = state.angle + "°";
+    $("gap").value = state.gap; $("gapOut").textContent = Math.round(state.gap * 100) + "%";
+    $("band").value = state.band; $("bandOut").textContent = state.band === 0 ? "none" : (state.band * 100).toFixed(1);
+    $("repeats").value = state.repeats; $("repeatsOut").textContent = state.repeats + " × " + state.repeats;
+    $("inner").checked = state.inner; $("dots").checked = state.dots; $("shift").checked = state.shift;
+    $("grout").checked = state.grout; $("glaze").checked = state.glaze;
+    $("wallSize").value = String(state.wall); $("exportSize").value = String(state.exportSize);
+    KEYS.forEach(function (k) { $("c-" + k[0]).value = state.colors[k[0]]; });
+    document.querySelectorAll(".pat").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.name === state.pattern)); });
+    document.querySelectorAll("#designs .chip").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.name === state.designName)); });
+    document.querySelectorAll("#palettes .chip").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.name === state.paletteName)); });
+  }
+
+  var rafId = 0, exportTimer = 0, needThumbs = false;
+  function schedule(full) {
+    if (full) needThumbs = true;
+    if (!rafId) rafId = requestAnimationFrame(function () {
+      rafId = 0; renderWall();
+      if (needThumbs) { drawThumbs(); needThumbs = false; }
+    });
+    clearTimeout(exportTimer);
+    exportTimer = setTimeout(renderExport, 180);
+  }
+  function update() { syncControls(); schedule(true); }
+
+  var lastW = 0;
+  window.addEventListener("resize", function () { if (wall.clientWidth !== lastW) { lastW = wall.clientWidth; schedule(false); } });
+
+  applyDesign("Lisbon star");
+})();
+</script>
