@@ -187,8 +187,14 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
       <img id="tileImg" alt="Your single tile">
       <div class="copy">
         <h2>Your tile</h2>
-        <p>This is one tile. Placed side by side it repeats with no visible edge, so you can use it for printing, wallpaper, fabric or as a background.</p>
+        <p>This is one tile. Placed side by side it repeats with no visible edge, so you can use it for printing, wallpaper, fabric or as a background. Choose “Black and white outline” for a line drawing you can colour in, trace or cut.</p>
         <div class="actions">
+          <label class="toggle" for="exportStyle">Style
+            <select id="exportStyle">
+              <option value="colour">In colour</option>
+              <option value="outline">Black and white outline</option>
+            </select>
+          </label>
           <label class="toggle" for="exportSize">Size
             <select id="exportSize">
               <option value="512">512 px</option>
@@ -369,7 +375,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     pattern: "octagon", angle: 67.5, gap: 0, band: 0.022, repeats: 1,
     inner: true, dots: false, shift: false, double: false,
     colors: Object.assign({}, PALETTES["Lisbon blue"]), paletteName: "Lisbon blue", designName: "Lisbon star",
-    wall: 4, grout: true, glaze: true, exportSize: 1024, view: "wall", sceneSize: "medium"
+    wall: 4, grout: true, glaze: true, exportSize: 1024, exportStyle: "colour", view: "wall", sceneSize: "medium"
   };
 
   // ---------- Drawing ----------
@@ -380,7 +386,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   }
   function renderTile(canvas, size, st) {
     canvas.width = size; canvas.height = size;
-    var ctx = canvas.getContext("2d"), col = st.colors, S = size, cellPx = size / st.repeats;
+    var bwMode = !!st.outlineOnly;
+    var col = bwMode ? { ground: "#ffffff", star: "#ffffff", star2: "#ffffff", star3: "#ffffff", inner: "#ffffff", band: "#ffffff", outline: "#000000", dot: "#ffffff" } : st.colors;
+    var ctx = canvas.getContext("2d"), S = size, cellPx = size / st.repeats;
     ctx.save();
     ctx.fillStyle = col.ground; ctx.fillRect(0, 0, S, S);
     ctx.beginPath(); ctx.rect(0, 0, S, S); ctx.clip();
@@ -402,8 +410,13 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
       });
     }
 
+    if (bwMode) {
+      ctx.lineJoin = "miter"; ctx.lineWidth = Math.max(1.5, cellPx * 0.009); ctx.strokeStyle = "#000000";
+      stars.forEach(function (h) { ctx.beginPath(); pathPts(ctx, h.star, S); ctx.stroke(); });
+    }
+
     if (st.band > 0) {
-      var bw = st.band * cellPx, ow = Math.max(1, cellPx * 0.007);
+      var bw = st.band * cellPx, ow = Math.max(bwMode ? 1.5 : 1, cellPx * (bwMode ? 0.009 : 0.007));
       ctx.lineCap = "butt"; ctx.lineJoin = "miter"; ctx.miterLimit = 12;
       ctx.beginPath();
       stars.forEach(function (h) {
@@ -658,8 +671,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   var stripCanvas = document.createElement("canvas");
   var tileImg = document.getElementById("tileImg");
   var strip = document.getElementById("strip");
+  function exportState() { return Object.assign({}, state, { outlineOnly: state.exportStyle === "outline" }); }
   function renderExport() {
-    renderTile(exportCanvas, state.exportSize, state);
+    renderTile(exportCanvas, state.exportSize, exportState());
     try { tileImg.src = exportCanvas.toDataURL("image/png"); } catch (e) {}
     renderTile(stripCanvas, 88, state);
     try { strip.style.backgroundImage = "url(" + stripCanvas.toDataURL("image/png") + ")"; } catch (e) {}
@@ -733,6 +747,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   });
   $("sceneSize").addEventListener("change", function () { state.sceneSize = $("sceneSize").value; schedule(false); });
   $("wallSize").addEventListener("change", function () { state.wall = parseInt($("wallSize").value, 10); schedule(false); });
+  $("exportStyle").addEventListener("change", function () { state.exportStyle = $("exportStyle").value; schedule(false); });
   $("exportSize").addEventListener("change", function () { state.exportSize = parseInt($("exportSize").value, 10); schedule(true); });
 
   $("surprise").addEventListener("click", function () {
@@ -754,8 +769,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     window.claude.use("downloads").then(function (d) { downloadsApi = d; }, function () {});
   }
   $("download").addEventListener("click", function () {
-    renderTile(exportCanvas, state.exportSize, state);
-    var name = "star-tile-" + state.pattern + "-" + state.exportSize + ".png";
+    renderTile(exportCanvas, state.exportSize, exportState());
+    var name = "star-tile-" + state.pattern + (state.exportStyle === "outline" ? "-outline-" : "-") + state.exportSize + ".png";
     if (downloadsApi) {
       exportCanvas.toBlob(function (blob) {
         if (blob) downloadsApi.save({ filename: name, data: blob }).catch(function () {});

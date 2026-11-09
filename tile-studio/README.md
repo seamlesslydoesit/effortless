@@ -10,4 +10,4 @@ Portuguese azulejos and Mexican Talavera tiles.
 - Pick a colour set, or change any single colour.
 - Choose **Kitchen splashback**, **Floor** or **Living room wall** to see your tile in a room.
 - Turn off **Grout lines** to see that the tiles join with no seam.
-- Press **Save tile as picture** to download one tile as a PNG.
+- Press **Save tile as picture** to download one tile as a PNG. Set **Style** to **Black and white outline** for a line drawing.
