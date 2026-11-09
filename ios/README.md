@@ -29,12 +29,14 @@ You need a Mac with Xcode 15 or newer.
   - the pattern, the star shape and the colours
 - **Precise sliders.** Each slider has − and + buttons for exact steps. The thumb snaps and locks onto key values (such as 512 px, a half-tile shift or 0°) with a small vibration.
 - **Vibration feedback** on snapping, alignment locks, switches and repeat changes.
+- **Look:** warm off-white background, near-black text, pink accent, Bricolage Grotesque headings and Inter text (same style as Seamlessly Does It). Works in light and dark mode.
 
 ## Code layout
 
 | Folder | What it holds |
 | --- | --- |
-| `DesignSystem` | Spacing, corner and colour tokens (light, dark and high-contrast), haptics |
+| `DesignSystem` | Spacing, corner, colour and type tokens (light, dark and high-contrast), haptics |
+| `Resources/Fonts` | Bricolage Grotesque and Inter (free fonts, licence files included) |
 | `Model` | Layout tokens (`TileLayout`), artwork settings (`StarStyle`), palettes, pattern geometry |
 | `Rendering` | `TileRenderer`: draws one tile into a bitmap |
 | `ViewModel` | `TileEditorViewModel`: the single source of truth for the editor |

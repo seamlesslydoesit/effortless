@@ -24,6 +24,11 @@ struct TileControlsSheet: View {
             .background(DS.Colour.sheetBackground)
             .navigationTitle("Tile settings")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Tile settings").font(DS.TypeStyle.screenTitle)
+                }
+            }
         }
     }
 
@@ -42,12 +47,12 @@ struct TileControlsSheet: View {
                                 .font(.title3)
                                 .frame(height: 26)
                             Text(type.title)
-                                .font(.caption.weight(.medium))
+                                .font(DS.TypeStyle.cardTitle)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
                         }
                         .frame(maxWidth: .infinity, minHeight: 60)
-                        .foregroundStyle(selected ? DS.Colour.accent : DS.Colour.textPrimary)
+                        .foregroundStyle(selected ? DS.Colour.accentText : DS.Colour.textPrimary)
                         .background(RoundedRectangle(cornerRadius: DS.Radius.card).fill(DS.Colour.surface))
                         .overlay(RoundedRectangle(cornerRadius: DS.Radius.card)
                             .strokeBorder(selected ? DS.Colour.accent : .clear, lineWidth: 2))
@@ -75,7 +80,7 @@ struct TileControlsSheet: View {
                             model.layout.tileSize = size
                             Haptics.shared.snap()
                         }
-                        .font(.footnote.monospacedDigit().weight(.semibold))
+                        .font(DS.TypeStyle.chip)
                         .frame(maxWidth: .infinity, minHeight: 32)
                         .foregroundStyle(selected ? DS.Colour.onAccent : DS.Colour.textPrimary)
                         .background(Capsule().fill(selected ? DS.Colour.accent : DS.Colour.track))
@@ -157,7 +162,7 @@ struct TileControlsSheet: View {
                 Toggle(isOn: $model.style.cornerCentred) { Label("Star on tile corners", systemImage: "viewfinder") }
             }
             .tint(DS.Colour.accent)
-            .font(.subheadline)
+            .font(DS.TypeStyle.body)
             .cardStyle()
         }
     }
@@ -180,7 +185,7 @@ struct TileControlsSheet: View {
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                             Text(palette.name)
-                                .font(.footnote.weight(.medium))
+                                .font(DS.TypeStyle.cardTitle)
                                 .lineLimit(1)
                             Spacer(minLength: 0)
                         }
@@ -236,12 +241,12 @@ private struct PatternAssetCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: DS.Radius.thumbnail))
 
                 Text(kind.title)
-                    .font(.caption2.weight(.semibold))
+                    .font(DS.TypeStyle.caption)
                     .foregroundStyle(DS.Colour.textPrimary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                 Text(kind.detail)
-                    .font(.caption2)
+                    .font(DS.TypeStyle.captionLight)
                     .foregroundStyle(DS.Colour.textSecondary)
                     .lineLimit(1)
             }
@@ -268,9 +273,8 @@ private struct SheetSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs) {
             Text(title)
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(DS.Colour.textSecondary)
-                .textCase(.uppercase)
+                .font(DS.TypeStyle.sectionTitle)
+                .foregroundStyle(DS.Colour.textPrimary)
                 .accessibilityAddTraits(.isHeader)
             content
         }
@@ -280,6 +284,7 @@ private struct SheetSection<Content: View>: View {
 private extension View {
     func cardStyle() -> some View {
         padding(DS.Space.s)
-            .background(RoundedRectangle(cornerRadius: DS.Radius.card).fill(DS.Colour.surface))
+            .background(RoundedRectangle(cornerRadius: DS.Radius.card).fill(DS.Colour.surface)
+                .shadow(color: DS.Colour.cardShadow, radius: 8, y: 2))
     }
 }

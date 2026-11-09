@@ -26,18 +26,18 @@ struct PrecisionSlider: View {
         VStack(alignment: .leading, spacing: DS.Space.xxs) {
             HStack(spacing: DS.Space.xs) {
                 Label(title, systemImage: systemImage)
-                    .font(.subheadline.weight(.medium))
+                    .font(DS.TypeStyle.label)
                     .foregroundStyle(DS.Colour.textPrimary)
                 Spacer(minLength: DS.Space.xs)
                 if isLocked {
                     Image(systemName: "lock.fill")
                         .font(.caption2.weight(.semibold))
-                        .foregroundStyle(DS.Colour.accent)
+                        .foregroundStyle(DS.Colour.accentText)
                         .transition(.scale.combined(with: .opacity))
                 }
                 Text(format(value))
-                    .font(.subheadline.monospacedDigit().weight(.semibold))
-                    .foregroundStyle(isLocked ? DS.Colour.accent : DS.Colour.textSecondary)
+                    .font(DS.TypeStyle.value)
+                    .foregroundStyle(isLocked ? DS.Colour.accentText : DS.Colour.textSecondary)
                     .contentTransition(.numericText())
             }
             .animation(.snappy(duration: 0.15), value: isLocked)
@@ -86,7 +86,7 @@ struct PrecisionSlider: View {
                     .fill(DS.Colour.thumbFill)
                     .frame(width: DS.Size.thumb, height: DS.Size.thumb)
                     .shadow(color: .black.opacity(0.18), radius: 3, y: 1.5)
-                    .overlay(Circle().strokeBorder(DS.Colour.accent, lineWidth: isDragging || isLocked ? 2 : 0))
+                    .overlay(Circle().strokeBorder(isDragging || isLocked ? DS.Colour.accent : DS.Colour.separator, lineWidth: isDragging || isLocked ? 2 : 1))
                     .scaleEffect(isDragging ? 1.12 : 1)
                     .offset(x: x - DS.Size.thumb / 2)
                     .animation(.snappy(duration: 0.12), value: isDragging)

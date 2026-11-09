@@ -12,6 +12,7 @@ struct TileEditorView: View {
                 .overlay(alignment: .topLeading) { statusReadout.padding(DS.Space.s) }
                 .navigationTitle("Star Tile Studio")
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(DS.Colour.background, for: .navigationBar)
                 .toolbar { toolbarContent }
                 .sheet(isPresented: $model.isControlsPresented) {
                     TileControlsSheet(model: model)
@@ -35,7 +36,7 @@ struct TileEditorView: View {
             Label(model.layout.repeatType.title, systemImage: model.layout.repeatType.systemImage)
         }
         .labelStyle(.titleAndIcon)
-        .font(.caption.monospacedDigit().weight(.medium))
+        .font(DS.TypeStyle.status)
         .foregroundStyle(DS.Colour.textPrimary)
         .padding(.horizontal, DS.Space.s)
         .padding(.vertical, DS.Space.xs)
@@ -47,6 +48,9 @@ struct TileEditorView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text("Star Tile Studio").font(DS.TypeStyle.screenTitle)
+        }
         ToolbarItemGroup(placement: .topBarTrailing) {
             Button {
                 model.showSeamGuide.toggle()
