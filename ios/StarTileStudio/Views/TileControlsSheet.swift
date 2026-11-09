@@ -77,7 +77,7 @@ struct TileControlsSheet: View {
                         }
                         .font(.footnote.monospacedDigit().weight(.semibold))
                         .frame(maxWidth: .infinity, minHeight: 32)
-                        .foregroundStyle(selected ? Color.white : DS.Colour.textPrimary)
+                        .foregroundStyle(selected ? DS.Colour.onAccent : DS.Colour.textPrimary)
                         .background(Capsule().fill(selected ? DS.Colour.accent : DS.Colour.track))
                         .buttonStyle(.plain)
                         .accessibilityLabel("\(Int(size)) pixels")

@@ -10,7 +10,7 @@ struct TileEditorView: View {
             InfiniteTileCanvas(model: model)
                 .ignoresSafeArea(edges: .bottom)
                 .overlay(alignment: .topLeading) { statusReadout.padding(DS.Space.s) }
-                .navigationTitle("Seamless Tiles")
+                .navigationTitle("Star Tile Studio")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbarContent }
                 .sheet(isPresented: $model.isControlsPresented) {

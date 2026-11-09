@@ -30,11 +30,13 @@ enum DS {
     /// Semantic colours. Brand colours are built with a dynamic provider so they
     /// flip with the trait collection; system colours are used wherever one fits.
     enum Colour {
-        /// Seamlessly Does It pink. Slightly deeper in light mode so it stays legible on white.
-        static let accent = dynamic(light: UIColor(hex: 0xE63E98), dark: UIColor(hex: 0xFF6BB8),
-                                    lightHighContrast: UIColor(hex: 0xB8106E), darkHighContrast: UIColor(hex: 0xFF9ACD))
+        /// Star Tile Studio cobalt, taken from the azulejo glaze. Lighter in dark mode so it stays legible.
+        static let accent = dynamic(light: UIColor(hex: 0x1F45C6), dark: UIColor(hex: 0x7FA1EE),
+                                    lightHighContrast: UIColor(hex: 0x14267A), darkHighContrast: UIColor(hex: 0xB3C8F2))
         static let canvasBackground = dynamic(light: UIColor(hex: 0xEDECEA), dark: UIColor(hex: 0x0B0B0D))
         static let seamGuide = accent
+        /// Text and icons sitting on an accent fill.
+        static let onAccent = dynamic(light: .white, dark: UIColor(hex: 0x0B1230))
         static let surface = Color(uiColor: .secondarySystemGroupedBackground)
         static let sheetBackground = Color(uiColor: .systemGroupedBackground)
         static let track = Color(uiColor: .tertiarySystemFill)
